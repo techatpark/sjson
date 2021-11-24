@@ -1,100 +1,277 @@
 package com.techatpark.sjson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
-public class Json {
+/**
+ *
+ */
+public final class Json {
 
-    public final Map<String, Object> value(final char[] charArray) {
+    public Object read(final String jsonText) {
+        final char[] charArray = jsonText.toCharArray();
 
-        final List<Tokenizer.Token> tokens = new Tokenizer().getTokens(charArray);
+        return getValue(charArray,nextClean(charArray,-1)).value();
+    }
 
-        Map<String, Object> jsonAsMap = new HashMap<>();
+    private ValueEntry<Map<String,Object>> getJsonObject(final char[] charArray, final int index) {
 
-        Stack<Map<String, Object>> objectsStack = new Stack<>();
-        Stack<List> arraysStack = new Stack<>();
+        Map<String,Object> jsonMap = new HashMap<>();
+        int currentIndex = nextClean(charArray, index);
 
-        objectsStack.push(jsonAsMap);
+        ValueEntry valueEntry;
+        String theKey;
 
-        int count = tokens.size();
+        while (charArray[currentIndex] == '"') {
+            // 1. Get the Key
+            valueEntry = getString(charArray, currentIndex);
+            theKey = (String) valueEntry.value();
 
-        Tokenizer.Token token;
+            // 2. Move to :
+            currentIndex = nextClean(charArray, valueEntry.end());
 
-        for (int index = 0; index < count; index++) {
-            token = tokens.get(index);
-            switch (token.tokenType()) {
-                case STRING ,NUMBER, TRUE, FALSE,NULL,ARRAY,EMPTY_OBJECT,EMPTY_ARRAY -> {
-                    objectsStack.peek().put(token.key(),token.value());
-                }
-                case OBJECT_START -> {
-                    objectsStack.peek().put(token.key(),token.value());
-                    objectsStack.push((Map<String, Object>) token.value());
-                }
-                case ARRAY_START -> {
-                    objectsStack.peek().put(token.key(),token.value());
-                    List theArray = (List) token.value();
-                    arraysStack.push(theArray);
+            // 3. Get the Value
+            valueEntry = getValue(charArray, nextClean(charArray, currentIndex));
+            currentIndex = nextClean(charArray, valueEntry.end());
 
-                    if(!theArray.isEmpty()
-                            && theArray.get(theArray.size()-1) instanceof List theInnerArray) {
-                        arraysStack.push(theInnerArray);
-                    }
+            // 4. Place the value
+            jsonMap.put(theKey,valueEntry.value());
 
-                    if(token.openingTokenTypes()
-                            .get(0).equals(Tokenizer.TokenType.OBJECT_START)) {
-                        Map<String,Object> newObject = new HashMap<>();
-                        arraysStack.peek().add(newObject);
-                        objectsStack.push(newObject);
-                    }
-                }
+            // 5. Check if it has a comma(,)
+            if(charArray[currentIndex] == ',') {
+                currentIndex = nextClean(charArray, currentIndex);
+            }
+        }
+
+
+        return new ValueEntry<>(TokenType.OBJECT,jsonMap,currentIndex);
+    }
+
+    private ValueEntry<List> getJsonArray(final char[] charArray, final int index) {
+
+        List list = new ArrayList();
+        int currentIndex = nextClean(charArray, index);
+
+        ValueEntry valueEntry;
+
+        while (charArray[currentIndex] != ']') {
+
+            // 1. Get the Value
+            valueEntry = getValue(charArray, currentIndex);
+            currentIndex = nextClean(charArray, valueEntry.end());
+
+            // 2. Place the value
+            list.add(valueEntry.value());
+
+            // 3. Check if it has a comma(,)
+            if(charArray[currentIndex] == ',') {
+                currentIndex = nextClean(charArray, currentIndex);
             }
 
-            token.closingTokenTypes().forEach(closingTokenType  -> {
-                switch (closingTokenType.tokenType()) {
-                    case OBJECT_END ->  {
-                        objectsStack.pop();
+        }
 
-                        if(!closingTokenType.items().isEmpty()) {
-                            arraysStack.peek().addAll(closingTokenType.items());
-                            // TODO: Do we need this
-                            closingTokenType.items().clear();
-                        }
+
+        return new ValueEntry<>(TokenType.ARRAY,list,currentIndex);
+    }
+
+
+    private ValueEntry<?> getValue(final char[] charArray, final int index) {
+
+        ValueEntry<?> valueEntry = null;
+
+        switch (getTokenType(charArray[index])) {
+            case STRING -> valueEntry = getString(charArray, index);
+            case NULL -> valueEntry = getNull(charArray, index);
+            case TRUE -> valueEntry = getTrue(charArray, index);
+            case FALSE -> valueEntry = getFalse(charArray, index);
+            case NUMBER -> valueEntry = getNumber(charArray, index);
+            case OBJECT -> valueEntry = getJsonObject(charArray, index);
+            case ARRAY -> valueEntry = getJsonArray(charArray, index);
+        }
+        return valueEntry;
+    }
+
+    private ValueEntry<Number> getNumber(final char[] charArray, final int index) {
+
+        Number theValue;
+        boolean isNegative = charArray[index] == '-';
+        int currentIndex = isNegative ? (index + 1) : index;
+
+        boolean containsDot = false;
+        StringBuilder builder = new StringBuilder();
+
+        while (Character.isDigit(charArray[currentIndex])
+                || charArray[currentIndex] == '.') {
+            builder.append(charArray[currentIndex]);
+            ++currentIndex;
+            if (charArray[currentIndex] == '.') {
+                containsDot = true;
+            }
+        }
+
+        //TODO Why We do this ?!
+        currentIndex = currentIndex - 1;
+        if (containsDot) {
+            theValue = Float.parseFloat(builder.toString());
+            if (isNegative) {
+                theValue = (Float) theValue * -1;
+            }
+        } else {
+            theValue = Integer.parseInt(builder.toString());
+            if (isNegative) {
+                theValue = (Integer) theValue * -1;
+            }
+        }
+
+
+        return new ValueEntry(TokenType.NUMBER, theValue, currentIndex);
+
+    }
+
+    private ValueEntry<Boolean> getTrue(final char[] charArray, final int index) {
+        if (charArray[index] == 't'
+                && charArray[index + 1] == 'r'
+                && charArray[index + 2] == 'u'
+                && charArray[index + 3] == 'e') {
+            return new ValueEntry(TokenType.TRUE, true, index + 3);
+        } else {
+            throw new IllegalArgumentException("Illegal value at " + index);
+        }
+    }
+
+    private ValueEntry<Boolean> getFalse(final char[] charArray, final int index) {
+        if (charArray[index] == 'f'
+                && charArray[index + 1] == 'a'
+                && charArray[index + 2] == 'l'
+                && charArray[index + 3] == 's'
+                && charArray[index + 4] == 'e') {
+            return new ValueEntry(TokenType.FALSE, false, index + 4);
+        } else {
+            throw new IllegalArgumentException("Illegal value at " + index);
+        }
+    }
+
+    private ValueEntry<Object> getNull(final char[] charArray, final int index) {
+        if (charArray[index] == 'n'
+                && charArray[index + 1] == 'u'
+                && charArray[index + 2] == 'l'
+                && charArray[index + 3] == 'l') {
+            return new ValueEntry(TokenType.NULL, null, index + 3);
+        } else {
+            throw new IllegalArgumentException("Illegal value at " + index);
+        }
+    }
+
+    private ValueEntry<String> getString(final char[] charArray, final int index) {
+
+        StringBuilder builder = new StringBuilder();
+        int currentIndex = index;
+        char c;
+        while (charArray[++currentIndex] != '"'
+                || charArray[currentIndex - 1] == '\\') {
+            c = charArray[currentIndex];
+            switch (c) {
+                case 0:
+                case '\n':
+                case '\r':
+                    throw new IllegalArgumentException("Unterminated string");
+                case '\\':
+                    currentIndex = currentIndex + 1;
+                    c = charArray[currentIndex];
+                    switch (c) {
+                        case 'b':
+                            builder.append('\b');
+                            break;
+                        case 't':
+                            builder.append('\t');
+                            break;
+                        case 'n':
+                            builder.append('\n');
+                            break;
+                        case 'f':
+                            builder.append('\f');
+                            break;
+                        case 'r':
+                            builder.append('\r');
+                            break;
+                        case 'u':
+                            try {
+                                String a = String.copyValueOf(charArray, currentIndex + 1, 4);
+                                currentIndex = currentIndex + 4;
+                                builder.append((char) Integer.parseInt(a, 16));
+                            } catch (NumberFormatException e) {
+                                throw new IllegalArgumentException("Illegal escape.", e);
+                            }
+                            break;
+                        case '"':
+                        case '\'':
+                        case '\\':
+                        case '/':
+                            builder.append(c);
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Illegal escape.");
                     }
-                    case ARRAY ->  {
-                        arraysStack.peek().addAll(closingTokenType.items());
+                    break;
+                default:
+                    if (c == '"') {
+                        break;
                     }
-                    case ARRAY_START ->  {
-                        arraysStack.peek().add(closingTokenType.items());
-                        arraysStack.push(closingTokenType.items());
-                    }
-                    case ARRAY_END ->  {
-                        arraysStack.pop();
-                        if(!closingTokenType.items().isEmpty()) {
-                            arraysStack.peek().addAll(closingTokenType.items());
-                            // TODO: Do we need this
-                            closingTokenType.items().clear();
-                        }
-                    }
-                    case OBJECT_START ->  {
-                        Map<String,Object> newObject = new HashMap<>();
-                        arraysStack.peek().add(newObject);
-                        objectsStack.push(newObject);
-                    }
+                    builder.append(c);
+            }
+
+        }
+        return new ValueEntry(TokenType.STRING, builder.toString(),
+                currentIndex);
+    }
+
+
+    private int nextClean(final char[] charArray, final int index) {
+        int currentIndex = index;
+
+        while (charArray[++currentIndex] == ' '
+                || charArray[currentIndex] == '\n'
+                || charArray[currentIndex] == '\r'
+                || charArray[currentIndex] == '\t') {
+        }
+
+        return currentIndex;
+    }
+
+    private TokenType getTokenType(final char frontChar) {
+        switch (frontChar) {
+            case '{':
+                return TokenType.OBJECT;
+            case '[':
+                return TokenType.ARRAY;
+            case '"':
+                return TokenType.STRING;
+            case 't':
+                return TokenType.TRUE;
+            case 'f':
+                return TokenType.FALSE;
+            case 'n':
+                return TokenType.NULL;
+            default:
+                if (Character.isDigit(frontChar) || frontChar == '-') {
+                    return TokenType.NUMBER;
+                } else {
+                    throw new IllegalArgumentException("Invalid Token " + frontChar);
                 }
-            });
 
         }
-
-        if( !arraysStack.isEmpty() || !objectsStack.isEmpty()  ) {
-            throw new IllegalArgumentException("Invalid Document");
-        }
-
-        return jsonAsMap;
     }
 
-    public final Map<String, Object> value(final String jsonText) {
-        return value(jsonText.toCharArray());
+
+    public enum TokenType {
+        STRING, NUMBER,OBJECT, NULL, TRUE, FALSE, ARRAY
     }
+
+    public record ValueEntry<T>(TokenType tokenType,
+                             T value,
+                             int end) {
+    }
+
 }
