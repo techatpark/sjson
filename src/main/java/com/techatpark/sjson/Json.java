@@ -105,11 +105,14 @@ public final class Json {
         boolean containsDot = false;
         StringBuilder builder = new StringBuilder();
 
-        while (Character.isDigit(charArray[currentIndex])
+        while ( Character.isDigit(charArray[currentIndex])
                 || charArray[currentIndex] == '.') {
             builder.append(charArray[currentIndex]);
-            ++currentIndex;
-            if (charArray[currentIndex] == '.') {
+
+            currentIndex++;
+            if (currentIndex == charArray.length) {
+                break;
+            }else if (charArray[currentIndex] == '.') {
                 containsDot = true;
             }
         }
