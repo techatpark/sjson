@@ -1,0 +1,11 @@
+{
+  "a-string" : "A Text",
+  "a-number" : [987,{
+    "a-string" : "A Text",
+    "a-number" : 987
+  }],
+  "a-obj" : {
+    "a-string" : "A Text",
+    "a-number" : 987
+  }
+}

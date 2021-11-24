@@ -3,11 +3,78 @@ package com.techatpark.sjson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  */
 public final class Tokenizer {
+
+    public Object getJson(final String jsonText) {
+        final char[] charArray = jsonText.toCharArray();
+
+        return getValue(charArray,nextClean(charArray,-1)).value();
+    }
+
+    public ValueEntry<Map<String,Object>> getJsonObject(final char[] charArray, final int index) {
+
+        Map<String,Object> jsonMap = new HashMap<>();
+        int currentIndex = nextClean(charArray, index);
+
+        ValueEntry valueEntry;
+        String theKey;
+
+        while (charArray[currentIndex] == '"') {
+            // 1. Get the Key
+            valueEntry = getString(charArray, currentIndex);
+            theKey = (String) valueEntry.value();
+
+            // 2. Move to :
+            currentIndex = nextClean(charArray, valueEntry.end());
+
+            // 3. Get the Value
+            valueEntry = getValue(charArray, nextClean(charArray, currentIndex));
+            currentIndex = nextClean(charArray, valueEntry.end());
+
+            // 4. Place the value
+            jsonMap.put(theKey,valueEntry.value());
+
+            // 5. Check if it has a comma(,)
+            if(charArray[currentIndex] == ',') {
+                currentIndex = nextClean(charArray, currentIndex);
+            }
+        }
+
+
+        return new ValueEntry<>(TokenType.OBJECT,jsonMap,currentIndex);
+    }
+
+    public ValueEntry<List> getJsonArray(final char[] charArray, final int index) {
+
+        List list = new ArrayList();
+        int currentIndex = nextClean(charArray, index);
+
+        ValueEntry valueEntry;
+
+        while (charArray[currentIndex] != ']') {
+
+            // 1. Get the Value
+            valueEntry = getValue(charArray, currentIndex);
+            currentIndex = nextClean(charArray, valueEntry.end());
+
+            // 2. Place the value
+            list.add(valueEntry.value());
+
+            // 3. Check if it has a comma(,)
+            if(charArray[currentIndex] == ',') {
+                currentIndex = nextClean(charArray, currentIndex);
+            }
+
+        }
+
+
+        return new ValueEntry<>(TokenType.ARRAY,list,currentIndex);
+    }
 
     public List<Token> getTokens(final char[] charArray) {
         List<Token> tokens = new ArrayList<>();
@@ -133,6 +200,7 @@ public final class Tokenizer {
     }
 
     private ValueEntry<?> getValue(final char[] charArray, final int index) {
+
         ValueEntry<?> valueEntry = null;
 
         switch (getTokenType(charArray[index])) {
@@ -153,13 +221,10 @@ public final class Tokenizer {
                 valueEntry = getNumber(charArray, index);
             }
             case OBJECT_START -> {
-                valueEntry = getObject(charArray, index);
-                if (valueEntry.tokenType == TokenType.OBJECT_START) {
-                    // This is a non-empty Object
-                }
+                valueEntry = getJsonObject(charArray, index);
             }
             case ARRAY_START -> {
-                valueEntry = getArray(charArray, index);
+                valueEntry = getJsonArray(charArray, index);
             }
 
 
@@ -406,7 +471,7 @@ public final class Tokenizer {
 
 
     public enum TokenType {
-        OBJECT_START, ARRAY_START, OBJECT_END, STRING, NUMBER, NULL, TRUE, FALSE, ARRAY, EMPTY_ARRAY, EMPTY_OBJECT, ARRAY_END
+        OBJECT_START, ARRAY_START, OBJECT_END, STRING, NUMBER,OBJECT, NULL, TRUE, FALSE, ARRAY, EMPTY_ARRAY, EMPTY_OBJECT, ARRAY_END
     }
 
     public record ClosingTokenType(TokenType tokenType,
@@ -423,7 +488,7 @@ public final class Tokenizer {
                         List<TokenType> openingTokenTypes) {
     }
 
-    private record ValueEntry<T>(TokenType tokenType,
+    public record ValueEntry<T>(TokenType tokenType,
                              T value,
                              int end) {
     }
