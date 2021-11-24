@@ -77,15 +77,21 @@ public final class Json {
 
     private ValueEntry<?> getValue(final char[] charArray, final int index) {
         ValueEntry<?> valueEntry ;
-        switch (getTokenType(charArray[index])) {
-            case STRING -> valueEntry = getString(charArray, index);
-            case NUMBER -> valueEntry = getNumber(charArray, index);
-            case NULL -> valueEntry = getNull(charArray, index);
-            case TRUE -> valueEntry = getTrue(charArray, index);
-            case FALSE -> valueEntry = getFalse(charArray, index);
-            case OBJECT -> valueEntry = getJsonObject(charArray, index);
-            case ARRAY -> valueEntry = getJsonArray(charArray, index);
-            default -> throw new IllegalArgumentException("Invalid JSON at " + index);
+        switch (charArray[index]) {
+            case '"' -> valueEntry = getString(charArray, index);
+            case 'n' -> valueEntry = getNull(charArray, index);
+            case 't' -> valueEntry = getTrue(charArray, index);
+            case 'f' -> valueEntry = getFalse(charArray, index);
+            case '{' -> valueEntry = getJsonObject(charArray, index);
+            case '[' -> valueEntry = getJsonArray(charArray, index);
+            default -> {
+                if (Character.isDigit(charArray[index]) || charArray[index] == '-') {
+                    valueEntry = getNumber(charArray, index);
+                } else {
+                    throw new IllegalArgumentException("Invalid Token at " + index);
+                }
+            }
+
         }
         return valueEntry;
     }
@@ -224,7 +230,6 @@ public final class Json {
                 currentIndex);
     }
 
-
     private int nextClean(final char[] charArray, final int index) {
         int currentIndex = index;
 
@@ -235,34 +240,6 @@ public final class Json {
         }
 
         return currentIndex;
-    }
-
-    private DataType getTokenType(final char frontChar) {
-        switch (frontChar) {
-            case '{':
-                return DataType.OBJECT;
-            case '[':
-                return DataType.ARRAY;
-            case '"':
-                return DataType.STRING;
-            case 't':
-                return DataType.TRUE;
-            case 'f':
-                return DataType.FALSE;
-            case 'n':
-                return DataType.NULL;
-            default:
-                if (Character.isDigit(frontChar) || frontChar == '-') {
-                    return DataType.NUMBER;
-                } else {
-                    throw new IllegalArgumentException("Invalid Token " + frontChar);
-                }
-        }
-    }
-
-
-    public enum DataType {
-        STRING, NUMBER,OBJECT, NULL, TRUE, FALSE, ARRAY
     }
 
     public record ValueEntry<T>(T value,
