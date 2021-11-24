@@ -132,8 +132,8 @@ public final class Tokenizer {
         return tokens;
     }
 
-    private ValueEntry getValue(final char[] charArray, final int index) {
-        ValueEntry valueEntry = null;
+    private ValueEntry<?> getValue(final char[] charArray, final int index) {
+        ValueEntry<?> valueEntry = null;
 
         switch (getTokenType(charArray[index])) {
 
@@ -167,7 +167,7 @@ public final class Tokenizer {
         return valueEntry;
     }
 
-    private ValueEntry getNumber(final char[] charArray, final int index) {
+    private ValueEntry<Number> getNumber(final char[] charArray, final int index) {
 
         Number theValue;
         boolean isNegative = charArray[index] == '-';
@@ -204,7 +204,7 @@ public final class Tokenizer {
 
     }
 
-    private ValueEntry getTrue(final char[] charArray, final int index) {
+    private ValueEntry<Boolean> getTrue(final char[] charArray, final int index) {
         if (charArray[index] == 't'
                 && charArray[index + 1] == 'r'
                 && charArray[index + 2] == 'u'
@@ -215,7 +215,7 @@ public final class Tokenizer {
         }
     }
 
-    private ValueEntry getFalse(final char[] charArray, final int index) {
+    private ValueEntry<Boolean> getFalse(final char[] charArray, final int index) {
         if (charArray[index] == 'f'
                 && charArray[index + 1] == 'a'
                 && charArray[index + 2] == 'l'
@@ -227,7 +227,7 @@ public final class Tokenizer {
         }
     }
 
-    private ValueEntry getNull(final char[] charArray, final int index) {
+    private ValueEntry<Object> getNull(final char[] charArray, final int index) {
         if (charArray[index] == 'n'
                 && charArray[index + 1] == 'u'
                 && charArray[index + 2] == 'l'
@@ -238,7 +238,7 @@ public final class Tokenizer {
         }
     }
 
-    private ValueEntry getString(final char[] charArray, final int index) {
+    private ValueEntry<String> getString(final char[] charArray, final int index) {
 
         StringBuilder builder = new StringBuilder();
         int currentIndex = index;
@@ -301,7 +301,7 @@ public final class Tokenizer {
                 currentIndex);
     }
 
-    private ValueEntry getObject(final char[] charArray, final int index) {
+    private ValueEntry<Object> getObject(final char[] charArray, final int index) {
 
         int nextNonspaceIndex = nextClean(charArray, index);
         // Empty Object
@@ -314,7 +314,7 @@ public final class Tokenizer {
         }
     }
 
-    private ValueEntry getArray(final char[] charArray, final int index) {
+    private ValueEntry<List> getArray(final char[] charArray, final int index) {
         List theArray = new ArrayList();
         int currentIndex = nextClean(charArray, index);
         TokenType tokenType = getTokenType(charArray[currentIndex]);
@@ -423,8 +423,8 @@ public final class Tokenizer {
                         List<TokenType> openingTokenTypes) {
     }
 
-    private record ValueEntry(TokenType tokenType,
-                             Object value,
+    private record ValueEntry<T>(TokenType tokenType,
+                             T value,
                              int end) {
     }
 
