@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,17 +22,30 @@ class JsonTest {
     void testParsing() throws IOException {
 
         final ObjectMapper jackson = new ObjectMapper();
+
+        Instant start;
+
+        Duration jacksonsTime,oursTime;
+
+        System.out.format("%40s%25s%25s%10s\n", "File Name" , "Jackson Speed", "Our Speed", "Gap");
+        System.out.format("%40s%25s%25s%10s\n", "----------" , "----------", "----------"
+                , "-------");
+
         for (String jsonFile :
                 getJSONFiles()) {
 
             // 1. Generate JSONNode directly
             String originalJsonText = getJSONSample(jsonFile);
+            start = Instant.now();
             JsonNode jacksonJsonNode = jackson
                     .readTree(new StringReader(originalJsonText));
+            jacksonsTime = Duration.between(start, Instant.now());
 
             // 2. Generate JSONNode through our implementation
+            start = Instant.now();
             Object ourJsonObject = new Json()
                     .read(originalJsonText);
+            oursTime = Duration.between(start, Instant.now());
             String reversedJsonText = jackson
                     .writeValueAsString(ourJsonObject);
             JsonNode ourJsonNode = jackson
@@ -40,6 +55,7 @@ class JsonTest {
             Assertions.assertEquals(jacksonJsonNode,
                     ourJsonNode,
                     "Reverse JSON Failed for " + jsonFile);
+            System.out.format("%40s%25s%25s%10d\n", jsonFile , jacksonsTime, oursTime,jacksonsTime.compareTo(oursTime));
 
 
         }
