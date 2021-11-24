@@ -83,10 +83,10 @@ public final class Json {
 
         switch (getTokenType(charArray[index])) {
             case STRING -> valueEntry = getString(charArray, index);
+            case NUMBER -> valueEntry = getNumber(charArray, index);
             case NULL -> valueEntry = getNull(charArray, index);
             case TRUE -> valueEntry = getTrue(charArray, index);
             case FALSE -> valueEntry = getFalse(charArray, index);
-            case NUMBER -> valueEntry = getNumber(charArray, index);
             case OBJECT -> valueEntry = getJsonObject(charArray, index);
             case ARRAY -> valueEntry = getJsonArray(charArray, index);
         }
