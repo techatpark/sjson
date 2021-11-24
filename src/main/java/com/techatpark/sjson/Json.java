@@ -1,7 +1,7 @@
 package com.techatpark.sjson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +17,7 @@ public final class Json {
 
     private ValueEntry<Map<String,Object>> getJsonObject(final char[] charArray, final int index) {
 
-        Map<String,Object> jsonMap = new HashMap<>();
+        Map<String,Object> jsonMap = new IdentityHashMap<>();
         int currentIndex = nextClean(charArray, index);
 
         ValueEntry valueEntry;
