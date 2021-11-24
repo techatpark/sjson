@@ -167,7 +167,6 @@ public final class Tokenizer {
         return valueEntry;
     }
 
-
     private ValueEntry getNumber(final char[] charArray, final int index) {
 
         Number theValue;
@@ -358,7 +357,6 @@ public final class Tokenizer {
             return new ValueEntry(TokenType.ARRAY_START, theArray, currentIndex);
         }
     }
-
 
     private int nextClean(final char[] charArray, final int index) {
         int currentIndex = index;
