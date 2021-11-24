@@ -12,7 +12,6 @@ public final class Json {
 
     public Object read(final String jsonText) {
         final char[] charArray = jsonText.toCharArray();
-
         return getValue(charArray,nextClean(charArray,-1)).value();
     }
 
@@ -45,8 +44,7 @@ public final class Json {
             }
         }
 
-
-        return new ValueEntry<>(TokenType.OBJECT,jsonMap,currentIndex);
+        return new ValueEntry(jsonMap,currentIndex);
     }
 
     private ValueEntry<List> getJsonArray(final char[] charArray, final int index) {
@@ -73,14 +71,12 @@ public final class Json {
         }
 
 
-        return new ValueEntry<>(TokenType.ARRAY,list,currentIndex);
+        return new ValueEntry(list,currentIndex);
     }
 
 
     private ValueEntry<?> getValue(final char[] charArray, final int index) {
-
-        ValueEntry<?> valueEntry = null;
-
+        ValueEntry<?> valueEntry ;
         switch (getTokenType(charArray[index])) {
             case STRING -> valueEntry = getString(charArray, index);
             case NUMBER -> valueEntry = getNumber(charArray, index);
@@ -89,6 +85,7 @@ public final class Json {
             case FALSE -> valueEntry = getFalse(charArray, index);
             case OBJECT -> valueEntry = getJsonObject(charArray, index);
             case ARRAY -> valueEntry = getJsonArray(charArray, index);
+            default -> throw new IllegalArgumentException("Invalid JSON at " + index);
         }
         return valueEntry;
     }
@@ -126,7 +123,7 @@ public final class Json {
         }
 
 
-        return new ValueEntry(TokenType.NUMBER, theValue, currentIndex);
+        return new ValueEntry(theValue, currentIndex);
 
     }
 
@@ -135,7 +132,7 @@ public final class Json {
                 && charArray[index + 1] == 'r'
                 && charArray[index + 2] == 'u'
                 && charArray[index + 3] == 'e') {
-            return new ValueEntry(TokenType.TRUE, true, index + 3);
+            return new ValueEntry(true, index + 3);
         } else {
             throw new IllegalArgumentException("Illegal value at " + index);
         }
@@ -147,7 +144,7 @@ public final class Json {
                 && charArray[index + 2] == 'l'
                 && charArray[index + 3] == 's'
                 && charArray[index + 4] == 'e') {
-            return new ValueEntry(TokenType.FALSE, false, index + 4);
+            return new ValueEntry( false, index + 4);
         } else {
             throw new IllegalArgumentException("Illegal value at " + index);
         }
@@ -158,7 +155,7 @@ public final class Json {
                 && charArray[index + 1] == 'u'
                 && charArray[index + 2] == 'l'
                 && charArray[index + 3] == 'l') {
-            return new ValueEntry(TokenType.NULL, null, index + 3);
+            return new ValueEntry( null, index + 3);
         } else {
             throw new IllegalArgumentException("Illegal value at " + index);
         }
@@ -223,7 +220,7 @@ public final class Json {
             }
 
         }
-        return new ValueEntry(TokenType.STRING, builder.toString(),
+        return new ValueEntry( builder.toString(),
                 currentIndex);
     }
 
@@ -240,37 +237,35 @@ public final class Json {
         return currentIndex;
     }
 
-    private TokenType getTokenType(final char frontChar) {
+    private DataType getTokenType(final char frontChar) {
         switch (frontChar) {
             case '{':
-                return TokenType.OBJECT;
+                return DataType.OBJECT;
             case '[':
-                return TokenType.ARRAY;
+                return DataType.ARRAY;
             case '"':
-                return TokenType.STRING;
+                return DataType.STRING;
             case 't':
-                return TokenType.TRUE;
+                return DataType.TRUE;
             case 'f':
-                return TokenType.FALSE;
+                return DataType.FALSE;
             case 'n':
-                return TokenType.NULL;
+                return DataType.NULL;
             default:
                 if (Character.isDigit(frontChar) || frontChar == '-') {
-                    return TokenType.NUMBER;
+                    return DataType.NUMBER;
                 } else {
                     throw new IllegalArgumentException("Invalid Token " + frontChar);
                 }
-
         }
     }
 
 
-    public enum TokenType {
+    public enum DataType {
         STRING, NUMBER,OBJECT, NULL, TRUE, FALSE, ARRAY
     }
 
-    public record ValueEntry<T>(TokenType tokenType,
-                             T value,
+    public record ValueEntry<T>(T value,
                              int end) {
     }
 
