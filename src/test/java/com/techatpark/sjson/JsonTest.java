@@ -3,6 +3,15 @@ package com.techatpark.sjson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import static net.andreinc.mockneat.unit.objects.ObjectMap.*;
+import static net.andreinc.mockneat.unit.user.Names.*;
+import static net.andreinc.mockneat.unit.address.Addresses.*;
+import static net.andreinc.mockneat.unit.address.Countries.*;
+import static net.andreinc.mockneat.unit.financial.CreditCards.*;
+import static net.andreinc.mockneat.unit.financial.Currencies.*;
+import static net.andreinc.mockneat.unit.types.Floats.*;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,13 +46,34 @@ class JsonTest {
             JsonNode ourJsonNode = jackson
                     .readTree(new StringReader(reversedJsonText));
 
-
             // 3. Compare Both
             Assertions.assertEquals(jacksonJsonNode,
                     ourJsonNode,
                     "Reverse JSON Failed for " + jsonFile);
         }
 
+    }
+
+    @Test
+    void testRandom() {
+        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+        objectMap()
+                .put("firstName", names().first())
+                .put("lastName", names().last())
+                .put("address",
+                        objectMap() // object
+                                .put("line1", addresses().line1())
+                                .put("line2", addresses().line2())
+                )
+                .put("financial",
+                        objectMap() // object
+                                .put("creditCard", creditCards().masterCard())
+                                .put("amount", floats().range(100.0f, 10_000.0f))
+                                .put("currency", currencies().code())
+                )
+                .put("countries", countries().names().set(10)) // array
+                .map(gson::toJson)
+                .consume(System.out::println);
 
     }
 

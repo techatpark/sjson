@@ -430,7 +430,7 @@ public final class Tokenizer {
                         List<TokenType> openingTokenTypes) {
     }
 
-    public record ValueEntry(TokenType tokenType,
+    private record ValueEntry(TokenType tokenType,
                              Object value,
                              int end) {
     }
