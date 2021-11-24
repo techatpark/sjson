@@ -12,12 +12,11 @@ public final class Json {
 
     public Object read(final String jsonText) {
         final char[] charArray = jsonText.toCharArray();
-        return getValue(charArray,nextClean(charArray,-1)).value();
+        return getValue(charArray, nextClean(charArray, -1)).value();
     }
 
-    private ValueEntry<Map<String,Object>> getJsonObject(final char[] charArray, final int index) {
-
-        Map<String,Object> jsonMap = new IdentityHashMap<>();
+    private ValueEntry<Map<String, Object>> getJsonObject(final char[] charArray, final int index) {
+        Map<String, Object> jsonMap = new IdentityHashMap<>();
         int currentIndex = nextClean(charArray, index);
 
         ValueEntry valueEntry;
@@ -36,15 +35,15 @@ public final class Json {
             currentIndex = nextClean(charArray, valueEntry.end());
 
             // 4. Place the value
-            jsonMap.put(theKey,valueEntry.value());
+            jsonMap.put(theKey, valueEntry.value());
 
             // 5. Check if it has a comma(,)
-            if(charArray[currentIndex] == ',') {
+            if (charArray[currentIndex] == ',') {
                 currentIndex = nextClean(charArray, currentIndex);
             }
         }
 
-        return new ValueEntry(jsonMap,currentIndex);
+        return new ValueEntry(jsonMap, currentIndex);
     }
 
     private ValueEntry<List> getJsonArray(final char[] charArray, final int index) {
@@ -55,7 +54,6 @@ public final class Json {
         ValueEntry valueEntry;
 
         while (charArray[currentIndex] != ']') {
-
             // 1. Get the Value
             valueEntry = getValue(charArray, currentIndex);
             currentIndex = nextClean(charArray, valueEntry.end());
@@ -64,19 +62,17 @@ public final class Json {
             list.add(valueEntry.value());
 
             // 3. Check if it has a comma(,)
-            if(charArray[currentIndex] == ',') {
+            if (charArray[currentIndex] == ',') {
                 currentIndex = nextClean(charArray, currentIndex);
             }
-
         }
 
-
-        return new ValueEntry(list,currentIndex);
+        return new ValueEntry(list, currentIndex);
     }
 
 
     private ValueEntry<?> getValue(final char[] charArray, final int index) {
-        ValueEntry<?> valueEntry ;
+        ValueEntry<?> valueEntry;
         switch (charArray[index]) {
             case '"' -> valueEntry = getString(charArray, index);
             case 'n' -> valueEntry = getNull(charArray, index);
@@ -91,13 +87,11 @@ public final class Json {
                     throw new IllegalArgumentException("Invalid Token at " + index);
                 }
             }
-
         }
         return valueEntry;
     }
 
     private ValueEntry<Number> getNumber(final char[] charArray, final int index) {
-
         Number theValue;
         boolean isNegative = charArray[index] == '-';
         int currentIndex = isNegative ? (index + 1) : index;
@@ -105,20 +99,17 @@ public final class Json {
         boolean containsDot = false;
         StringBuilder builder = new StringBuilder();
 
-        while ( Character.isDigit(charArray[currentIndex])
+        while (Character.isDigit(charArray[currentIndex])
                 || charArray[currentIndex] == '.') {
             builder.append(charArray[currentIndex]);
 
             currentIndex++;
             if (currentIndex == charArray.length) {
                 break;
-            }else if (charArray[currentIndex] == '.') {
+            } else if (charArray[currentIndex] == '.') {
                 containsDot = true;
             }
         }
-
-        //TODO Why We do this ?!
-        currentIndex = currentIndex - 1;
         if (containsDot) {
             theValue = Double.parseDouble(builder.toString());
             if (isNegative) {
@@ -130,10 +121,7 @@ public final class Json {
                 theValue = (Long) theValue * -1;
             }
         }
-
-
-        return new ValueEntry(theValue, currentIndex);
-
+        return new ValueEntry(theValue, currentIndex - 1);
     }
 
     private ValueEntry<Boolean> getTrue(final char[] charArray, final int index) {
@@ -153,7 +141,7 @@ public final class Json {
                 && charArray[index + 2] == 'l'
                 && charArray[index + 3] == 's'
                 && charArray[index + 4] == 'e') {
-            return new ValueEntry( false, index + 4);
+            return new ValueEntry(false, index + 4);
         } else {
             throw new IllegalArgumentException("Illegal value at " + index);
         }
@@ -164,14 +152,13 @@ public final class Json {
                 && charArray[index + 1] == 'u'
                 && charArray[index + 2] == 'l'
                 && charArray[index + 3] == 'l') {
-            return new ValueEntry( null, index + 3);
+            return new ValueEntry(null, index + 3);
         } else {
             throw new IllegalArgumentException("Illegal value at " + index);
         }
     }
 
     private ValueEntry<String> getString(final char[] charArray, final int index) {
-
         StringBuilder builder = new StringBuilder();
         int currentIndex = index;
         char c;
@@ -179,13 +166,10 @@ public final class Json {
                 || charArray[currentIndex - 1] == '\\') {
             c = charArray[currentIndex];
             switch (c) {
-                case 0:
-                case '\n':
-                case '\r':
+                case 0, '\n', '\r':
                     throw new IllegalArgumentException("Unterminated string");
                 case '\\':
-                    currentIndex = currentIndex + 1;
-                    c = charArray[currentIndex];
+                    c = charArray[++currentIndex];
                     switch (c) {
                         case 'b':
                             builder.append('\b');
@@ -211,10 +195,7 @@ public final class Json {
                                 throw new IllegalArgumentException("Illegal escape.", e);
                             }
                             break;
-                        case '"':
-                        case '\'':
-                        case '\\':
-                        case '/':
+                        case '"', '\'', '\\', '/':
                             builder.append(c);
                             break;
                         default:
@@ -227,15 +208,13 @@ public final class Json {
                     }
                     builder.append(c);
             }
-
         }
-        return new ValueEntry( builder.toString(),
+        return new ValueEntry(builder.toString(),
                 currentIndex);
     }
 
     private int nextClean(final char[] charArray, final int index) {
         int currentIndex = index;
-
         while (charArray[++currentIndex] == ' '
                 || charArray[currentIndex] == '\n'
                 || charArray[currentIndex] == '\r'
@@ -246,7 +225,7 @@ public final class Json {
     }
 
     public record ValueEntry<T>(T value,
-                             int end) {
+                                int end) {
     }
 
 }
