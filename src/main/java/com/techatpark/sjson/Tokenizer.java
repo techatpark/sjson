@@ -1,7 +1,6 @@
-package com.tehatpark.sjson;
+package com.techatpark.sjson;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.tehatpark.sjson;
+package com.techatpark.sjson;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,17 +1,25 @@
-package com.tehatpark.sjson;
+package com.techatpark.sjson;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-public class JsonObject extends Json<Map<String, Object>> {
+public class Json {
 
-    public JsonObject(final String jsonText) {
-        super(jsonText);
+
+    private final List<Tokenizer.Token> tokens;
+
+    private final Tokenizer tokenizer;
+    private final char[] charArray;
+
+    public Json(final String jsonText) {
+        charArray = jsonText.toCharArray();
+        tokenizer = new Tokenizer();
+        tokens = tokenizer.getTokens(charArray);
     }
 
-    @Override
+
     public Map<String, Object> value() {
         Map<String, Object> jsonAsMap = new HashMap<>();
 
@@ -95,6 +103,4 @@ public class JsonObject extends Json<Map<String, Object>> {
 
         return jsonAsMap;
     }
-
-
 }

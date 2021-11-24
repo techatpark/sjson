@@ -1,4 +1,4 @@
-package com.tehatpark.sjson;
+package com.techatpark.sjson;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class JsonObjectTest {
+class JsonTest {
 
 
 
@@ -30,7 +30,7 @@ class JsonObjectTest {
                     .readTree(new StringReader(originalJsonText));
 
             // 2. Generate JSONNode through our implementation
-            Map<String, Object> ourJsonObject = new JsonObject(originalJsonText)
+            Map<String, Object> ourJsonObject = new Json(originalJsonText)
                     .value();
             String reversedJsonText = jackson
                     .writeValueAsString(ourJsonObject);
