@@ -372,11 +372,6 @@ public final class Tokenizer {
         return currentIndex;
     }
 
-    private boolean isOpeningTag(final char character) {
-        return (character == '{'
-                || character == '[');
-    }
-
     private boolean isClosingTag(final char character) {
         return (character == '}'
                 || character == ']');
