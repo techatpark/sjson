@@ -26,13 +26,14 @@ import java.util.stream.Stream;
 
 class JsonTest {
 
-
-
     @Test
     void testvalue() throws IOException {
         final ObjectMapper jackson = new ObjectMapper();
         for (String jsonFile :
                 getJSONFiles()) {
+
+            System.out.println("Verifying " + jsonFile);
+
             // 1. Generate JSONNode directly
             String originalJsonText = getJSONSample(jsonFile);
             JsonNode jacksonJsonNode = jackson
@@ -50,6 +51,8 @@ class JsonTest {
             Assertions.assertEquals(jacksonJsonNode,
                     ourJsonNode,
                     "Reverse JSON Failed for " + jsonFile);
+
+            System.out.println("Verified " + jsonFile);
         }
 
     }
