@@ -7,20 +7,10 @@ import java.util.Stack;
 
 public class Json {
 
+    public final Map<String, Object> value(final char[] charArray) {
 
-    private final List<Tokenizer.Token> tokens;
+        final List<Tokenizer.Token> tokens = new Tokenizer().getTokens(charArray);
 
-    private final Tokenizer tokenizer;
-    private final char[] charArray;
-
-    public Json(final String jsonText) {
-        charArray = jsonText.toCharArray();
-        tokenizer = new Tokenizer();
-        tokens = tokenizer.getTokens(charArray);
-    }
-
-
-    public Map<String, Object> value() {
         Map<String, Object> jsonAsMap = new HashMap<>();
 
         Stack<Map<String, Object>> objectsStack = new Stack<>();
@@ -102,5 +92,9 @@ public class Json {
         }
 
         return jsonAsMap;
+    }
+
+    public final Map<String, Object> value(final String jsonText) {
+        return value(jsonText.toCharArray());
     }
 }

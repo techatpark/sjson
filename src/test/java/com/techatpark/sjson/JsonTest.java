@@ -39,8 +39,8 @@ class JsonTest {
                     .readTree(new StringReader(originalJsonText));
 
             // 2. Generate JSONNode through our implementation
-            Map<String, Object> ourJsonObject = new Json(originalJsonText)
-                    .value();
+            Map<String, Object> ourJsonObject = new Json()
+                    .value(originalJsonText);
             String reversedJsonText = jackson
                     .writeValueAsString(ourJsonObject);
             JsonNode ourJsonNode = jackson
