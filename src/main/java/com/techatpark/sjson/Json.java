@@ -1,5 +1,6 @@
 package com.techatpark.sjson;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,14 +118,14 @@ public final class Json {
         //TODO Why We do this ?!
         currentIndex = currentIndex - 1;
         if (containsDot) {
-            theValue = Float.parseFloat(builder.toString());
+            theValue = Double.parseDouble(builder.toString());
             if (isNegative) {
-                theValue = (Float) theValue * -1;
+                theValue = (Double) theValue * -1;
             }
         } else {
-            theValue = Integer.parseInt(builder.toString());
+            theValue = Long.parseLong(builder.toString());
             if (isNegative) {
-                theValue = (Integer) theValue * -1;
+                theValue = (Long) theValue * -1;
             }
         }
 
