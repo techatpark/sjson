@@ -1,0 +1,103 @@
+{
+  "a-pure-obj-array34": [{"a": 8},[12,{"a": 8,"AAA": true}],8],
+  "a-pure-obj-array": [{"a": 8,"AAA": true},{"a": 8,"AAA": true}],
+  "a-scalar-start-array": [1,{"a": 8,"AAA": true},{"a": 8,"AAA": true}],
+  "a-pure-obj-array4": [{"a": 8},[12,{"a": 8,"AAA": true}]],
+  "kind": "youtube#searchListResponse",
+  "etag": "\"m2yskBQFythfE4irbTIeOgYYfBU/PaiEDiVxOyCWelLPuuwa9LKz3Gk\"",
+  "nextPageToken": "CAUQAA",
+  "regionCode": "KE",
+  "empty-object": [],
+  "nested-object": {
+    "name": "mani",
+    "salary": 10000,
+    "grade": 1,
+    "education": ["btech",{"grade": []}],
+    "job1": {
+      "working": "software engineer",
+      "experience": 1.5,
+      "income": 10000,
+      "joining_date" : "2021-04-12",
+      "is-good": true,
+      "is-bad": false
+    },
+    "job2": {
+      "working": "farming",
+      "experience": -8.0,
+      "income": -10000,
+      "items": {
+        "acer1": "rice",
+        "acer2": "maize",
+        "acer3": "green gram",
+        "acer4": "black gram",
+        "empty-items": {
+          "empty-items2": {
+            "is-farming": true
+          },
+          "empty-item2": {
+            "book": "english",
+            "price": 20,
+            "empty-store": {}
+          },
+          "empty-item3": {},
+          "empty-item4": {},
+          "empty-item5": {},
+          "empty-item6": {}
+        }
+      }
+    },
+    "job3": {
+      "working": "business analyst",
+      "experince": 0,
+      "income": null
+    },
+    "job4": {}
+  },
+  "job5": {
+    "order_num" : "O2012019231a",
+    "order_date" : "2012-06-27",
+    "order_id" : 21934,
+    "order_item" :
+    {
+      "product_id" : 20933,
+      "quantity" : 3,
+      "price" : 36000,
+      "product_name" : "Thingamagic 2000",
+      "unit_price" : 12000,
+      "item1": {
+        "product_id" : 10366,
+        "quantity" : 1,
+        "price" : 100,
+        "product_name" : "Super Duper Blooper",
+        "unit_price" : 100
+      },
+      "item2": {}
+    }
+  },
+  "text-with-quotes": {
+    "color": {},
+    "emoji": "😐",
+    "text": "A Text"
+  },
+  "theme1": {
+    "color": "red",
+    "value": "#f00"
+  },
+  "theme2": {
+    "name": "Rixos The Palm Dubai",
+    "position": 25.1212
+  },
+  "theme3":{
+    "color": "green",
+    "value": "#0f0"
+  },
+  "theme4": {
+    "color": "blue",
+    "value": "#00f"
+  },
+  "a-digit": 1,
+  "a-integer": -45677,
+  "a-decimal": 23.45,
+  "a-true": true,
+  "a-false": false
+}
