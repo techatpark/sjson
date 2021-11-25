@@ -12,18 +12,21 @@ import java.util.Map;
  */
 public final class Json {
 
-
     public Object read(final Reader reader) throws IOException {
         try (reader) {
             return getValue(reader);
         }
     }
 
-    private Map<String, Object> getJsonObject(final Reader reader) throws IOException {
-        final Map<String, Object> jsonMap = new HashMap<>();
+    private Map<String, Object> getObject(final Reader reader) throws IOException {
 
+        char character;
+        if( (character = nextClean(reader)) == '}') {
+            return Map.of();
+        }
+
+        final Map<String, Object> jsonMap = new HashMap<>();
         String theKey;
-        char character = nextClean(reader);
 
         while (character == '"') {
             // 1. Get the Key
@@ -35,10 +38,7 @@ public final class Json {
             // 3. Get the Value
             jsonMap.put(theKey, getValue(reader));
 
-            character = nextClean(reader);
-
-            // 5. Check if it has a comma(,)
-            if (character == ',') {
+            if ( (character = nextClean(reader)) == ',') {
                 character = nextClean(reader);
             }
         }
@@ -46,19 +46,18 @@ public final class Json {
         return jsonMap;
     }
 
-    private List getJsonArray(final Reader reader) throws IOException {
-
-        final List list = new ArrayList();
-        Object value = getValue(reader);
+    private List getArray(final Reader reader) throws IOException {
+        final Object value = getValue(reader);
         // If not Empty List
         if(value != reader) {
+            final List list = new ArrayList();
             list.add(value);
-            while(nextClean(reader) != ']') {
+            while(nextClean(reader) == ',') {
                 list.add(getValue(reader));
             }
+            return list;
         }
-
-        return list;
+        return List.of();
     }
 
     private String getString(final Reader reader) throws IOException {
@@ -142,8 +141,8 @@ public final class Json {
             case 'n' -> valueEntry = getNull(reader);
             case 't' -> valueEntry = getTrue(reader);
             case 'f' -> valueEntry = getFalse(reader);
-            case '{' -> valueEntry = getJsonObject(reader);
-            case '[' -> valueEntry = getJsonArray(reader);
+            case '{' -> valueEntry = getObject(reader);
+            case '[' -> valueEntry = getArray(reader);
             case ']' -> valueEntry = reader;
             default -> {
                 if (Character.isDigit(character) || character == '-') {
