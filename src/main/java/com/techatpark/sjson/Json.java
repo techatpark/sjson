@@ -132,18 +132,17 @@ public final class Json {
     private Number getNumber(final Reader reader,final char startingChar) throws IOException {
         Number theValue ;
         StringBuilder builder = new StringBuilder();
-        char character = startingChar;
+        builder.append(startingChar);
+        char character;
         boolean containsDot = false;
         reader.mark(1);
-        while ( Character.isDigit(character)
-                || character == '.'
-                || character == '-') {
+        while ( Character.isDigit(character = (char) reader.read())
+                || character == '.') {
             builder.append(character);
             if (character == '.') {
                 containsDot = true;
             }
             reader.mark(1);
-            character = (char) reader.read();
         }
         reader.reset();
         if (containsDot) {
