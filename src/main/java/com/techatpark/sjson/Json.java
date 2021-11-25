@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ public final class Json {
     }
 
     private Map<String, Object> getJsonObject(final Reader reader) throws IOException {
-        Map<String, Object> jsonMap = new IdentityHashMap<>();
+        Map<String, Object> jsonMap = new HashMap<>();
 
         String theKey;
         char character = nextClean(reader);
