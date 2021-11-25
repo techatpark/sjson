@@ -21,7 +21,7 @@ public final class Json {
     private Map<String, Object> getObject(final Reader reader) throws IOException {
 
         char character;
-        if( (character = nextClean(reader)) == '}') {
+        if ((character = nextClean(reader)) == '}') {
             return Map.of();
         }
 
@@ -38,7 +38,7 @@ public final class Json {
             // 3. Get the Value
             jsonMap.put(theKey.intern(), getValue(reader));
 
-            if ( (character = nextClean(reader)) == ',') {
+            if ((character = nextClean(reader)) == ',') {
                 character = nextClean(reader);
             }
         }
@@ -49,24 +49,24 @@ public final class Json {
     private List getArray(final Reader reader) throws IOException {
         final Object value = getValue(reader);
         // If not Empty List
-        if(value != reader) {
-            final List list = new ArrayList();
-            list.add(value);
-            while(nextClean(reader) == ',') {
-                list.add(getValue(reader));
-            }
-            return list;
+        if (value == reader) {
+            return List.of();
         }
-        return List.of();
+        final List list = new ArrayList();
+        list.add(value);
+        while (nextClean(reader) == ',') {
+            list.add(getValue(reader));
+        }
+        return list;
     }
 
     private String getString(final Reader reader) throws IOException {
         char c;
         final StringBuilder sb = new StringBuilder();
-        for (;;) {
+        for (; ; ) {
             c = (char) reader.read();
             switch (c) {
-                case 0,'\n','\r':
+                case 0, '\n', '\r':
                     throw new IllegalArgumentException("Invalid Token at ");
                 case '\\':
                     c = (char) reader.read();
@@ -87,9 +87,9 @@ public final class Json {
                             sb.append('\r');
                             break;
                         case 'u':
-                            sb.append((char)Integer.parseInt(next4(reader), 16));
+                            sb.append((char) Integer.parseInt(next4(reader), 16));
                             break;
-                        case '"','\'','\\','/':
+                        case '"', '\'', '\\', '/':
                             sb.append(c);
                             break;
                         default:
@@ -105,48 +105,56 @@ public final class Json {
         }
     }
 
-    private Number getNumber(final Reader reader,final char startingChar) throws IOException {
+    private Number getNumber(final Reader reader, final char startingChar) throws IOException {
         final StringBuilder builder = new StringBuilder();
         builder.append(startingChar);
 
         char character;
 
-        while ( Character.isDigit(character = (char) reader.read()) ) {
+        while (Character.isDigit(character = (char) reader.read())) {
             builder.append(character);
         }
 
-        if(character == '.') {
+        if (character == '.') {
             builder.append('.');
-            while ( Character.isDigit(character = (char) reader.read()) ) {
+            while (Character.isDigit(character = (char) reader.read())) {
                 builder.append(character);
             }
-            ((ShiftReader)reader).reverse(character);
+            ((ShiftReader) reader).reverse(character);
             return Double.parseDouble(builder.toString());
         } else {
-            ((ShiftReader)reader).reverse(character);
+            ((ShiftReader) reader).reverse(character);
             return Long.parseLong(builder.toString());
         }
     }
 
     private Object getValue(final Reader reader) throws IOException {
-        return getValue(reader,nextClean(reader));
+        return getValue(reader, nextClean(reader));
     }
 
-    private Object getValue(final Reader reader,final char character) throws IOException {
+    private Object getValue(final Reader reader, final char character) throws IOException {
         switch (character) {
-            case '"' : return getString(reader);
-            case 'n' : return getNull(reader);
-            case 't' : return getTrue(reader);
-            case 'f' : return getFalse(reader);
-            case '{' : return getObject(reader);
-            case '[' : return getArray(reader);
-            case ']' : return reader;
-            default : return getNumber(reader,character);
+            case '"':
+                return getString(reader);
+            case 'n':
+                return getNull(reader);
+            case 't':
+                return getTrue(reader);
+            case 'f':
+                return getFalse(reader);
+            case '{':
+                return getObject(reader);
+            case '[':
+                return getArray(reader);
+            case ']':
+                return reader;
+            default:
+                return getNumber(reader, character);
         }
     }
 
     private boolean getTrue(final Reader reader) throws IOException {
-        if ( (char) reader.read() == 'r'
+        if ((char) reader.read() == 'r'
                 && (char) reader.read() == 'u'
                 && (char) reader.read() == 'e') {
             return true;
@@ -156,7 +164,7 @@ public final class Json {
     }
 
     private boolean getFalse(final Reader reader) throws IOException {
-        if ( (char) reader.read() == 'a'
+        if ((char) reader.read() == 'a'
                 && (char) reader.read() == 'l'
                 && (char) reader.read() == 's'
                 && (char) reader.read() == 'e') {
@@ -167,18 +175,18 @@ public final class Json {
     }
 
     private Object getNull(final Reader reader) throws IOException {
-        if ( (char) reader.read() == 'u'
+        if ((char) reader.read() == 'u'
                 && (char) reader.read() == 'l'
                 && (char) reader.read() == 'l') {
             return null;
         } else {
-            throw new IllegalArgumentException("Illegal value at " );
+            throw new IllegalArgumentException("Illegal value at ");
         }
     }
 
     private char nextClean(final Reader reader) throws IOException {
-        char character ;
-        while((character = (char) reader.read()) == ' '
+        char character;
+        while ((character = (char) reader.read()) == ' '
                 || character == '\n'
                 || character == '\r'
                 || character == '\t') {
@@ -220,10 +228,9 @@ public final class Json {
          */
         @Override
         public int read() throws IOException {
-            if(this.previous == 0) {
+            if (this.previous == 0) {
                 return this.reader.read();
-            }
-            else {
+            } else {
                 int temp = this.previous;
                 this.previous = 0;
                 return temp;
@@ -252,7 +259,7 @@ public final class Json {
          */
         @Override
         public int read(final char[] cbuf, final int off, final int len) throws IOException {
-            return this.reader.read(cbuf,off,len);
+            return this.reader.read(cbuf, off, len);
         }
 
         /**
