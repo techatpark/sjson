@@ -106,7 +106,6 @@ public final class Json {
     }
 
     private Number getNumber(final Reader reader,final char startingChar) throws IOException {
-        Number theValue ;
         final StringBuilder builder = new StringBuilder();
         builder.append(startingChar);
 
@@ -124,35 +123,28 @@ public final class Json {
                 reader.mark(1);
             }
             reader.reset();
-            theValue = Double.parseDouble(builder.toString());
+            return Double.parseDouble(builder.toString());
         } else {
             reader.reset();
-            theValue = Long.parseLong(builder.toString());
+            return Long.parseLong(builder.toString());
         }
-
-        return theValue;
     }
 
     private Object getValue(final Reader reader) throws IOException {
-        final Object valueEntry;
-        final char character = nextClean(reader);
+        return getValue(reader,nextClean(reader));
+    }
+
+    private Object getValue(final Reader reader,final char character) throws IOException {
         switch (character) {
-            case '"' -> valueEntry = getString(reader);
-            case 'n' -> valueEntry = getNull(reader);
-            case 't' -> valueEntry = getTrue(reader);
-            case 'f' -> valueEntry = getFalse(reader);
-            case '{' -> valueEntry = getObject(reader);
-            case '[' -> valueEntry = getArray(reader);
-            case ']' -> valueEntry = reader;
-            default -> {
-                if (Character.isDigit(character) || character == '-') {
-                    valueEntry = getNumber(reader,character);
-                } else {
-                    throw new IllegalArgumentException("Invalid Token at " + character);
-                }
-            }
+            case '"' : return getString(reader);
+            case 'n' : return getNull(reader);
+            case 't' : return getTrue(reader);
+            case 'f' : return getFalse(reader);
+            case '{' : return getObject(reader);
+            case '[' : return getArray(reader);
+            case ']' : return reader;
+            default : return getNumber(reader,character);
         }
-        return valueEntry;
     }
 
 
