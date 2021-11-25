@@ -133,23 +133,28 @@ public final class Json {
         Number theValue ;
         StringBuilder builder = new StringBuilder();
         builder.append(startingChar);
+
         char character;
-        boolean containsDot = false;
         reader.mark(1);
-        while ( Character.isDigit(character = (char) reader.read())
-                || character == '.') {
+        while ( Character.isDigit(character = (char) reader.read()) ) {
             builder.append(character);
-            if (character == '.') {
-                containsDot = true;
-            }
             reader.mark(1);
         }
-        reader.reset();
-        if (containsDot) {
+
+        if(character == '.') {
+            builder.append('.');
+            while ( Character.isDigit(character = (char) reader.read()) ) {
+                builder.append(character);
+                reader.mark(1);
+            }
+            reader.reset();
             theValue = Double.parseDouble(builder.toString());
         } else {
+            reader.reset();
             theValue = Long.parseLong(builder.toString());
         }
+
+
 
         return theValue;
     }
