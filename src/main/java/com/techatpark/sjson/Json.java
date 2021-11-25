@@ -49,27 +49,13 @@ public final class Json {
     private List getJsonArray(final Reader reader) throws IOException {
 
         List list = new ArrayList();
-        char character = nextClean(reader);
-
-        Object value ;
-
-        if(character == ']') {
-            return list;
-        }
-
-        while (character != ',') {
-
-            value = getValue(reader,character);
-
-            // 1. Get the Value
+        Object value = getValue(reader);
+        // If not Empty List
+        if(value != reader) {
             list.add(value);
-
-            character = nextClean(reader);
-            if(character == ']') {
-                break;
+            while(nextClean(reader) != ']') {
+                list.add(getValue(reader));
             }
-            character = nextClean(reader);
-
         }
 
         return list;
@@ -173,11 +159,12 @@ public final class Json {
             case 'f' -> valueEntry = getFalse(reader);
             case '{' -> valueEntry = getJsonObject(reader);
             case '[' -> valueEntry = getJsonArray(reader);
+            case ']' -> valueEntry = reader;
             default -> {
                 if (Character.isDigit(character) || character == '-') {
                     valueEntry = getNumber(reader,character);
                 } else {
-                    throw new IllegalArgumentException("Invalid Token at ");
+                    throw new IllegalArgumentException("Invalid Token at " + character);
                 }
             }
         }
