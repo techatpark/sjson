@@ -20,7 +20,7 @@ public final class Json {
     }
 
     private Map<String, Object> getJsonObject(final Reader reader) throws IOException {
-        Map<String, Object> jsonMap = new HashMap<>();
+        final Map<String, Object> jsonMap = new HashMap<>();
 
         String theKey;
         char character = nextClean(reader);
@@ -48,7 +48,7 @@ public final class Json {
 
     private List getJsonArray(final Reader reader) throws IOException {
 
-        List list = new ArrayList();
+        final List list = new ArrayList();
         Object value = getValue(reader);
         // If not Empty List
         if(value != reader) {
@@ -63,7 +63,7 @@ public final class Json {
 
     private String getString(final Reader reader) throws IOException {
         char c;
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         for (;;) {
             c = (char) reader.read();
             switch (c) {
@@ -117,7 +117,7 @@ public final class Json {
 
     private Number getNumber(final Reader reader,final char startingChar) throws IOException {
         Number theValue ;
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append(startingChar);
 
         char character;
@@ -140,18 +140,15 @@ public final class Json {
             theValue = Long.parseLong(builder.toString());
         }
 
-
-
         return theValue;
     }
-
 
     private Object getValue(final Reader reader) throws IOException {
         return getValue(reader,nextClean(reader));
     }
 
     private Object getValue(final Reader reader,final char character) throws IOException {
-        Object valueEntry;
+        final Object valueEntry;
         switch (character) {
             case '"' -> valueEntry = getString(reader);
             case 'n' -> valueEntry = getNull(reader);
@@ -172,7 +169,6 @@ public final class Json {
     }
 
 
-
     private boolean getTrue(final Reader reader) throws IOException {
         if ( (char) reader.read() == 'r'
                 && (char) reader.read() == 'u'
@@ -190,7 +186,7 @@ public final class Json {
                 && (char) reader.read() == 'e') {
             return false;
         } else {
-            throw new IllegalArgumentException("Illegal value at");
+            throw new IllegalArgumentException("Illegal value at ");
         }
     }
 

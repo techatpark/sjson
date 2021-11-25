@@ -21,6 +21,7 @@ class JsonTest {
     void testParsing() throws IOException {
 
         final ObjectMapper jackson = new ObjectMapper();
+        final Json json = new Json();
 
         Instant start;
 
@@ -40,7 +41,7 @@ class JsonTest {
 
             // 2. Generate JSONNode through our implementation
             start = Instant.now();
-            Object ourJsonObject = new Json()
+            Object ourJsonObject = json
                     .read(getJSONSample(jsonFile));
             oursTime = Duration.between(start, Instant.now());
             String reversedJsonText = jackson
