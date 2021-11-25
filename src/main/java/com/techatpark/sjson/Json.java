@@ -36,7 +36,7 @@ public final class Json {
             nextClean(reader);
 
             // 3. Get the Value
-            jsonMap.put(theKey, getValue(reader));
+            jsonMap.put(theKey.intern(), getValue(reader));
 
             if ( (character = nextClean(reader)) == ',') {
                 character = nextClean(reader);
