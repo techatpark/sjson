@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -34,16 +33,15 @@ class JsonTest {
                 getJSONFiles()) {
 
             // 1. Generate JSONNode directly
-            String originalJsonText = getJSONSample(jsonFile);
             start = Instant.now();
             JsonNode jacksonJsonNode = jackson
-                    .readTree(new StringReader(originalJsonText));
+                    .readTree(getJSONSample(jsonFile));
             jacksonsTime = Duration.between(start, Instant.now());
 
             // 2. Generate JSONNode through our implementation
             start = Instant.now();
             Object ourJsonObject = new Json()
-                    .read(originalJsonText);
+                    .read(getJSONSample(jsonFile));
             oursTime = Duration.between(start, Instant.now());
             String reversedJsonText = jackson
                     .writeValueAsString(ourJsonObject);
@@ -73,9 +71,8 @@ class JsonTest {
         }
     }
 
-    private String getJSONSample(final String fileName) throws IOException {
-        return Files
-                .readString(Path
-                        .of("src/test/resources/samples/" + fileName ));
+    private Reader getJSONSample(final String fileName) throws IOException {
+        return new BufferedReader(new FileReader(Path
+                .of("src/test/resources/samples/" + fileName ).toFile()));
     }
 }

@@ -2,7 +2,6 @@ package com.techatpark.sjson;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,9 +13,10 @@ import java.util.Map;
 public final class Json {
 
 
-    public Object read(final String jsonText) throws IOException {
-        final Reader reader = new StringReader(jsonText);
-        return getValue(reader);
+    public Object read(final Reader reader) throws IOException {
+        try (reader) {
+            return getValue(reader);
+        }
     }
 
     private Map<String, Object> getJsonObject(final Reader reader) throws IOException {
@@ -145,13 +145,13 @@ public final class Json {
             reader.mark(1);
             character = (char) reader.read();
         }
-
+        reader.reset();
         if (containsDot) {
             theValue = Double.parseDouble(builder.toString());
         } else {
             theValue = Long.parseLong(builder.toString());
         }
-        reader.reset();
+
         return theValue;
     }
 
