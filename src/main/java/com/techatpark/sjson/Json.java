@@ -135,11 +135,8 @@ public final class Json {
     }
 
     private Object getValue(final Reader reader) throws IOException {
-        return getValue(reader,nextClean(reader));
-    }
-
-    private Object getValue(final Reader reader,final char character) throws IOException {
         final Object valueEntry;
+        final char character = nextClean(reader);
         switch (character) {
             case '"' -> valueEntry = getString(reader);
             case 'n' -> valueEntry = getNull(reader);
