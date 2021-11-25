@@ -67,9 +67,7 @@ public final class Json {
         for (;;) {
             c = (char) reader.read();
             switch (c) {
-                case 0:
-                case '\n':
-                case '\r':
+                case 0,'\n','\r':
                     throw new IllegalArgumentException("Invalid Token at ");
                 case '\\':
                     c = (char) reader.read();
@@ -90,16 +88,9 @@ public final class Json {
                             sb.append('\r');
                             break;
                         case 'u':
-                            try {
-                                sb.append((char)Integer.parseInt(next4(reader), 16));
-                            } catch (NumberFormatException e) {
-                                throw new IllegalArgumentException("Invalid Token at ");
-                            }
+                            sb.append((char)Integer.parseInt(next4(reader), 16));
                             break;
-                        case '"':
-                        case '\'':
-                        case '\\':
-                        case '/':
+                        case '"','\'','\\','/':
                             sb.append(c);
                             break;
                         default:
