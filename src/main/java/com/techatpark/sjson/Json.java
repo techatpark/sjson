@@ -14,7 +14,6 @@ import java.util.Map;
 public final class Json {
 
 
-
     public Object read(final String jsonText) throws IOException {
         final Reader reader = new StringReader(jsonText);
         return getValue(reader);
@@ -153,7 +152,6 @@ public final class Json {
             theValue = Long.parseLong(builder.toString());
         }
         reader.reset();
-        reader.mark(0);
         return theValue;
     }
 
