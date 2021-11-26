@@ -1,7 +1,9 @@
 package com.techatpark.sjson;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,222 +12,231 @@ import java.util.Map;
  */
 public final class Json {
 
-    public Object read(final String jsonText) {
-        final char[] charArray = jsonText.toCharArray();
-        return getValue(charArray, nextClean(charArray, -1)).value();
+    public Object read(final Reader reader) throws IOException {
+        try (Reader shiftReader = new ShiftReader(reader)) {
+            return getValue(shiftReader);
+        }
     }
 
-    private ValueEntry<Map<String, Object>> getJsonObject(final char[] charArray, final int index) {
-        Map<String, Object> jsonMap = new IdentityHashMap<>();
-        int currentIndex = nextClean(charArray, index);
-
-        ValueEntry valueEntry;
-        String theKey;
-
-        while (charArray[currentIndex] == '"') {
-            // 1. Get the Key
-            valueEntry = getString(charArray, currentIndex);
-            theKey = (String) valueEntry.value();
-
-            // 2. Move to :
-            currentIndex = nextClean(charArray, valueEntry.end());
-
-            // 3. Get the Value
-            valueEntry = getValue(charArray, nextClean(charArray, currentIndex));
-            currentIndex = nextClean(charArray, valueEntry.end());
-
-            // 4. Place the value
-            jsonMap.put(theKey, valueEntry.value());
-
-            // 5. Check if it has a comma(,)
-            if (charArray[currentIndex] == ',') {
-                currentIndex = nextClean(charArray, currentIndex);
-            }
-        }
-
-        return new ValueEntry(jsonMap, currentIndex);
-    }
-
-    private ValueEntry<List> getJsonArray(final char[] charArray, final int index) {
-
-        List list = new ArrayList();
-        int currentIndex = nextClean(charArray, index);
-
-        ValueEntry valueEntry;
-
-        while (charArray[currentIndex] != ']') {
-            // 1. Get the Value
-            valueEntry = getValue(charArray, currentIndex);
-            currentIndex = nextClean(charArray, valueEntry.end());
-
-            // 2. Place the value
-            list.add(valueEntry.value());
-
-            // 3. Check if it has a comma(,)
-            if (charArray[currentIndex] == ',') {
-                currentIndex = nextClean(charArray, currentIndex);
-            }
-        }
-
-        return new ValueEntry(list, currentIndex);
-    }
-
-
-    private ValueEntry<?> getValue(final char[] charArray, final int index) {
-        ValueEntry<?> valueEntry;
-        switch (charArray[index]) {
-            case '"' -> valueEntry = getString(charArray, index);
-            case 'n' -> valueEntry = getNull(charArray, index);
-            case 't' -> valueEntry = getTrue(charArray, index);
-            case 'f' -> valueEntry = getFalse(charArray, index);
-            case '{' -> valueEntry = getJsonObject(charArray, index);
-            case '[' -> valueEntry = getJsonArray(charArray, index);
-            default -> {
-                if (Character.isDigit(charArray[index]) || charArray[index] == '-') {
-                    valueEntry = getNumber(charArray, index);
-                } else {
-                    throw new IllegalArgumentException("Invalid Token at " + index);
-                }
-            }
-        }
-        return valueEntry;
-    }
-
-    private ValueEntry<Number> getNumber(final char[] charArray, final int index) {
-        Number theValue;
-        boolean isNegative = charArray[index] == '-';
-        int currentIndex = isNegative ? (index + 1) : index;
-
-        boolean containsDot = false;
-        StringBuilder builder = new StringBuilder();
-
-        while (Character.isDigit(charArray[currentIndex])
-                || charArray[currentIndex] == '.') {
-            builder.append(charArray[currentIndex]);
-
-            currentIndex++;
-            if (currentIndex == charArray.length) {
-                break;
-            } else if (charArray[currentIndex] == '.') {
-                containsDot = true;
-            }
-        }
-        if (containsDot) {
-            theValue = Double.parseDouble(builder.toString());
-            if (isNegative) {
-                theValue = (Double) theValue * -1;
-            }
+    private boolean getTrue(final Reader reader) throws IOException {
+        if ((char) reader.read() == 'r'
+                && (char) reader.read() == 'u'
+                && (char) reader.read() == 'e') {
+            return true;
         } else {
-            theValue = Long.parseLong(builder.toString());
-            if (isNegative) {
-                theValue = (Long) theValue * -1;
-            }
+            throw new IllegalArgumentException("Illegal value at ");
         }
-        return new ValueEntry(theValue, currentIndex - 1);
     }
 
-    private ValueEntry<Boolean> getTrue(final char[] charArray, final int index) {
-        if (charArray[index] == 't'
-                && charArray[index + 1] == 'r'
-                && charArray[index + 2] == 'u'
-                && charArray[index + 3] == 'e') {
-            return new ValueEntry(true, index + 3);
+    private boolean getFalse(final Reader reader) throws IOException {
+        if ((char) reader.read() == 'a'
+                && (char) reader.read() == 'l'
+                && (char) reader.read() == 's'
+                && (char) reader.read() == 'e') {
+            return false;
         } else {
-            throw new IllegalArgumentException("Illegal value at " + index);
+            throw new IllegalArgumentException("Illegal value at ");
         }
     }
 
-    private ValueEntry<Boolean> getFalse(final char[] charArray, final int index) {
-        if (charArray[index] == 'f'
-                && charArray[index + 1] == 'a'
-                && charArray[index + 2] == 'l'
-                && charArray[index + 3] == 's'
-                && charArray[index + 4] == 'e') {
-            return new ValueEntry(false, index + 4);
+    private Object getNull(final Reader reader) throws IOException {
+        if ((char) reader.read() == 'u'
+                && (char) reader.read() == 'l'
+                && (char) reader.read() == 'l') {
+            return null;
         } else {
-            throw new IllegalArgumentException("Illegal value at " + index);
+            throw new IllegalArgumentException("Illegal value at ");
         }
     }
 
-    private ValueEntry<Object> getNull(final char[] charArray, final int index) {
-        if (charArray[index] == 'n'
-                && charArray[index + 1] == 'u'
-                && charArray[index + 2] == 'l'
-                && charArray[index + 3] == 'l') {
-            return new ValueEntry(null, index + 3);
-        } else {
-            throw new IllegalArgumentException("Illegal value at " + index);
-        }
-    }
-
-    private ValueEntry<String> getString(final char[] charArray, final int index) {
-        StringBuilder builder = new StringBuilder();
-        int currentIndex = index;
+    private String getString(final Reader reader) throws IOException {
         char c;
-        while (charArray[++currentIndex] != '"'
-                || charArray[currentIndex - 1] == '\\') {
-            c = charArray[currentIndex];
+        final StringBuilder sb = new StringBuilder();
+        for (; ; ) {
+            c = (char) reader.read();
             switch (c) {
                 case 0, '\n', '\r':
-                    throw new IllegalArgumentException("Unterminated string");
+                    throw new IllegalArgumentException("Invalid Token at ");
                 case '\\':
-                    c = charArray[++currentIndex];
+                    c = (char) reader.read();
                     switch (c) {
                         case 'b':
-                            builder.append('\b');
+                            sb.append('\b');
                             break;
                         case 't':
-                            builder.append('\t');
+                            sb.append('\t');
                             break;
                         case 'n':
-                            builder.append('\n');
+                            sb.append('\n');
                             break;
                         case 'f':
-                            builder.append('\f');
+                            sb.append('\f');
                             break;
                         case 'r':
-                            builder.append('\r');
+                            sb.append('\r');
                             break;
                         case 'u':
-                            try {
-                                String a = String.copyValueOf(charArray, currentIndex + 1, 4);
-                                currentIndex = currentIndex + 4;
-                                builder.append((char) Integer.parseInt(a, 16));
-                            } catch (NumberFormatException e) {
-                                throw new IllegalArgumentException("Illegal escape.", e);
-                            }
+                            sb.append((char) Integer.parseInt(next4(reader), 16));
                             break;
                         case '"', '\'', '\\', '/':
-                            builder.append(c);
+                            sb.append(c);
                             break;
                         default:
-                            throw new IllegalArgumentException("Illegal escape.");
+                            throw new IllegalArgumentException("Invalid Token at ");
                     }
                     break;
                 default:
                     if (c == '"') {
-                        break;
+                        return sb.toString();
                     }
-                    builder.append(c);
+                    sb.append(c);
             }
         }
-        return new ValueEntry(builder.toString(),
-                currentIndex);
     }
 
-    private int nextClean(final char[] charArray, final int index) {
-        int currentIndex = index;
-        while (charArray[++currentIndex] == ' '
-                || charArray[currentIndex] == '\n'
-                || charArray[currentIndex] == '\r'
-                || charArray[currentIndex] == '\t') {
+    private Number getNumber(final Reader reader, final char startingChar) throws IOException {
+
+        final StringBuilder builder = new StringBuilder();
+        builder.append(startingChar);
+        int length = 1;
+        char character;
+
+        while (Character.isDigit(character = (char) reader.read())) {
+            builder.append(character);
+            length++;
         }
 
-        return currentIndex;
+        if (character == '.') {
+            builder.append('.');
+            length++;
+            while (Character.isDigit(character = (char) reader.read())) {
+                builder.append(character);
+                length++;
+            }
+            ((ShiftReader) reader).reverse(character);
+            return Double.parseDouble(builder.toString());
+        } else {
+            ((ShiftReader) reader).reverse(character);
+            return Long.parseLong(builder,0,length,10);
+        }
     }
 
-    public record ValueEntry<T>(T value,
-                                int end) {
+    private Map<String, Object> getObject(final Reader reader) throws IOException {
+
+        char character;
+        if ((character = nextClean(reader)) == '}') {
+            return Map.of();
+        }
+
+        final Map<String, Object> jsonMap = new HashMap<>();
+        String theKey;
+
+        while (character == '"') {
+            // 1. Get the Key. User String Pool as JSON Keys may be repeating across
+            theKey = getString(reader).intern();
+
+            // 2. Move to :
+            nextClean(reader);
+
+            // 3. Get the Value
+            jsonMap.put(theKey, getValue(reader));
+
+            if ((character = nextClean(reader)) == ',') {
+                character = nextClean(reader);
+            }
+        }
+
+        return jsonMap;
     }
 
+    private List getArray(final Reader reader) throws IOException {
+        final Object value = getValue(reader);
+        // If not Empty List
+        if (value == reader) {
+            return List.of();
+        }
+        final List list = new ArrayList();
+        list.add(value);
+        while (nextClean(reader) == ',') {
+            list.add(getValue(reader));
+        }
+        return list;
+    }
+
+    private char nextClean(final Reader reader) throws IOException {
+        char character;
+        while ((character = (char) reader.read()) == ' '
+                || character == '\n'
+                || character == '\r'
+                || character == '\t') {
+        }
+        return character;
+    }
+
+    private String next4(final Reader reader) throws IOException {
+        return new String(new char[]{(char) reader.read(), (char) reader.read(),
+                (char) reader.read(), (char) reader.read()});
+    }
+
+    private Object getValue(final Reader reader, final char character) throws IOException {
+        switch (character) {
+            case '"':
+                return getString(reader);
+            case 'n':
+                return getNull(reader);
+            case 't':
+                return getTrue(reader);
+            case 'f':
+                return getFalse(reader);
+            case '{':
+                return getObject(reader);
+            case '[':
+                return getArray(reader);
+            case ']':
+                return reader;
+            default:
+                return getNumber(reader, character);
+        }
+    }
+
+    private Object getValue(final Reader reader) throws IOException {
+        return getValue(reader, nextClean(reader));
+    }
+
+    private class ShiftReader extends Reader {
+
+        private final Reader reader;
+
+        private int previous;
+
+        private ShiftReader(final Reader reader) {
+            this.reader = reader;
+            this.previous = 0;
+        }
+
+        private void reverse(final int previous) {
+            this.previous = previous;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (this.previous == 0) {
+                return this.reader.read();
+            } else {
+                int temp = this.previous;
+                this.previous = 0;
+                return temp;
+            }
+        }
+
+        @Override
+        public int read(final char[] cbuf, final int off, final int len) throws IOException {
+            return this.reader.read(cbuf, off, len);
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.reader.close();
+        }
+    }
 }
