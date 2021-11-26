@@ -2,6 +2,8 @@ package com.techatpark.sjson;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -95,26 +97,24 @@ public final class Json {
 
         final StringBuilder builder = new StringBuilder();
         builder.append(startingChar);
-        int length = 1;
         char character;
 
         while (Character.isDigit(character = (char) reader.read())) {
             builder.append(character);
-            length++;
         }
 
         if (character == '.') {
             builder.append('.');
-            length++;
             while (Character.isDigit(character = (char) reader.read())) {
                 builder.append(character);
-                length++;
             }
             ((ShiftReader) reader).reverse(character);
-            return Double.parseDouble(builder.toString());
+            BigDecimal bigDecimal = new BigDecimal(builder.toString());
+            return bigDecimal;
         } else {
             ((ShiftReader) reader).reverse(character);
-            return Long.parseLong(builder,0,length,10);
+            BigInteger bigInteger = new BigInteger(builder.toString());
+            return bigInteger;
         }
     }
 
