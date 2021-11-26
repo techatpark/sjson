@@ -2,10 +2,7 @@ package com.techatpark.sjson;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -125,7 +122,7 @@ public final class Json {
 
         char character;
         if ((character = nextClean(reader)) == '}') {
-            return Map.of();
+            return Collections.EMPTY_MAP;
         }
 
         final Map<String, Object> jsonMap = new HashMap<>();
@@ -146,21 +143,21 @@ public final class Json {
             }
         }
 
-        return jsonMap;
+        return Collections.unmodifiableMap(jsonMap);
     }
 
     private List getArray(final Reader reader) throws IOException {
         final Object value = getValue(reader);
         // If not Empty List
         if (value == reader) {
-            return List.of();
+            return Collections.EMPTY_LIST;
         }
         final List list = new ArrayList();
         list.add(value);
         while (nextClean(reader) == ',') {
             list.add(getValue(reader));
         }
-        return list;
+        return Collections.unmodifiableList(list);
     }
 
     private char nextClean(final Reader reader) throws IOException {
