@@ -13,7 +13,7 @@ public final class Json {
     public Object read(final Reader reader) throws IOException {
         try (reader) {
             ContentExtractor extractor = new ContentExtractor(reader);
-            return getValue(extractor,nextClean(extractor));
+            return getValue(extractor,extractor.nextClean());
         }
     }
 
@@ -77,7 +77,7 @@ public final class Json {
                             sb.append('\r');
                             break;
                         case 'u':
-                            sb.append((char) Integer.parseInt(next4(extractor), 16));
+                            sb.append((char) Integer.parseInt(extractor.next4(), 16));
                             break;
                         case '"':
                         case '\'':
@@ -125,7 +125,7 @@ public final class Json {
 
     private Map<String, Object> getObject(final ContentExtractor extractor) throws IOException {
 
-        boolean eoo = endOfObject(extractor);
+        boolean eoo = extractor.endOfObject();
         if (eoo) {
             return Collections.EMPTY_MAP;
         }
@@ -138,9 +138,9 @@ public final class Json {
             theKey = getString(extractor).intern();
 
             // 2. Get the Value
-            jsonMap.put(theKey, getValue(extractor,nextCleanAfter(extractor,':')));
+            jsonMap.put(theKey, getValue(extractor,extractor.nextCleanAfter(':')));
 
-            eoo = endOfObject(extractor);
+            eoo = extractor.endOfObject();
         }
 
         return Collections.unmodifiableMap(jsonMap);
@@ -148,60 +148,24 @@ public final class Json {
 
     private List getArray(final ContentExtractor extractor) throws IOException {
 
-        Object value = getValue(extractor,nextClean(extractor));
+        Object value = getValue(extractor,extractor.nextClean());
         // If not Empty List
         if (value == extractor) {
             return Collections.EMPTY_LIST;
         }
         final List list = new ArrayList();
         list.add(value);
-        boolean eoa = endOfArray(extractor);
+        boolean eoa = extractor.endOfArray();
         while (!eoa) {
-            value = getValue(extractor,nextClean(extractor));
+            value = getValue(extractor,extractor.nextClean());
             list.add(value);
-            eoa = endOfArray(extractor);
+            eoa = extractor.endOfArray();
         }
 
         return Collections.unmodifiableList(list);
     }
 
-    private char nextCleanAfter(final ContentExtractor extractor,final char skipChar) throws IOException {
-        while (extractor.read() != skipChar) {
-        }
-        return nextClean(extractor);
-    }
 
-    private char nextClean(final ContentExtractor extractor) throws IOException {
-        char character;
-        while ((character = (char) extractor.read()) == ' '
-                || character == '\n'
-                || character == '\r'
-                || character == '\t') {
-        }
-        return character;
-    }
-
-
-    private boolean endOfObject(final ContentExtractor extractor) throws IOException {
-        char character;
-        while ((character = (char) extractor.read()) != '"'
-                && character != '}') {
-        }
-        return character == '}';
-    }
-
-    private boolean endOfArray(final ContentExtractor extractor) throws IOException {
-        char character;
-        while ((character = (char) extractor.read()) != ','
-                && character != ']') {
-        }
-        return character == ']';
-    }
-
-    private String next4(final ContentExtractor extractor) throws IOException {
-        return new String(new char[]{(char) extractor.read(), (char) extractor.read(),
-                (char) extractor.read(), (char) extractor.read()});
-    }
 
     private Object getValue(final ContentExtractor extractor,final char character) throws IOException {
         switch (character) {
@@ -248,6 +212,44 @@ public final class Json {
                 this.previous = 0;
                 return temp;
             }
+        }
+
+        private char nextCleanAfter(final char skipChar) throws IOException {
+            while (read() != skipChar) {
+            }
+            return nextClean();
+        }
+
+        private char nextClean() throws IOException {
+            char character;
+            while ((character = (char) read()) == ' '
+                    || character == '\n'
+                    || character == '\r'
+                    || character == '\t') {
+            }
+            return character;
+        }
+
+
+        private boolean endOfObject() throws IOException {
+            char character;
+            while ((character = (char) read()) != '"'
+                    && character != '}') {
+            }
+            return character == '}';
+        }
+
+        private boolean endOfArray() throws IOException {
+            char character;
+            while ((character = (char) read()) != ','
+                    && character != ']') {
+            }
+            return character == ']';
+        }
+
+        private String next4() throws IOException {
+            return new String(new char[]{(char) reader.read(), (char) reader.read(),
+                    (char) reader.read(), (char) reader.read()});
         }
 
     }
