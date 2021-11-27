@@ -219,7 +219,8 @@ public final class Json {
 
             if (character == '.') {
                 builder.append('.');
-                while (Character.isDigit(character = (char) reader.read())) {
+                while (Character.isDigit(character = (char) reader.read())
+                        || character == 'e' || character == '-') {
                     builder.append(character);
                 }
                 current = character;
