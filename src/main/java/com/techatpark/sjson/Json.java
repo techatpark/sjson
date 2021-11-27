@@ -5,67 +5,61 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-
 /**
  *
  */
 public final class Json {
 
-    /**
-     * REad JSON String as Object.
-     * @param reader
-     * @return object
-     * @throws IOException
-     */
     public Object read(final Reader reader) throws IOException {
-        try (Reader shiftReader = new ShiftReader(reader)) {
-            return getValue(shiftReader);
+        try (reader) {
+            ContentExtractor extractor = new ContentExtractor(reader);
+            return getValue(extractor,nextClean(extractor));
         }
     }
 
-    private boolean getTrue(final Reader reader) throws IOException {
-        if ((char) reader.read() == 'r'
-                && (char) reader.read() == 'u'
-                && (char) reader.read() == 'e') {
+    private boolean getTrue(final ContentExtractor extractor) throws IOException {
+        if ((char) extractor.read() == 'r'
+                && (char) extractor.read() == 'u'
+                && (char) extractor.read() == 'e') {
             return true;
         } else {
             throw new IllegalArgumentException("Illegal value at ");
         }
     }
 
-    private boolean getFalse(final Reader reader) throws IOException {
-        if ((char) reader.read() == 'a'
-                && (char) reader.read() == 'l'
-                && (char) reader.read() == 's'
-                && (char) reader.read() == 'e') {
+    private boolean getFalse(final ContentExtractor extractor) throws IOException {
+        if ((char) extractor.read() == 'a'
+                && (char) extractor.read() == 'l'
+                && (char) extractor.read() == 's'
+                && (char) extractor.read() == 'e') {
             return false;
         } else {
             throw new IllegalArgumentException("Illegal value at ");
         }
     }
 
-    private Object getNull(final Reader reader) throws IOException {
-        if ((char) reader.read() == 'u'
-                && (char) reader.read() == 'l'
-                && (char) reader.read() == 'l') {
+    private Object getNull(final ContentExtractor extractor) throws IOException {
+        if ((char) extractor.read() == 'u'
+                && (char) extractor.read() == 'l'
+                && (char) extractor.read() == 'l') {
             return null;
         } else {
             throw new IllegalArgumentException("Illegal value at ");
         }
     }
 
-    private String getString(final Reader reader) throws IOException {
+    private String getString(final ContentExtractor extractor) throws IOException {
         char c;
         final StringBuilder sb = new StringBuilder();
         for (; ; ) {
-            c = (char) reader.read();
+            c = (char) extractor.read();
             switch (c) {
                 case 0:
-                case '\n':case  '\r':
-
+                case '\n':
+                case '\r':
                     throw new IllegalArgumentException("Invalid Token at ");
                 case '\\':
-                    c = (char) reader.read();
+                    c = (char) extractor.read();
                     switch (c) {
                         case 'b':
                             sb.append('\b');
@@ -83,12 +77,12 @@ public final class Json {
                             sb.append('\r');
                             break;
                         case 'u':
-                            sb.append((char) Integer.parseInt(next4(reader), 16));
+                            sb.append((char) Integer.parseInt(next4(extractor), 16));
                             break;
                         case '"':
                         case '\'':
-                            case '\\':
-                            case '/':
+                        case '\\':
+                        case '/':
                             sb.append(c);
                             break;
                         default:
@@ -104,76 +98,82 @@ public final class Json {
         }
     }
 
-    private Number getNumber(final Reader reader, final char startingChar) throws IOException {
+    private Number getNumber(final ContentExtractor extractor, final char startingChar) throws IOException {
 
         final StringBuilder builder = new StringBuilder();
         builder.append(startingChar);
         char character;
 
-        while (Character.isDigit(character = (char) reader.read())) {
+        while (Character.isDigit(character = (char) extractor.read())) {
             builder.append(character);
         }
 
         if (character == '.') {
             builder.append('.');
-            while (Character.isDigit(character = (char) reader.read())) {
+            while (Character.isDigit(character = (char) extractor.read())) {
                 builder.append(character);
             }
-            ((ShiftReader) reader).reverse(character);
+            ((ContentExtractor) extractor).reverse(character);
             BigDecimal bigDecimal = new BigDecimal(builder.toString());
             return bigDecimal;
         } else {
-            ((ShiftReader) reader).reverse(character);
+            ((ContentExtractor) extractor).reverse(character);
             BigInteger bigInteger = new BigInteger(builder.toString());
             return bigInteger;
         }
     }
 
-    private Map<String, Object> getObject(final Reader reader) throws IOException {
+    private Map<String, Object> getObject(final ContentExtractor extractor) throws IOException {
 
-        char character;
-        if ((character = nextClean(reader)) == '}') {
+        boolean eoo = endOfObject(extractor);
+        if (eoo) {
             return Collections.EMPTY_MAP;
         }
 
         final Map<String, Object> jsonMap = new HashMap<>();
         String theKey;
 
-        while (character == '"') {
+        while (!eoo) {
             // 1. Get the Key. User String Pool as JSON Keys may be repeating across
-            theKey = getString(reader).intern();
+            theKey = getString(extractor).intern();
 
-            // 2. Move to :
-            nextClean(reader);
+            // 2. Get the Value
+            jsonMap.put(theKey, getValue(extractor,nextCleanAfter(extractor,':')));
 
-            // 3. Get the Value
-            jsonMap.put(theKey, getValue(reader));
-
-            if ((character = nextClean(reader)) == ',') {
-                character = nextClean(reader);
-            }
+            eoo = endOfObject(extractor);
         }
 
         return Collections.unmodifiableMap(jsonMap);
     }
 
-    private List getArray(final Reader reader) throws IOException {
-        final Object value = getValue(reader);
+    private List getArray(final ContentExtractor extractor) throws IOException {
+
+        Object value = getValue(extractor,nextClean(extractor));
         // If not Empty List
-        if (value == reader) {
+        if (value == extractor) {
             return Collections.EMPTY_LIST;
         }
         final List list = new ArrayList();
         list.add(value);
-        while (nextClean(reader) == ',') {
-            list.add(getValue(reader));
+        boolean eoa = endOfArray(extractor);
+        while (!eoa) {
+            value = getValue(extractor,nextClean(extractor));
+            list.add(value);
+            eoa = endOfArray(extractor);
         }
+
         return Collections.unmodifiableList(list);
     }
 
-    private char nextClean(final Reader reader) throws IOException {
+    private char nextCleanAfter(final ContentExtractor extractor,final char skipChar) throws IOException {
+        while (extractor.read() != skipChar) {
+        }
+        return nextClean(extractor);
+    }
+
+    private char nextClean(final ContentExtractor extractor) throws IOException {
         char character;
-        while ((character = (char) reader.read()) == ' '
+        while ((character = (char) extractor.read()) == ' '
                 || character == '\n'
                 || character == '\r'
                 || character == '\t') {
@@ -181,43 +181,57 @@ public final class Json {
         return character;
     }
 
-    private String next4(final Reader reader) throws IOException {
-        return new String(new char[]{(char) reader.read(), (char) reader.read(),
-                (char) reader.read(), (char) reader.read()});
+
+    private boolean endOfObject(final ContentExtractor extractor) throws IOException {
+        char character;
+        while ((character = (char) extractor.read()) != '"'
+                && character != '}') {
+        }
+        return character == '}';
     }
 
-    private Object getValue(final Reader reader, final char character) throws IOException {
+    private boolean endOfArray(final ContentExtractor extractor) throws IOException {
+        char character;
+        while ((character = (char) extractor.read()) != ','
+                && character != ']') {
+        }
+        return character == ']';
+    }
+
+    private String next4(final ContentExtractor extractor) throws IOException {
+        return new String(new char[]{(char) extractor.read(), (char) extractor.read(),
+                (char) extractor.read(), (char) extractor.read()});
+    }
+
+    private Object getValue(final ContentExtractor extractor,final char character) throws IOException {
         switch (character) {
             case '"':
-                return getString(reader);
+                return getString(extractor);
             case 'n':
-                return getNull(reader);
+                return getNull(extractor);
             case 't':
-                return getTrue(reader);
+                return getTrue(extractor);
             case 'f':
-                return getFalse(reader);
+                return getFalse(extractor);
             case '{':
-                return getObject(reader);
+                return getObject(extractor);
             case '[':
-                return getArray(reader);
+                return getArray(extractor);
             case ']':
-                return reader;
+                return extractor;
             default:
-                return getNumber(reader, character);
+                return getNumber(extractor, character);
         }
     }
 
-    private Object getValue(final Reader reader) throws IOException {
-        return getValue(reader, nextClean(reader));
-    }
-
-    private class ShiftReader extends Reader {
+    private class ContentExtractor {
 
         private final Reader reader;
 
         private int previous;
+        private int current ;
 
-        private ShiftReader(final Reader reader) {
+        private ContentExtractor(final Reader reader) {
             this.reader = reader;
             this.previous = 0;
         }
@@ -226,10 +240,9 @@ public final class Json {
             this.previous = previous;
         }
 
-        @Override
         public int read() throws IOException {
             if (this.previous == 0) {
-                return this.reader.read();
+                return current = this.reader.read();
             } else {
                 int temp = this.previous;
                 this.previous = 0;
@@ -237,14 +250,5 @@ public final class Json {
             }
         }
 
-        @Override
-        public int read(final char[] cbuf, final int off, final int len) throws IOException {
-            return this.reader.read(cbuf, off, len);
-        }
-
-        @Override
-        public void close() throws IOException {
-            this.reader.close();
-        }
     }
 }
