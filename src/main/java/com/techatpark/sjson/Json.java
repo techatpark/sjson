@@ -51,7 +51,7 @@ public final class Json {
 
     private List getArray(final ContentExtractor extractor) throws IOException {
 
-        Object value = getValue(extractor, extractor.nextClean());
+        final Object value = getValue(extractor, extractor.nextClean());
         // If not Empty List
         if (value == extractor) {
             return Collections.EMPTY_LIST;
@@ -60,8 +60,7 @@ public final class Json {
         list.add(value);
         boolean eoa = extractor.endOfArray();
         while (!eoa) {
-            value = getValue(extractor, extractor.nextClean());
-            list.add(value);
+            list.add(getValue(extractor, extractor.nextClean()));
             eoa = extractor.endOfArray();
         }
 
