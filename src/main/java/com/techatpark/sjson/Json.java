@@ -211,8 +211,8 @@ public final class Json {
                 builder.append(character);
             }
 
-            if (character == '.') {
-                builder.append('.');
+            if (character == '.' || character=='e') {
+                builder.append(character);
                 while (Character.isDigit(character = (char) reader.read())
                         || character == 'e' || character == '-') {
                     builder.append(character);
