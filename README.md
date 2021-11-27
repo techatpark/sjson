@@ -1,4 +1,5 @@
 # SJson
+
 SJson is a json parser for server side workloads. It tries to get optimized memory and performance with below aspects.
 
 1. Trust the validity of json documents

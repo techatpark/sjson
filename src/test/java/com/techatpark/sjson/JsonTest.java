@@ -26,10 +26,10 @@ class JsonTest {
 
         Instant start;
 
-        Duration jacksonsTime,oursTime;
+        Duration jacksonsTime, oursTime;
 
-        System.out.format("%40s%25s%25s%10s\n", "File Name" , "Jackson Speed", "Our Speed", "%");
-        System.out.format("%40s%25s%25s%10s\n", "----------" , "----------", "----------", "-------");
+        System.out.format("%40s%25s%25s%10s\n", "File Name", "Jackson Speed", "Our Speed", "%");
+        System.out.format("%40s%25s%25s%10s\n", "----------", "----------", "----------", "-------");
 
         for (String jsonFile :
                 getJSONFiles()) {
@@ -54,8 +54,8 @@ class JsonTest {
             Assertions.assertEquals(jacksonJsonNode,
                     ourJsonNode,
                     "Reverse JSON Failed for " + jsonFile);
-            System.out.format("%40s%25s%25s%10d\n", jsonFile , jacksonsTime.toNanos(), oursTime.toNanos()
-                    ,   Math.round(((jacksonsTime.toNanos()-oursTime.toNanos()) * 100 ) / jacksonsTime.toNanos() ) );
+            System.out.format("%40s%25s%25s%10d\n", jsonFile, jacksonsTime.toNanos(), oursTime.toNanos()
+                    , Math.round(((jacksonsTime.toNanos() - oursTime.toNanos()) * 100) / jacksonsTime.toNanos()));
 
 
         }
@@ -77,6 +77,6 @@ class JsonTest {
 
     private Reader getJSONSample(final String fileName) throws IOException {
         return new BufferedReader(new FileReader(Paths
-                .get("src/test/resources/samples/" + fileName ).toFile()));
+                .get("src/test/resources/samples/" + fileName).toFile()));
     }
 }

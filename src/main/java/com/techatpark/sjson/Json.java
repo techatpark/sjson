@@ -13,6 +13,7 @@ public final class Json {
 
     /**
      * Reads JSON as a Java Object.
+     *
      * @param reader
      * @return object
      * @throws IOException
@@ -20,14 +21,9 @@ public final class Json {
     public Object read(final Reader reader) throws IOException {
         try (reader) {
             ContentExtractor extractor = new ContentExtractor(reader);
-            return getValue(extractor,extractor.nextClean());
+            return getValue(extractor, extractor.nextClean());
         }
     }
-
-
-
-
-
 
 
     private Map<String, Object> getObject(final ContentExtractor extractor) throws IOException {
@@ -45,7 +41,7 @@ public final class Json {
             theKey = extractor.getString().intern();
 
             // 2. Get the Value
-            jsonMap.put(theKey, getValue(extractor,extractor.nextCleanAfter(':')));
+            jsonMap.put(theKey, getValue(extractor, extractor.nextCleanAfter(':')));
 
             eoo = extractor.endOfObject();
         }
@@ -55,7 +51,7 @@ public final class Json {
 
     private List getArray(final ContentExtractor extractor) throws IOException {
 
-        Object value = getValue(extractor,extractor.nextClean());
+        Object value = getValue(extractor, extractor.nextClean());
         // If not Empty List
         if (value == extractor) {
             return Collections.EMPTY_LIST;
@@ -64,7 +60,7 @@ public final class Json {
         list.add(value);
         boolean eoa = extractor.endOfArray();
         while (!eoa) {
-            value = getValue(extractor,extractor.nextClean());
+            value = getValue(extractor, extractor.nextClean());
             list.add(value);
             eoa = extractor.endOfArray();
         }
@@ -73,8 +69,7 @@ public final class Json {
     }
 
 
-
-    private Object getValue(final ContentExtractor extractor,final char character) throws IOException {
+    private Object getValue(final ContentExtractor extractor, final char character) throws IOException {
         switch (character) {
             case '"':
                 return extractor.getString();
@@ -91,7 +86,7 @@ public final class Json {
             case ']':
                 return extractor;
             default:
-                return extractor.getNumber( character);
+                return extractor.getNumber(character);
         }
     }
 
@@ -100,7 +95,7 @@ public final class Json {
         private final Reader reader;
 
         private boolean back;
-        private int current ;
+        private int current;
 
         private ContentExtractor(final Reader reader) {
             this.reader = reader;
@@ -111,7 +106,7 @@ public final class Json {
         }
 
         public int read() throws IOException {
-            if(this.back) {
+            if (this.back) {
                 this.back = false;
                 return current;
             }
