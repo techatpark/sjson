@@ -120,11 +120,11 @@ public final class Json {
             while (Character.isDigit(character = (char) extractor.read())) {
                 builder.append(character);
             }
-            extractor.reverse(character);
+            extractor.back();
             BigDecimal bigDecimal = new BigDecimal(builder.toString());
             return bigDecimal;
         } else {
-            extractor.reverse(character);
+            extractor.back();
             BigInteger bigInteger = new BigInteger(builder.toString());
             return bigInteger;
         }
@@ -199,26 +199,23 @@ public final class Json {
 
         private final Reader reader;
 
-        private int previous;
+        private boolean back;
         private int current ;
 
         private ContentExtractor(final Reader reader) {
             this.reader = reader;
-            this.previous = 0;
         }
 
-        private void reverse(final int previous) {
-            this.previous = previous;
+        private void back() {
+            this.back = true;
         }
 
         public int read() throws IOException {
-            if (this.previous == 0) {
-                return current = this.reader.read();
-            } else {
-                int temp = this.previous;
-                this.previous = 0;
-                return temp;
+            if(this.back) {
+                this.back = false;
+                return current;
             }
+            return current = this.reader.read();
         }
 
         private char nextCleanAfter(final char skipChar) throws IOException {
