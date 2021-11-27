@@ -1,0 +1,282 @@
+{
+
+"arr": [
+  {
+    "id": "0001",
+    "type": "donut",
+    "name": "Cake",
+    "ppu": 0.55,
+    "color": [
+      {
+        "AAA": [
+          [
+            [ [
+              {
+                "AAA": [
+                  [
+                    [
+                      {
+                        "a": 8,
+                        "abc": [{}]
+                      }
+                    ]
+                  ]
+                ]
+              }
+            ],
+              {
+                "a": 8
+              }
+            ]
+          ]
+        ]
+      }
+    ],
+    "foo":
+    [
+      "bar",
+      "baz"
+    ],
+    "": 0,
+    "a/b": 1,
+    "c%d": 2,
+    "e^f": 3,
+    "g|h": 4,
+    "i\\j": 5,
+    "k\"l": 6,
+    " ": 7,
+    "m~n": 8,
+    "obj" : {
+      "key" : "value",
+      "other~key" : {
+        "another/key" : [
+          "val"
+        ]
+      },
+      "" : {
+        "" : "empty key of an object with an empty key",
+        "subKey" : "Some other value"
+      }
+    },
+    "batters":
+    {
+      "batter":
+      [
+        { "id": "1001", "type": "Regular" },
+        { "id": "1002", "type": "Chocolate" },
+        { "id": "1003", "type": "Blueberry" },
+        { "id": "1004", "type": "Devil's Food",  "color": "\\char \\mathchoice \\TextOrMath \\@ifstar \\@ifnextchar \\@firstoftwo \\@secondoftwo \\relax \\expandafter \\noexpand"},
+        { }
+      ],
+      "items":
+      {
+        "item":
+        [
+          {
+            "id": "0001",
+            "type": "donut",
+            "name": "Cake",
+            "ppu": 0.55,
+            "batters":
+            {
+              "batter":
+              [
+                { "id": "1001", "type": "Regular" },
+                { "id": "1002", "type": "Chocolate" },
+                { "id": "1003", "type": "Blueberry" },
+                { "id": "1004", "type": "Devil's Food" }
+              ]
+            },
+            "topping":
+            [
+              { "id": "5001", "type": "None" },
+              { "id": "5002", "type": "Glazed" },
+              { "id": "5005", "type": "Sugar" },
+              { "id": "5007", "type": "Powdered Sugar" },
+              { "id": "5006", "type": "Chocolate with Sprinkles" },
+              { "id": "5003", "type": "Chocolate" },
+              { "id": "5004", "type": "Maple" }
+            ]
+          }
+        ]
+      }
+    },
+    "topping":
+    [
+      { "id": "5001", "type": "None" },
+      { "id": "5002", "type": "Glazed" },
+      { "id": "5005", "type": "Sugar" },
+      { "id": "5007", "type": "Powdered Sugar" },
+      { "id": "5006", "type": "Chocolate with Sprinkles" },
+      { "id": "5003", "type": "Chocolate" },
+      { "id": "5004", "type": "Maple" }
+    ]
+  },
+  {
+    "id": "0002",
+    "type": "donut",
+    "name": "Raised",
+    "ppu": 0.55,
+    "batters":
+    {
+      "batter":
+      [
+        { "id": "1001", "type": "Regular",
+          "arr": [12,44,[],[
+            {
+              "arr":[
+                {
+                  "arr": [
+                    {
+                      "item":
+                      [
+                        {
+                          "id": "0001",
+                          "type": "donut",
+                          "name": "Cake",
+                          "ppu": 0.55,
+                          "batters":
+                          {
+                            "batter":
+                            [
+                              {
+                                "item":
+                                [
+                                  {
+                                    "id": "0001",
+                                    "type": "donut",
+                                    "name": "Cake",
+                                    "ppu": 0.55,
+                                    "batters":
+                                    {
+                                      "batter":
+                                      [
+                                        { "id": "1001", "type": "Regular" },
+                                        { "id": "1002", "type": "Chocolate" },
+                                        { "id": "1003", "type": "Blueberry" },
+                                        { "id": "1004", "type": "Devil's Food" }
+                                      ]
+                                    },
+                                    "topping":
+                                    [
+                                      { "id": "5001", "type": "None" },
+                                      { "id": "5002", "type": "Glazed" },
+                                      { "id": "5005", "type": "Sugar" },
+                                      { "id": "5007", "type": "Powdered Sugar" },
+                                      { "id": "5006", "type": "Chocolate with Sprinkles" },
+                                      { "id": "5003", "type": "Chocolate" },
+                                      { "id": "5004", "type": "Maple" }
+                                    ]
+                                  }
+                                ]
+                              },
+                              { "id": "1001", "type": "Regular" },
+                              { "id": "1002", "type": "Chocolate" },
+                              { "id": "1003", "type": "Blueberry" },
+                              { "id": "1004", "type": "Devil's Food" }
+                            ]
+                          },
+                          "topping":
+                          [
+                            { "id": "5001", "type": "None" },
+                            { "id": "5002", "type": "Glazed" },
+                            { "id": "5005", "type": "Sugar" },
+                            { "id": "5007", "type": "Powdered Sugar" },
+                            { "id": "5006", "type": "Chocolate with Sprinkles" },
+                            { "id": "5003", "type": "Chocolate" },
+                            { "id": "5004", "type": "Maple" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],[
+            12
+          ],
+          25]
+        }
+      ]
+    },
+    "topping":
+    [
+      { "id": "5001", "type": "None" },
+      { "id": "5002", "type": "Glazed" },
+      { "id": "5005", "type": "Sugar" },
+      { "id": "5003", "type": "Chocolate" },
+      { "id": "5004", "type": "Maple" }
+    ]
+  },
+  {
+    "id": "0003",
+    "type": "donut",
+    "name": "Old Fashioned",
+    "ppu": 0.55,
+    "batters":
+    {
+      "batter":
+      [
+        { "id": "1001", "type": "Regular" },
+        { "id": "1002", "type": "Chocolate" }
+      ]
+    },
+    "topping":
+    [
+      { "id": "5001", "type": "None" },
+      { "id": "5002", "type": "Glazed" },
+      { "id": "5003", "type": "Chocolate" },
+      { "id": "5004", "type": "Maple" }
+    ]
+  }
+],"a-pure-obj-array34": [[
+    {
+      "color": "red",
+      "value": "#f00"
+    },
+      [
+        { "id": "1001", "type": "Regular" },
+        { "id": "1002", "type": "Chocolate" },
+        { "id": "1003", "type": "Blueberry" },
+        { "id": "1004", "type": "Devil's Food" }
+      ],
+    [
+      { "id": "5001", "type": "None" },
+      { "id": "5002", "type": "Glazed" },
+      { "id": "5005", "type": "Sugar" },
+      { "id": "5007", "type": "Powdered Sugar" },
+      { "id": "5006", "type": "Chocolate with Sprinkles" },
+      { "id": "5003", "type": "Chocolate" },
+      { "id": "5004", "type": "Maple" }
+    ],
+    {
+      "color": "green",
+      "value": "#0f0"
+    },
+    {
+      "color": "blue",
+      "value": "#00f"
+    },
+    {
+      "color": "cyan",
+      "value": "#0ff"
+    },
+    {
+      "color": "magenta",
+      "value": "#f0f"
+    },
+    {
+      "color": "yellow",
+      "value": "#ff0"
+    },
+    {
+      "color": "black",
+      "value": "#000"
+    }
+  ],{"a": 8},[12,{"a": 8,"AAA": true}],8],
+
+  "a-pure-obj-array": [{"a": 8,"AAA": true},[],[],{"a": 8,"AAA": true}],
+  "a-scalar-start-array": [1,{"a": 8,"AAA": true},{"a": 8,"AAA": true},{"foo":["bar","baz"],"":0,"a\/b":1,"c%d":2,"e^f":3,"g|h":4,"i\\j":5,"k\"l":6," ":7,"m~n":8,"obj":{"key":"value","other~key":{"another\/key":["val"]},"":{"":"empty key of an object with an empty key","subKey":"Some other value"}}}],
+  "a-pure-obj-array4": [{"a": 8},[12,[{}],[{}],[{}],[{}],[{}],[{}],[{}],[{}],[{}],[{}],{"a": 8,"AAA": true}]]
+}

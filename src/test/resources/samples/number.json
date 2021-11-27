@@ -1,1 +1,13 @@
--87128971289712
+{
+  "int-negitive-number": -2147483648,
+  "int-positive-number": 2147483647,
+  "byte-range": -128,
+  "byte": 127,
+  "short": -32768,
+  "short-positive": 32767,
+  "long-negitive number": -9223372036854775808,
+  "long-positive-number": 9223372036854775807,
+  "double": 1.7976931348623157,
+  "float": 3.40282347,
+  "char": 6553565536
+}
