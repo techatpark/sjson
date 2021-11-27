@@ -24,111 +24,11 @@ public final class Json {
         }
     }
 
-    private boolean getTrue(final ContentExtractor extractor) throws IOException {
-        if ((char) extractor.read() == 'r'
-                && (char) extractor.read() == 'u'
-                && (char) extractor.read() == 'e') {
-            return true;
-        } else {
-            throw new IllegalArgumentException("Illegal value at ");
-        }
-    }
 
-    private boolean getFalse(final ContentExtractor extractor) throws IOException {
-        if ((char) extractor.read() == 'a'
-                && (char) extractor.read() == 'l'
-                && (char) extractor.read() == 's'
-                && (char) extractor.read() == 'e') {
-            return false;
-        } else {
-            throw new IllegalArgumentException("Illegal value at ");
-        }
-    }
 
-    private Object getNull(final ContentExtractor extractor) throws IOException {
-        if ((char) extractor.read() == 'u'
-                && (char) extractor.read() == 'l'
-                && (char) extractor.read() == 'l') {
-            return null;
-        } else {
-            throw new IllegalArgumentException("Illegal value at ");
-        }
-    }
 
-    private String getString(final ContentExtractor extractor) throws IOException {
-        char c;
-        final StringBuilder sb = new StringBuilder();
-        for (; ; ) {
-            c = (char) extractor.read();
-            switch (c) {
-                case 0:
-                case '\n':
-                case '\r':
-                    throw new IllegalArgumentException("Invalid Token at ");
-                case '\\':
-                    c = (char) extractor.read();
-                    switch (c) {
-                        case 'b':
-                            sb.append('\b');
-                            break;
-                        case 't':
-                            sb.append('\t');
-                            break;
-                        case 'n':
-                            sb.append('\n');
-                            break;
-                        case 'f':
-                            sb.append('\f');
-                            break;
-                        case 'r':
-                            sb.append('\r');
-                            break;
-                        case 'u':
-                            sb.append((char) Integer.parseInt(extractor.next4(), 16));
-                            break;
-                        case '"':
-                        case '\'':
-                        case '\\':
-                        case '/':
-                            sb.append(c);
-                            break;
-                        default:
-                            throw new IllegalArgumentException("Invalid Token at ");
-                    }
-                    break;
-                default:
-                    if (c == '"') {
-                        return sb.toString();
-                    }
-                    sb.append(c);
-            }
-        }
-    }
 
-    private Number getNumber(final ContentExtractor extractor, final char startingChar) throws IOException {
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append(startingChar);
-        char character;
-
-        while (Character.isDigit(character = (char) extractor.read())) {
-            builder.append(character);
-        }
-
-        if (character == '.') {
-            builder.append('.');
-            while (Character.isDigit(character = (char) extractor.read())) {
-                builder.append(character);
-            }
-            extractor.back();
-            BigDecimal bigDecimal = new BigDecimal(builder.toString());
-            return bigDecimal;
-        } else {
-            extractor.back();
-            BigInteger bigInteger = new BigInteger(builder.toString());
-            return bigInteger;
-        }
-    }
 
     private Map<String, Object> getObject(final ContentExtractor extractor) throws IOException {
 
@@ -142,7 +42,7 @@ public final class Json {
 
         while (!eoo) {
             // 1. Get the Key. User String Pool as JSON Keys may be repeating across
-            theKey = getString(extractor).intern();
+            theKey = extractor.getString().intern();
 
             // 2. Get the Value
             jsonMap.put(theKey, getValue(extractor,extractor.nextCleanAfter(':')));
@@ -177,13 +77,13 @@ public final class Json {
     private Object getValue(final ContentExtractor extractor,final char character) throws IOException {
         switch (character) {
             case '"':
-                return getString(extractor);
+                return extractor.getString();
             case 'n':
-                return getNull(extractor);
+                return extractor.getNull();
             case 't':
-                return getTrue(extractor);
+                return extractor.getTrue();
             case 'f':
-                return getFalse(extractor);
+                return extractor.getFalse();
             case '{':
                 return getObject(extractor);
             case '[':
@@ -191,7 +91,7 @@ public final class Json {
             case ']':
                 return extractor;
             default:
-                return getNumber(extractor, character);
+                return extractor.getNumber( character);
         }
     }
 
@@ -254,6 +154,118 @@ public final class Json {
         private String next4() throws IOException {
             return new String(new char[]{(char) reader.read(), (char) reader.read(),
                     (char) reader.read(), (char) reader.read()});
+        }
+
+        private String getString() throws IOException {
+            char c;
+            final StringBuilder sb = new StringBuilder();
+            for (; ; ) {
+                c = (char) reader.read();
+                switch (c) {
+                    case 0:
+                    case '\n':
+                    case '\r':
+                        throw new IllegalArgumentException("Invalid Token at ");
+                    case '\\':
+                        c = (char) reader.read();
+                        switch (c) {
+                            case 'b':
+                                sb.append('\b');
+                                break;
+                            case 't':
+                                sb.append('\t');
+                                break;
+                            case 'n':
+                                sb.append('\n');
+                                break;
+                            case 'f':
+                                sb.append('\f');
+                                break;
+                            case 'r':
+                                sb.append('\r');
+                                break;
+                            case 'u':
+                                sb.append((char) Integer.parseInt(next4(), 16));
+                                break;
+                            case '"':
+                            case '\'':
+                            case '\\':
+                            case '/':
+                                sb.append(c);
+                                current = c;
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Invalid Token at ");
+                        }
+                        break;
+                    default:
+                        if (c == '"') {
+                            return sb.toString();
+                        }
+                        sb.append(c);
+                }
+            }
+        }
+
+        private Number getNumber(final char startingChar) throws IOException {
+
+            final StringBuilder builder = new StringBuilder(10);
+            builder.append(startingChar);
+            char character;
+
+            while (Character.isDigit(character = (char) reader.read())) {
+                builder.append(character);
+            }
+
+            if (character == '.') {
+                builder.append('.');
+                while (Character.isDigit(character = (char) reader.read())) {
+                    builder.append(character);
+                }
+                current = character;
+                back();
+                BigDecimal bigDecimal = new BigDecimal(builder.toString());
+                return bigDecimal;
+            } else {
+                current = character;
+                back();
+                BigInteger bigInteger = new BigInteger(builder.toString());
+                return bigInteger;
+            }
+        }
+
+        private boolean getTrue() throws IOException {
+            if ((char) reader.read() == 'r'
+                    && (char) reader.read() == 'u'
+                    && (char) reader.read() == 'e') {
+                current = 'e';
+                return true;
+            } else {
+                throw new IllegalArgumentException("Illegal value at ");
+            }
+        }
+
+        private boolean getFalse() throws IOException {
+            if ((char) reader.read() == 'a'
+                    && (char) reader.read() == 'l'
+                    && (char) reader.read() == 's'
+                    && (char) reader.read() == 'e') {
+                current = 'e';
+                return false;
+            } else {
+                throw new IllegalArgumentException("Illegal value at ");
+            }
+        }
+
+        private Object getNull() throws IOException {
+            if ((char) reader.read() == 'u'
+                    && (char) reader.read() == 'l'
+                    && (char) reader.read() == 'l') {
+                current = 'l';
+                return null;
+            } else {
+                throw new IllegalArgumentException("Illegal value at ");
+            }
         }
 
     }
