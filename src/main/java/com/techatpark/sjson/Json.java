@@ -5,11 +5,18 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+
 /**
- *
+ * Json parser.
  */
 public final class Json {
 
+    /**
+     * Reads JSON as a Java Object.
+     * @param reader
+     * @return object
+     * @throws IOException
+     */
     public Object read(final Reader reader) throws IOException {
         try (reader) {
             ContentExtractor extractor = new ContentExtractor(reader);
@@ -113,11 +120,11 @@ public final class Json {
             while (Character.isDigit(character = (char) extractor.read())) {
                 builder.append(character);
             }
-            ((ContentExtractor) extractor).reverse(character);
+            extractor.reverse(character);
             BigDecimal bigDecimal = new BigDecimal(builder.toString());
             return bigDecimal;
         } else {
-            ((ContentExtractor) extractor).reverse(character);
+            extractor.reverse(character);
             BigInteger bigInteger = new BigInteger(builder.toString());
             return bigInteger;
         }
