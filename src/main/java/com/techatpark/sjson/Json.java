@@ -11,6 +11,12 @@ import java.util.*;
  */
 public final class Json {
 
+    /**
+     * REad JSON String as Object.
+     * @param reader
+     * @return object
+     * @throws IOException
+     */
     public Object read(final Reader reader) throws IOException {
         try (Reader shiftReader = new ShiftReader(reader)) {
             return getValue(shiftReader);
@@ -54,7 +60,9 @@ public final class Json {
         for (; ; ) {
             c = (char) reader.read();
             switch (c) {
-                case 0, '\n', '\r':
+                case 0:
+                case '\n':case  '\r':
+
                     throw new IllegalArgumentException("Invalid Token at ");
                 case '\\':
                     c = (char) reader.read();
@@ -77,7 +85,10 @@ public final class Json {
                         case 'u':
                             sb.append((char) Integer.parseInt(next4(reader), 16));
                             break;
-                        case '"', '\'', '\\', '/':
+                        case '"':
+                        case '\'':
+                            case '\\':
+                            case '/':
                             sb.append(c);
                             break;
                         default:

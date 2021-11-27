@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
@@ -63,7 +64,9 @@ class JsonTest {
     }
 
     public Set<String> getJSONFiles() throws IOException {
-        try (Stream<Path> stream = Files.list(Path.of("src/test/resources/samples/"))) {
+        try (Stream<Path> stream = Files.list(Paths.get("src/test" +
+                "/resources" +
+                "/samples/"))) {
             return stream
                     .filter(file -> !Files.isDirectory(file))
                     .map(Path::getFileName)
@@ -73,7 +76,7 @@ class JsonTest {
     }
 
     private Reader getJSONSample(final String fileName) throws IOException {
-        return new BufferedReader(new FileReader(Path
-                .of("src/test/resources/samples/" + fileName ).toFile()));
+        return new BufferedReader(new FileReader(Paths
+                .get("src/test/resources/samples/" + fileName ).toFile()));
     }
 }
