@@ -2,6 +2,8 @@ package com.techatpark.sjson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +17,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.json.JSONObject;
+
 class JsonTest {
 
 
@@ -26,19 +30,30 @@ class JsonTest {
 
         Instant start;
 
-        Duration jacksonsTime, oursTime;
+        Duration jacksonsTime, jsonTime, gsonTime, oursTime;
 
-        System.out.format("%40s%25s%25s%10s\n", "File Name", "Jackson Speed", "Our Speed", "%");
-        System.out.format("%40s%25s%25s%10s\n", "----------", "----------", "----------", "-------");
+        System.out.format("%40s%25s%25s%25s\n", "File Name", "Jackson","Org Json","Gson");
+        System.out.format("%40s%25s%25s%25s\n", "----------", "----------", "----------", "----------");
 
         for (String jsonFile :
                 getJSONFiles()) {
 
-            // 1. Generate JSONNode directly
+            // 1. Generate JSONNode directly from Jackson
             start = Instant.now();
             JsonNode jacksonJsonNode = jackson
                     .readTree(getJSONSample(jsonFile));
             jacksonsTime = Duration.between(start, Instant.now());
+
+            // 2. Generate JSONNode directly from Org Json
+            start = Instant.now();
+            JSONObject jo = new JSONObject(getJSONSample(jsonFile));
+            jsonTime = Duration.between(start, Instant.now());
+
+            // 2. Generate JSONNode directly from Gson
+            start = Instant.now();
+            JsonObject gjo = JsonParser.parseReader(getJSONSample(jsonFile))
+                    .getAsJsonObject();
+            gsonTime = Duration.between(start, Instant.now());
 
             // 2. Generate JSONNode through our implementation
             start = Instant.now();
@@ -50,16 +65,15 @@ class JsonTest {
             JsonNode ourJsonNode = jackson
                     .readTree(new StringReader(reversedJsonText));
 
-            // 3. Compare Both
+            // 3. Compare Ours with JAckson
             Assertions.assertEquals(jacksonJsonNode,
                     ourJsonNode,
                     "Reverse JSON Failed for " + jsonFile);
-            System.out.format("%40s%25s%25s%10d\n", jsonFile, jacksonsTime.toNanos(), oursTime.toNanos()
-                    , Math.round(((jacksonsTime.toNanos() - oursTime.toNanos()) * 100) / jacksonsTime.toNanos()));
-
-
+            System.out.format("%40s%25s%25s%25s\n", jsonFile,
+                     Math.round(((jacksonsTime.toNanos() - oursTime.toNanos()) * 100) / jacksonsTime.toNanos()),
+                    Math.round(((jsonTime.toNanos() - oursTime.toNanos()) * 100) / jsonTime.toNanos()),
+                    Math.round(((gsonTime.toNanos() - oursTime.toNanos()) * 100) / gsonTime.toNanos()));
         }
-
 
     }
 
