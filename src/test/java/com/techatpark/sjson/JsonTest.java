@@ -34,29 +34,29 @@ class JsonTest {
         System.out.format("%40s%25s%25s%25s\n", "File Name", "Jackson","Org Json","Gson");
         System.out.format("%40s%25s%25s%25s\n", "----------", "----------", "----------", "----------");
 
-        for (String jsonFile :
+        for (Path jsonFile :
                 getJSONFiles()) {
 
-            // 2. SJson
+            // 1. SJson
             start = Instant.now();
             Object ourJsonObject = json
-                    .read(getJSONSample(jsonFile));
+                    .read(new BufferedReader(new FileReader(jsonFile.toFile())));
             oursTime = Duration.between(start, Instant.now()).toNanos();
 
-            // 1. Jackson
+            // 2. Jackson
             start = Instant.now();
             JsonNode jacksonJsonNode = jackson
-                    .readTree(getJSONSample(jsonFile));
+                    .readTree(new BufferedReader(new FileReader(jsonFile.toFile())));
             jacksonsTime = Duration.between(start, Instant.now()).toNanos();
 
-            // 2.  Org Json
+            // 3.  Org Json
             start = Instant.now();
-            JSONObject jo = new JSONObject(getJSONSample(jsonFile));
+            JSONObject jo = new JSONObject(new BufferedReader(new FileReader(jsonFile.toFile())));
             jsonTime = Duration.between(start, Instant.now()).toNanos();
 
-            // 2. Gson
+            // 4. Gson
             start = Instant.now();
-            JsonParser.parseReader(getJSONSample(jsonFile))
+            JsonParser.parseReader(new BufferedReader(new FileReader(jsonFile.toFile())))
                     .getAsJsonObject();
             gsonTime = Duration.between(start, Instant.now()).toNanos();
 
@@ -68,7 +68,7 @@ class JsonTest {
             Assertions.assertEquals(jacksonJsonNode,
                     ourJsonNode,
                     "Reverse JSON Failed for " + jsonFile);
-            System.out.format("%40s%25s%25s%25s\n", jsonFile,
+            System.out.format("%40s%25s%25s%25s\n", jsonFile.getFileName(),
                      Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime),
                     Math.round(((jsonTime - oursTime) * 100) / jsonTime),
                     Math.round(((gsonTime - oursTime) * 100) / gsonTime));
@@ -76,20 +76,13 @@ class JsonTest {
 
     }
 
-    public Set<String> getJSONFiles() throws IOException {
-        try (Stream<Path> stream = Files.list(Paths.get("src/test" +
-                "/resources" +
-                "/samples/"))) {
+    public Set<Path> getJSONFiles() throws IOException {
+        String baseFolder = "src/test/resources/samples";
+        try (Stream<Path> stream = Files.list(Paths.get(baseFolder))) {
             return stream
                     .filter(file -> !Files.isDirectory(file))
-                    .map(Path::getFileName)
-                    .map(Path::toString)
                     .collect(Collectors.toSet());
         }
     }
 
-    private Reader getJSONSample(final String fileName) throws IOException {
-        return new BufferedReader(new FileReader(Paths
-                .get("src/test/resources/samples/" + fileName).toFile()));
-    }
 }
