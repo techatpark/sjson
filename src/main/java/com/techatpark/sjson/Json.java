@@ -20,72 +20,7 @@ public final class Json {
      */
     public Object read(final Reader reader) throws IOException {
         try (reader) {
-            ContentExtractor extractor = new ContentExtractor(reader);
-            return getValue(extractor, extractor.nextClean());
-        }
-    }
-
-
-    private Map<String, Object> getObject(final ContentExtractor extractor) throws IOException {
-
-        boolean eoo = extractor.endOfObject();
-        if (eoo) {
-            return Collections.EMPTY_MAP;
-        }
-
-        final Map<String, Object> jsonMap = new HashMap<>();
-        String theKey;
-
-        while (!eoo) {
-            // 1. Get the Key. User String Pool as JSON Keys may be repeating across
-            theKey = extractor.getString().intern();
-
-            // 2. Get the Value
-            jsonMap.put(theKey, getValue(extractor, extractor.nextCleanAfter(':')));
-
-            eoo = extractor.endOfObject();
-        }
-
-        return Collections.unmodifiableMap(jsonMap);
-    }
-
-    private List getArray(final ContentExtractor extractor) throws IOException {
-
-        final Object value = getValue(extractor, extractor.nextClean());
-        // If not Empty List
-        if (value == extractor) {
-            return Collections.EMPTY_LIST;
-        }
-        final List list = new ArrayList();
-        list.add(value);
-        boolean eoa = extractor.endOfArray();
-        while (!eoa) {
-            list.add(getValue(extractor, extractor.nextClean()));
-            eoa = extractor.endOfArray();
-        }
-
-        return Collections.unmodifiableList(list);
-    }
-
-
-    private Object getValue(final ContentExtractor extractor, final char character) throws IOException {
-        switch (character) {
-            case '"':
-                return extractor.getString();
-            case 'n':
-                return extractor.getNull();
-            case 't':
-                return extractor.getTrue();
-            case 'f':
-                return extractor.getFalse();
-            case '{':
-                return getObject(extractor);
-            case '[':
-                return getArray(extractor);
-            case ']':
-                return extractor;
-            default:
-                return extractor.getNumber(character);
+            return new ContentExtractor(reader).getValue();
         }
     }
 
@@ -265,6 +200,72 @@ public final class Json {
             char[] cbuf = new char[length];
             reader.read(cbuf,0,length);
             return cbuf;
+        }
+
+        private Map<String, Object> getObject() throws IOException {
+
+            boolean eoo = endOfObject();
+            if (eoo) {
+                return Collections.EMPTY_MAP;
+            }
+
+            final Map<String, Object> jsonMap = new HashMap<>();
+            String theKey;
+
+            while (!eoo) {
+                // 1. Get the Key. User String Pool as JSON Keys may be repeating across
+                theKey = getString().intern();
+
+                // 2. Get the Value
+                jsonMap.put(theKey, getValue( nextCleanAfter(':')));
+
+                eoo = endOfObject();
+            }
+
+            return Collections.unmodifiableMap(jsonMap);
+        }
+
+        private List getArray() throws IOException {
+
+            final Object value = getValue(nextClean());
+            // If not Empty List
+            if (value == this) {
+                return Collections.EMPTY_LIST;
+            }
+            final List list = new ArrayList();
+            list.add(value);
+            boolean eoa = endOfArray();
+            while (!eoa) {
+                list.add(getValue(nextClean()));
+                eoa = endOfArray();
+            }
+
+            return Collections.unmodifiableList(list);
+        }
+
+        private Object getValue() throws IOException {
+            return getValue(nextClean());
+        }
+
+        private Object getValue(final char character) throws IOException {
+            switch (character) {
+                case '"':
+                    return getString();
+                case 'n':
+                    return getNull();
+                case 't':
+                    return getTrue();
+                case 'f':
+                    return getFalse();
+                case '{':
+                    return getObject();
+                case '[':
+                    return getArray();
+                case ']':
+                    return this;
+                default:
+                    return getNumber(character);
+            }
         }
 
     }
