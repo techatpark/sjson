@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Json parser.
@@ -24,20 +28,31 @@ public final class Json {
         }
     }
 
+    /**
+     * ContentExtractor is responsible to interact with underlying reader to
+     * extract the content.
+     */
     private final class ContentExtractor {
 
+        /**
+         * Reader to the JSON Content.
+         */
         private final Reader reader;
 
+        /**
+         * Flag to start one step back. Look at getNumber
+         */
         private boolean back;
+
         private char current;
 
-        private ContentExtractor(final Reader reader) {
-            this.reader = reader;
+        private ContentExtractor(final Reader theReader) {
+            this.reader = theReader;
         }
 
-        private void back(final char current) {
+        private void back(final char character) {
             this.back = true;
-            this.current = current;
+            this.current = character;
         }
 
         public char read() throws IOException {
@@ -47,14 +62,14 @@ public final class Json {
             }
             return current = (char) this.reader.read();
         }
-        // TODO: Should we read using ContentExtractor ?
+        /* TODO: Should we read using ContentExtractor ? */
         private char nextCleanAfter(final char skipChar) throws IOException {
             while ((char) this.reader.read() != skipChar) {
             }
             return nextClean();
         }
 
-        // TODO: Should we read using ContentExtractor ?
+        /* TODO: Should we read using ContentExtractor ? */
         private char nextClean() throws IOException {
             char character;
             while ((character = (char) this.reader.read()) == ' '
@@ -81,21 +96,19 @@ public final class Json {
             return character == ']';
         }
 
-
-
         private String getString() throws IOException {
-            char c;
+            char character;
             final StringBuilder sb = new StringBuilder();
             for (; ; ) {
-                c = (char) reader.read();
-                switch (c) {
+                character = (char) reader.read();
+                switch (character) {
                     case 0:
                     case '\n':
                     case '\r':
                         throw new IllegalArgumentException("Invalid Token at ");
                     case '\\':
-                        c = (char) reader.read();
-                        switch (c) {
+                        character = (char) reader.read();
+                        switch (character) {
                             case 'b':
                                 sb.append('\b');
                                 break;
@@ -118,18 +131,18 @@ public final class Json {
                             case '\'':
                             case '\\':
                             case '/':
-                                sb.append(c);
+                                sb.append(character);
                                 break;
                             default:
                                 throw new IllegalArgumentException("Invalid Token at ");
                         }
                         break;
                     default:
-                        if (c == '"') {
-                            current = c;
+                        if (character == '"') {
+                            current = character;
                             return sb.toString();
                         }
-                        sb.append(c);
+                        sb.append(character);
                 }
             }
         }
