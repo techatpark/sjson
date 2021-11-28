@@ -129,7 +129,6 @@ public final class Json {
             return character;
         }
 
-
         private boolean endOfObject() throws IOException {
             char character;
             while ((character = read()) != '"'
@@ -146,10 +145,7 @@ public final class Json {
             return character == ']';
         }
 
-        private String next4() throws IOException {
-            return new String(new char[]{(char) reader.read(), (char) reader.read(),
-                    (char) reader.read(), (char) reader.read()});
-        }
+
 
         private String getString() throws IOException {
             char c;
@@ -180,14 +176,13 @@ public final class Json {
                                 sb.append('\r');
                                 break;
                             case 'u':
-                                sb.append((char) Integer.parseInt(next4(), 16));
+                                sb.append((char) Integer.parseInt(new String(next(4)), 16));
                                 break;
                             case '"':
                             case '\'':
                             case '\\':
                             case '/':
                                 sb.append(c);
-                                current = c;
                                 break;
                             default:
                                 throw new IllegalArgumentException("Invalid Token at ");
@@ -195,6 +190,7 @@ public final class Json {
                         break;
                     default:
                         if (c == '"') {
+                            current = c;
                             return sb.toString();
                         }
                         sb.append(c);
@@ -222,7 +218,6 @@ public final class Json {
                 BigDecimal bigDecimal = new BigDecimal(builder.toString());
                 return bigDecimal;
             } else {
-                current = character;
                 back(character);
                 BigInteger bigInteger = new BigInteger(builder.toString());
                 return bigInteger;
@@ -230,9 +225,10 @@ public final class Json {
         }
 
         private boolean getTrue() throws IOException {
-            if ((char) reader.read() == 'r'
-                    && (char) reader.read() == 'u'
-                    && (char) reader.read() == 'e') {
+            char[] cbuf = next(3);
+            if (cbuf[0] == 'r'
+                    && cbuf[1] == 'u'
+                    && cbuf[2] == 'e') {
                 current = 'e';
                 return true;
             } else {
@@ -241,10 +237,11 @@ public final class Json {
         }
 
         private boolean getFalse() throws IOException {
-            if ((char) reader.read() == 'a'
-                    && (char) reader.read() == 'l'
-                    && (char) reader.read() == 's'
-                    && (char) reader.read() == 'e') {
+            char[] cbuf = next(4);
+            if (cbuf[0] == 'a'
+                    && cbuf[1] == 'l'
+                    && cbuf[2] == 's'
+                    && cbuf[3] == 'e') {
                 current = 'e';
                 return false;
             } else {
@@ -253,14 +250,21 @@ public final class Json {
         }
 
         private Object getNull() throws IOException {
-            if ((char) reader.read() == 'u'
-                    && (char) reader.read() == 'l'
-                    && (char) reader.read() == 'l') {
+            char[] cbuf = next(3);
+            if (cbuf[0] == 'u'
+                    && cbuf[1] == 'l'
+                    && cbuf[2] == 'l') {
                 current = 'l';
                 return null;
             } else {
                 throw new IllegalArgumentException("Illegal value at ");
             }
+        }
+
+        private char[] next(final int length) throws IOException {
+            char[] cbuf = new char[length];
+            reader.read(cbuf,0,length);
+            return cbuf;
         }
 
     }
