@@ -94,7 +94,7 @@ public final class Json {
         private final Reader reader;
 
         private boolean back;
-        private int current;
+        private char current;
 
         private ContentExtractor(final Reader reader) {
             this.reader = reader;
@@ -105,12 +105,12 @@ public final class Json {
             this.current = current;
         }
 
-        public int read() throws IOException {
+        public char read() throws IOException {
             if (this.back) {
                 this.back = false;
                 return current;
             }
-            return current = this.reader.read();
+            return current = (char) this.reader.read();
         }
 
         private char nextCleanAfter(final char skipChar) throws IOException {
@@ -121,7 +121,7 @@ public final class Json {
 
         private char nextClean() throws IOException {
             char character;
-            while ((character = (char) read()) == ' '
+            while ((character = read()) == ' '
                     || character == '\n'
                     || character == '\r'
                     || character == '\t') {
@@ -132,7 +132,7 @@ public final class Json {
 
         private boolean endOfObject() throws IOException {
             char character;
-            while ((character = (char) read()) != '"'
+            while ((character = read()) != '"'
                     && character != '}') {
             }
             return character == '}';
@@ -140,7 +140,7 @@ public final class Json {
 
         private boolean endOfArray() throws IOException {
             char character;
-            while ((character = (char) read()) != ','
+            while ((character = read()) != ','
                     && character != ']') {
             }
             return character == ']';
