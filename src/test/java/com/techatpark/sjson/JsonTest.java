@@ -38,34 +38,37 @@ class JsonTest {
         for (String jsonFile :
                 getJSONFiles()) {
 
-            // 1. Generate JSONNode directly from Jackson
+            // 2. SJson
+            start = Instant.now();
+            Object ourJsonObject = json
+                    .read(getJSONSample(jsonFile));
+            oursTime = Duration.between(start, Instant.now());
+
+            // 1. Jackson
             start = Instant.now();
             JsonNode jacksonJsonNode = jackson
                     .readTree(getJSONSample(jsonFile));
             jacksonsTime = Duration.between(start, Instant.now());
 
-            // 2. Generate JSONNode directly from Org Json
+            // 2.  Org Json
             start = Instant.now();
             JSONObject jo = new JSONObject(getJSONSample(jsonFile));
             jsonTime = Duration.between(start, Instant.now());
 
-            // 2. Generate JSONNode directly from Gson
+            // 2. Gson
             start = Instant.now();
             JsonObject gjo = JsonParser.parseReader(getJSONSample(jsonFile))
                     .getAsJsonObject();
             gsonTime = Duration.between(start, Instant.now());
 
-            // 2. Generate JSONNode through our implementation
-            start = Instant.now();
-            Object ourJsonObject = json
-                    .read(getJSONSample(jsonFile));
-            oursTime = Duration.between(start, Instant.now());
+
+
+
+            // 3. SJson with Jackson
             String reversedJsonText = jackson
                     .writeValueAsString(ourJsonObject);
             JsonNode ourJsonNode = jackson
                     .readTree(new StringReader(reversedJsonText));
-
-            // 3. Compare Ours with JAckson
             Assertions.assertEquals(jacksonJsonNode,
                     ourJsonNode,
                     "Reverse JSON Failed for " + jsonFile);
