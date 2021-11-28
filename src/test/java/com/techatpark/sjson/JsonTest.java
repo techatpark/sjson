@@ -30,7 +30,7 @@ class JsonTest {
 
         Instant start;
 
-        Duration jacksonsTime, jsonTime, gsonTime, oursTime;
+        long jacksonsTime, jsonTime, gsonTime, oursTime;
 
         System.out.format("%40s%25s%25s%25s\n", "File Name", "Jackson","Org Json","Gson");
         System.out.format("%40s%25s%25s%25s\n", "----------", "----------", "----------", "----------");
@@ -42,27 +42,24 @@ class JsonTest {
             start = Instant.now();
             Object ourJsonObject = json
                     .read(getJSONSample(jsonFile));
-            oursTime = Duration.between(start, Instant.now());
+            oursTime = Duration.between(start, Instant.now()).toNanos();
 
             // 1. Jackson
             start = Instant.now();
             JsonNode jacksonJsonNode = jackson
                     .readTree(getJSONSample(jsonFile));
-            jacksonsTime = Duration.between(start, Instant.now());
+            jacksonsTime = Duration.between(start, Instant.now()).toNanos();
 
             // 2.  Org Json
             start = Instant.now();
             JSONObject jo = new JSONObject(getJSONSample(jsonFile));
-            jsonTime = Duration.between(start, Instant.now());
+            jsonTime = Duration.between(start, Instant.now()).toNanos();
 
             // 2. Gson
             start = Instant.now();
-            JsonObject gjo = JsonParser.parseReader(getJSONSample(jsonFile))
+            JsonParser.parseReader(getJSONSample(jsonFile))
                     .getAsJsonObject();
-            gsonTime = Duration.between(start, Instant.now());
-
-
-
+            gsonTime = Duration.between(start, Instant.now()).toNanos();
 
             // 3. SJson with Jackson
             String reversedJsonText = jackson
@@ -73,9 +70,9 @@ class JsonTest {
                     ourJsonNode,
                     "Reverse JSON Failed for " + jsonFile);
             System.out.format("%40s%25s%25s%25s\n", jsonFile,
-                     Math.round(((jacksonsTime.toNanos() - oursTime.toNanos()) * 100) / jacksonsTime.toNanos()),
-                    Math.round(((jsonTime.toNanos() - oursTime.toNanos()) * 100) / jsonTime.toNanos()),
-                    Math.round(((gsonTime.toNanos() - oursTime.toNanos()) * 100) / gsonTime.toNanos()));
+                     Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime),
+                    Math.round(((jsonTime - oursTime) * 100) / jsonTime),
+                    Math.round(((gsonTime - oursTime) * 100) / gsonTime));
         }
 
     }
