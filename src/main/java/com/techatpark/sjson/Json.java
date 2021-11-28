@@ -24,7 +24,7 @@ public final class Json {
         }
     }
 
-    private class ContentExtractor {
+    private final class ContentExtractor {
 
         private final Reader reader;
 
@@ -47,16 +47,17 @@ public final class Json {
             }
             return current = (char) this.reader.read();
         }
-
+        // TODO: Should we read using ContentExtractor ?
         private char nextCleanAfter(final char skipChar) throws IOException {
-            while (read() != skipChar) {
+            while ((char) this.reader.read() != skipChar) {
             }
             return nextClean();
         }
 
+        // TODO: Should we read using ContentExtractor ?
         private char nextClean() throws IOException {
             char character;
-            while ((character = read()) == ' '
+            while ((character = (char) this.reader.read()) == ' '
                     || character == '\n'
                     || character == '\r'
                     || character == '\t') {
