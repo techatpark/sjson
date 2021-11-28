@@ -100,8 +100,9 @@ public final class Json {
             this.reader = reader;
         }
 
-        private void back() {
+        private void back(final char current) {
             this.back = true;
+            this.current = current;
         }
 
         public int read() throws IOException {
@@ -217,13 +218,12 @@ public final class Json {
                         || character == 'e' || character == '-') {
                     builder.append(character);
                 }
-                current = character;
-                back();
+                back(character);
                 BigDecimal bigDecimal = new BigDecimal(builder.toString());
                 return bigDecimal;
             } else {
                 current = character;
-                back();
+                back(character);
                 BigInteger bigInteger = new BigInteger(builder.toString());
                 return bigInteger;
             }
