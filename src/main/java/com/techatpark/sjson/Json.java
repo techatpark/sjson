@@ -157,10 +157,10 @@ public final class Json {
                 builder.append(character);
             }
 
-            if (character == '.' || character=='e') {
+            if (character == '.' || character=='e' || character == 'E') {
                 builder.append(character);
                 while (Character.isDigit(character = (char) reader.read())
-                        || character == 'e' || character == '-') {
+                        || character == 'e' || character == '-' || character == 'E') {
                     builder.append(character);
                 }
                 back(character);
