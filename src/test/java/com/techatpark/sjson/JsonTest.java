@@ -76,8 +76,10 @@ class JsonTest {
 
     }
 
-    public Set<Path> getJSONFiles() throws IOException {
-        String baseFolder = "src/test/resources/samples";
+    private Set<Path> getJSONFiles() throws IOException {
+
+        String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
+                System.getenv("SJSON_LOCAL_DIR");
         try (Stream<Path> stream = Files.list(Paths.get(baseFolder))) {
             return stream
                     .filter(file -> !Files.isDirectory(file))
