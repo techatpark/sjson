@@ -1,9 +1,29 @@
 # SJson
 
-SJson is a json parser for server side workloads. It tries to get optimized memory and performance with below aspects.
+SJson is a json parser for server side workloads. It tries to get optimized memory and performance with below goals.
 
 1. Trust the validity of json documents
 2. It is just enough to say invalid, reasoning is optional
 3. Represent Json in native format.
+4. No external dependencies
 
+**Note:** This is **not** general purpose parser. This is useful for Microservices and REST Clients.
 
+## Usage
+
+Include below in your pom.xml
+
+````
+<dependency>
+   <groupId>com.techatpark.sjson</groupId>
+   <artifactId>json-parser</artifactId>
+   <version>1.0.0</version>
+<dependency>   
+````
+
+Below is the code to read JSON as Java Object
+
+````
+   Json json = new Json();
+   Object obj = json.read(new StringReader("{ \"abc\" : \"def\" }"));
+````
