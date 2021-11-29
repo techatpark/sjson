@@ -62,12 +62,6 @@ public final class Json {
             }
             return current = (char) this.reader.read();
         }
-        /* TODO: Should we read using ContentExtractor ? */
-        private char nextCleanAfter(final char skipChar) throws IOException {
-            while ((char) this.reader.read() != skipChar) {
-            }
-            return nextClean();
-        }
 
         /* TODO: Should we read using ContentExtractor ? */
         private char nextClean() throws IOException {
@@ -77,11 +71,21 @@ public final class Json {
                     || character == '\r'
                     || character == '\t') {
             }
+            current = character;
             return character;
         }
 
         private boolean endOfObject() throws IOException {
             char character;
+            if(current == '}') {
+                return true;
+            }
+            if(current == ',') {
+                while (read() != '"') {
+
+                }
+                return false;
+            }
             while ((character = read()) != '"'
                     && character != '}') {
             }
@@ -90,6 +94,12 @@ public final class Json {
 
         private boolean endOfArray() throws IOException {
             char character;
+            if(current == ']') {
+                return true;
+            }
+            if(current == ',') {
+                return false;
+            }
             while ((character = read()) != ','
                     && character != ']') {
             }
@@ -163,11 +173,11 @@ public final class Json {
                         || character == 'e' || character == '-' || character == 'E') {
                     builder.append(character);
                 }
-                back(character);
+                current = character;
                 BigDecimal bigDecimal = new BigDecimal(builder.toString());
                 return bigDecimal;
             } else {
-                back(character);
+                current = character;
                 BigInteger bigInteger = new BigInteger(builder.toString());
                 return bigInteger;
             }
@@ -220,16 +230,24 @@ public final class Json {
 
             boolean eoo = endOfObject();
             if (eoo) {
+                nextClean();
                 return Collections.EMPTY_MAP;
             }
 
             final Map<String, Object> jsonMap = new HashMap<>();
 
+            String theKey ;
             while (!eoo) {
+                theKey = getString().intern();
+
+                // Move to :
+                nextClean();
+
                 // 1. Get the Value
-                jsonMap.put(getString().intern(), getValue( nextCleanAfter(':')));
+                jsonMap.put(theKey,getValue());
                 eoo = endOfObject();
             }
+            nextClean();
 
             return Collections.unmodifiableMap(jsonMap);
         }
@@ -239,16 +257,17 @@ public final class Json {
             final Object value = getValue(nextClean());
             // If not Empty List
             if (value == this) {
+                nextClean();
                 return Collections.EMPTY_LIST;
             }
             final List list = new ArrayList();
             list.add(value);
             boolean eoa = endOfArray();
             while (!eoa) {
-                list.add(getValue(nextClean()));
+                list.add(getValue());
                 eoa = endOfArray();
             }
-
+            nextClean();
             return Collections.unmodifiableList(list);
         }
 
