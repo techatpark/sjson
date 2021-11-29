@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 class JsonTest {
 
-
     @Test
     void testParsing() throws IOException {
 
@@ -51,7 +50,7 @@ class JsonTest {
 
             // 3.  Org Json
             start = Instant.now();
-            JSONObject jo = new JSONObject(new BufferedReader(new FileReader(jsonFile.toFile())));
+            new JSONObject(new BufferedReader(new FileReader(jsonFile.toFile())));
             jsonTime = Duration.between(start, Instant.now()).toNanos();
 
             // 4. Gson
