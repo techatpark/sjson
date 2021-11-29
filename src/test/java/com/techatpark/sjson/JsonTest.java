@@ -33,29 +33,29 @@ class JsonTest {
         System.out.format("%40s%25s%25s%25s\n", "File Name", "Jackson","Org Json","Gson");
         System.out.format("%40s%25s%25s%25s\n", "----------", "----------", "----------", "----------");
 
-        for (Path jsonFile :
+        for (Path path :
                 getJSONFiles()) {
 
             // 1. SJson
             start = Instant.now();
             Object ourJsonObject = json
-                    .read(new BufferedReader(new FileReader(jsonFile.toFile())));
+                    .read(new BufferedReader(new FileReader(path.toFile())));
             oursTime = Duration.between(start, Instant.now()).toNanos();
 
             // 2. Jackson
             start = Instant.now();
             JsonNode jacksonJsonNode = jackson
-                    .readTree(new BufferedReader(new FileReader(jsonFile.toFile())));
+                    .readTree(new BufferedReader(new FileReader(path.toFile())));
             jacksonsTime = Duration.between(start, Instant.now()).toNanos();
 
             // 3.  Org Json
             start = Instant.now();
-            new JSONObject(new BufferedReader(new FileReader(jsonFile.toFile())));
+            new JSONObject(new BufferedReader(new FileReader(path.toFile())));
             jsonTime = Duration.between(start, Instant.now()).toNanos();
 
             // 4. Gson
             start = Instant.now();
-            JsonParser.parseReader(new BufferedReader(new FileReader(jsonFile.toFile())))
+            JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())))
                     .getAsJsonObject();
             gsonTime = Duration.between(start, Instant.now()).toNanos();
 
@@ -66,8 +66,8 @@ class JsonTest {
                     .readTree(new StringReader(reversedJsonText));
             Assertions.assertEquals(jacksonJsonNode,
                     ourJsonNode,
-                    "Reverse JSON Failed for " + jsonFile);
-            System.out.format("%40s%25s%25s%25s\n", jsonFile.getFileName(),
+                    "Reverse JSON Failed for " + path);
+            System.out.format("%40s%25s%25s%25s\n", path.getFileName(),
                      Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime),
                     Math.round(((jsonTime - oursTime) * 100) / jsonTime),
                     Math.round(((gsonTime - oursTime) * 100) / gsonTime));
