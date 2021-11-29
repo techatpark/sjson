@@ -224,15 +224,10 @@ public final class Json {
             }
 
             final Map<String, Object> jsonMap = new HashMap<>();
-            String theKey;
 
             while (!eoo) {
-                // 1. Get the Key. User String Pool as JSON Keys may be repeating across
-                theKey = getString().intern();
-
-                // 2. Get the Value
-                jsonMap.put(theKey, getValue( nextCleanAfter(':')));
-
+                // 1. Get the Value
+                jsonMap.put(getString().intern(), getValue( nextCleanAfter(':')));
                 eoo = endOfObject();
             }
 
