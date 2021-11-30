@@ -164,24 +164,62 @@ public final class Json {
             builder.append(startingChar);
             char character;
 
-            while (Character.isDigit(character = (char) reader.read())) {
+            while ( ( character = (char) reader.read()) != ','
+                    && character != '.'
+                    && character != 'e'
+                    && character != 'E'
+                    && character != '}'
+                    && character != ']'
+                    && !isSpace(character)) {
                 builder.append(character);
             }
 
-            if (character == '.' || character=='e' || character == 'E') {
+            // May be a double ?!
+            if(character == '.' || character == 'e' || character == 'E' ) {
                 builder.append(character);
-                while (Character.isDigit(character = (char) reader.read())
-                        || character == 'e' || character == '-' || character == 'E') {
+                while ( ( character = (char) reader.read()) != ','
+                        && character != '}'
+                        && character != ']'
+                        && !isSpace(character)) {
                     builder.append(character);
                 }
                 current = character;
-                BigDecimal bigDecimal = new BigDecimal(builder.toString());
-                return bigDecimal;
+                return getDecimalNumber(builder);
             } else {
                 current = character;
-                BigInteger bigInteger = new BigInteger(builder.toString());
-                return bigInteger;
+                return getNumber(builder);
             }
+
+        }
+
+        /**
+         * Gets Number from the String.
+         * @param builder
+         * @return
+         */
+        private Number getNumber(final StringBuilder builder) {
+            if(builder.length() < 3) {
+                return Byte.parseByte(builder.toString());
+            }
+            if(builder.length() < 5) {
+                return Short.parseShort(builder.toString());
+            }
+            if(builder.length() < 10) {
+                return Integer.parseInt(builder.toString());
+            }
+            if(builder.length() < 19) {
+                return Long.parseLong(builder.toString());
+            }
+            return new BigInteger(builder.toString());
+        }
+
+        /**
+         * Gets Decimal Number from the String
+         * @param builder
+         * @return
+         */
+        private Number getDecimalNumber(final StringBuilder builder) {
+            return new BigDecimal(builder.toString());
         }
 
         /**
@@ -313,13 +351,22 @@ public final class Json {
          */
         private char nextClean() throws IOException {
             char character;
-            while ((character = (char) this.reader.read()) == ' '
-                    || character == '\n'
-                    || character == '\r'
-                    || character == '\t') {
+            while (isSpace (character = (char) this.reader.read())) {
             }
             current = character;
             return character;
+        }
+
+        /**
+         * Determines if this is a space charecter
+         * @param character
+         * @return
+         */
+        private boolean isSpace(final char character) {
+            return (character == ' '
+                    || character == '\n'
+                    || character == '\r'
+                    || character == '\t');
         }
 
         /**
