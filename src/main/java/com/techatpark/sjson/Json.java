@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * Note:
  * This is not general purpose parser. This is useful for Microservices and REST Clients
- * where we primarily need to read/write data.
+ * where we primarily need to read/write json data.
  */
 public final class Json {
 
@@ -104,8 +104,21 @@ public final class Json {
         private String getString() throws IOException {
             char character;
             final StringBuilder sb = new StringBuilder();
+
+            while ((character = (char) reader.read()) != '\\' && character != '"') {
+                sb.append(character);
+            }
+
+            // Normal String
+            if(character == '"') {
+                current = character;
+                return sb.toString();
+            }
+
+
+            // String with escape characters ?!
             for (; ; ) {
-                character = (char) reader.read();
+
                 switch (character) {
                     case 0:
                     case '\n':
@@ -149,6 +162,7 @@ public final class Json {
                         }
                         sb.append(character);
                 }
+                character = (char) reader.read();
             }
         }
 
