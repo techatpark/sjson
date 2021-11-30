@@ -39,31 +39,12 @@ public final class Json {
          */
         private final Reader reader;
 
-        /**
-         * Flag to start one step back. Look at getNumber
-         */
-        private boolean back;
-
         private char current;
 
         private ContentExtractor(final Reader theReader) {
             this.reader = theReader;
         }
 
-        private void back(final char character) {
-            this.back = true;
-            this.current = character;
-        }
-
-        public char read() throws IOException {
-            if (this.back) {
-                this.back = false;
-                return current;
-            }
-            return current = (char) this.reader.read();
-        }
-
-        /* TODO: Should we read using ContentExtractor ? */
         private char nextClean() throws IOException {
             char character;
             while ((character = (char) this.reader.read()) == ' '
@@ -81,12 +62,11 @@ public final class Json {
                 return true;
             }
             if(current == ',') {
-                while (read() != '"') {
-
+                while (this.reader.read() != '"') {
                 }
                 return false;
             }
-            while ((character = read()) != '"'
+            while ((character = (char) this.reader.read()) != '"'
                     && character != '}') {
             }
             return character == '}';
@@ -100,7 +80,7 @@ public final class Json {
             if(current == ',') {
                 return false;
             }
-            while ((character = read()) != ','
+            while ((character = (char) this.reader.read()) != ','
                     && character != ']') {
             }
             return character == ']';
@@ -227,34 +207,28 @@ public final class Json {
         }
 
         private Map<String, Object> getObject() throws IOException {
-
             boolean eoo = endOfObject();
             if (eoo) {
                 nextClean();
                 return Collections.EMPTY_MAP;
             }
-
             final Map<String, Object> jsonMap = new HashMap<>();
-
-            String theKey ;
             while (!eoo) {
-                theKey = getString().intern();
-
-                // Move to :
-                nextClean();
-
-                // 1. Get the Value
-                jsonMap.put(theKey,getValue());
+                jsonMap.put(getKey(),getValue());
                 eoo = endOfObject();
             }
             nextClean();
-
             return Collections.unmodifiableMap(jsonMap);
         }
 
-        private List getArray() throws IOException {
+        private String getKey() throws IOException {
+            String key = getString().intern();
+            nextClean();
+            return key;
+        }
 
-            final Object value = getValue(nextClean());
+        private List getArray() throws IOException {
+            final Object value = getValue();
             // If not Empty List
             if (value == this) {
                 nextClean();
@@ -272,10 +246,7 @@ public final class Json {
         }
 
         private Object getValue() throws IOException {
-            return getValue(nextClean());
-        }
-
-        private Object getValue(final char character) throws IOException {
+            final char character = nextClean();
             switch (character) {
                 case '"':
                     return getString();
