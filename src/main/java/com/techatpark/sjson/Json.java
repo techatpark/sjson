@@ -102,10 +102,11 @@ public final class Json {
          * @throws IOException
          */
         private String getString() throws IOException {
-            char character;
             final StringBuilder sb = new StringBuilder();
+            char character;
 
-            while ((character = (char) reader.read()) != '\\' && character != '"') {
+            while ((character = (char) reader.read()) != '\\'
+                    && character != '"') {
                 sb.append(character);
             }
 
@@ -114,7 +115,6 @@ public final class Json {
                 current = character;
                 return sb.toString();
             }
-
 
             // String with escape characters ?!
             for (; ; ) {
