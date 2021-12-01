@@ -1,5 +1,6 @@
 {
-  "a-digit": 1,
+  "a-digit": {
+  },
   "a-integer": -45677,
   "a-decimal": 23.45,
   "a-alp-number": -2.775557561563e-17,

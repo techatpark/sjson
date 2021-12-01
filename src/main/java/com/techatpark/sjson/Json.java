@@ -11,12 +11,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Json parser.
+ * Json parser for server side workloads.
+ * It tries to get optimized memory and performance with below goals.
+ *
+ * 1. Trust the validity of json documents
+ * 2. It is just enough to say invalid, reasoning is optional
+ * 3. Represent Json in native format.
+ * 4. No external dependencies
+ *
+ * Note:
+ * This is not general purpose parser. This is useful for Microservices and REST Clients
+ * where we primarily need to read/write json data.
  */
 public final class Json {
 
     /**
      * Reads JSON as a Java Object.
+     *
+     * It will return native java objects as given below based on JSON Data Type.
+     * Ref: https://www.w3schools.com/js/js_json_datatypes.asp
+     *
+     * string - java.lang.String
+     * number - java.lang.Number
+     * object - java.util.Map<String,Object>
+     * array  - java.util.List
+     * boolean - java.lang.Boolean
+     * null - null
      *
      * @param reader
      * @return object
@@ -39,68 +59,66 @@ public final class Json {
          */
         private final Reader reader;
 
-        /**
-         * Flag to start one step back. Look at getNumber
-         */
-        private boolean back;
-
         private char current;
 
         private ContentExtractor(final Reader theReader) {
             this.reader = theReader;
         }
 
-        private void back(final char character) {
-            this.back = true;
-            this.current = character;
+        /**
+         * Entry Method for extraction. This will
+         *      1. move to the first clean character to determine the Data type
+         *      2. Call corresponding get methods based on the type
+         * @return
+         * @throws IOException
+         */
+        private Object getValue() throws IOException {
+            // 1. move to the first clean character to determine the Data type
+            final char character = nextClean();
+            // 2. Call corresponding get methods based on the type
+            switch (character) {
+                case '"':
+                    return getString();
+                case 'n':
+                    return getNull();
+                case 't':
+                    return getTrue();
+                case 'f':
+                    return getFalse();
+                case '{':
+                    return getObject();
+                case '[':
+                    return getArray();
+                case ']':
+                    return this;
+                default:
+                    return getNumber(character);
+            }
         }
 
-        public char read() throws IOException {
-            if (this.back) {
-                this.back = false;
-                return current;
-            }
-            return current = (char) this.reader.read();
-        }
-        /* TODO: Should we read using ContentExtractor ? */
-        private char nextCleanAfter(final char skipChar) throws IOException {
-            while ((char) this.reader.read() != skipChar) {
-            }
-            return nextClean();
-        }
-
-        /* TODO: Should we read using ContentExtractor ? */
-        private char nextClean() throws IOException {
-            char character;
-            while ((character = (char) this.reader.read()) == ' '
-                    || character == '\n'
-                    || character == '\r'
-                    || character == '\t') {
-            }
-            return character;
-        }
-
-        private boolean endOfObject() throws IOException {
-            char character;
-            while ((character = read()) != '"'
-                    && character != '}') {
-            }
-            return character == '}';
-        }
-
-        private boolean endOfArray() throws IOException {
-            char character;
-            while ((character = read()) != ','
-                    && character != ']') {
-            }
-            return character == ']';
-        }
-
+        /**
+         * Reads String from Reader. Reader will stop at the " symbol
+         * @return string
+         * @throws IOException
+         */
         private String getString() throws IOException {
-            char character;
             final StringBuilder sb = new StringBuilder();
+            char character;
+
+            while ((character = (char) reader.read()) != '\\'
+                    && character != '"') {
+                sb.append(character);
+            }
+
+            // Normal String
+            if(character == '"') {
+                current = character;
+                return sb.toString();
+            }
+
+            // String with escape characters ?!
             for (; ; ) {
-                character = (char) reader.read();
+
                 switch (character) {
                     case 0:
                     case '\n':
@@ -144,40 +162,90 @@ public final class Json {
                         }
                         sb.append(character);
                 }
+                character = (char) reader.read();
             }
         }
 
+        /**
+         * Reads the number from reader. Reader will stop at the next to the end of number.
+         * @param startingChar
+         * @return
+         * @throws IOException
+         */
         private Number getNumber(final char startingChar) throws IOException {
 
             final StringBuilder builder = new StringBuilder(10);
             builder.append(startingChar);
             char character;
 
-            while (Character.isDigit(character = (char) reader.read())) {
+            while ( ( character = (char) reader.read()) != ','
+                    && character != '.'
+                    && character != 'e'
+                    && character != 'E'
+                    && character != '}'
+                    && character != ']'
+                    && !isSpace(character)) {
                 builder.append(character);
             }
 
-            if (character == '.' || character=='e' || character == 'E') {
+            // May be a double ?!
+            if(character == '.' || character == 'e' || character == 'E' ) {
                 builder.append(character);
-                while (Character.isDigit(character = (char) reader.read())
-                        || character == 'e' || character == '-' || character == 'E') {
+                while ( ( character = (char) reader.read()) != ','
+                        && character != '}'
+                        && character != ']'
+                        && !isSpace(character)) {
                     builder.append(character);
                 }
-                back(character);
-                BigDecimal bigDecimal = new BigDecimal(builder.toString());
-                return bigDecimal;
+                current = character;
+                return getDecimalNumber(builder);
             } else {
-                back(character);
-                BigInteger bigInteger = new BigInteger(builder.toString());
-                return bigInteger;
+                current = character;
+                return getNumber(builder);
             }
+
         }
 
+        /**
+         * Gets Number from the String.
+         * @param builder
+         * @return
+         */
+        private Number getNumber(final StringBuilder builder) {
+            if(builder.length() < 3) {
+                return Byte.parseByte(builder.toString());
+            }
+            if(builder.length() < 5) {
+                return Short.parseShort(builder.toString());
+            }
+            if(builder.length() < 10) {
+                return Integer.parseInt(builder.toString());
+            }
+            if(builder.length() < 19) {
+                return Long.parseLong(builder.toString());
+            }
+            return new BigInteger(builder.toString());
+        }
+
+        /**
+         * Gets Decimal Number from the String
+         * @param builder
+         * @return
+         */
+        private Number getDecimalNumber(final StringBuilder builder) {
+            return new BigDecimal(builder.toString());
+        }
+
+        /**
+         * Reads True from Reader. Reader will stip at the "e" symbol
+         * @return string
+         * @throws IOException
+         */
         private boolean getTrue() throws IOException {
-            char[] cbuf = next(3);
-            if (cbuf[0] == 'r'
-                    && cbuf[1] == 'u'
-                    && cbuf[2] == 'e') {
+            char[] charBuffer = next(3);
+            if (charBuffer[0] == 'r'
+                    && charBuffer[1] == 'u'
+                    && charBuffer[2] == 'e') {
                 current = 'e';
                 return true;
             } else {
@@ -185,12 +253,17 @@ public final class Json {
             }
         }
 
+        /**
+         * Reads False from Reader. Reader will stip at the "e" symbol
+         * @return string
+         * @throws IOException
+         */
         private boolean getFalse() throws IOException {
-            char[] cbuf = next(4);
-            if (cbuf[0] == 'a'
-                    && cbuf[1] == 'l'
-                    && cbuf[2] == 's'
-                    && cbuf[3] == 'e') {
+            char[] charBuffer = next(4);
+            if (charBuffer[0] == 'a'
+                    && charBuffer[1] == 'l'
+                    && charBuffer[2] == 's'
+                    && charBuffer[3] == 'e') {
                 current = 'e';
                 return false;
             } else {
@@ -198,11 +271,16 @@ public final class Json {
             }
         }
 
+        /**
+         * Reads Null from Reader. Reader will stip at the "l" symbol
+         * @return string
+         * @throws IOException
+         */
         private Object getNull() throws IOException {
-            char[] cbuf = next(3);
-            if (cbuf[0] == 'u'
-                    && cbuf[1] == 'l'
-                    && cbuf[2] == 'l') {
+            char[] charBuffer = next(3);
+            if (charBuffer[0] == 'u'
+                    && charBuffer[1] == 'l'
+                    && charBuffer[2] == 'l') {
                 current = 'l';
                 return null;
             } else {
@@ -210,71 +288,139 @@ public final class Json {
             }
         }
 
+        /**
+         * Reads next chars for given length from the reader and fill an char array
+         * @param length
+         * @return char array
+         * @throws IOException
+         */
         private char[] next(final int length) throws IOException {
             char[] cbuf = new char[length];
             reader.read(cbuf,0,length);
             return cbuf;
         }
 
+        /**
+         * Reads Object from a reader. Reader will stop at the next clean char after object
+         *
+         * @return json object
+         * @throws IOException
+         */
         private Map<String, Object> getObject() throws IOException {
 
             boolean eoo = endOfObject();
+            // This is Empty Object
             if (eoo) {
+                nextClean();
                 return Collections.EMPTY_MAP;
             }
-
             final Map<String, Object> jsonMap = new HashMap<>();
-
             while (!eoo) {
-                // 1. Get the Value
-                jsonMap.put(getString().intern(), getValue( nextCleanAfter(':')));
+                jsonMap.put(getKey(),getValue());
                 eoo = endOfObject();
             }
-
+            nextClean();
             return Collections.unmodifiableMap(jsonMap);
         }
 
-        private List getArray() throws IOException {
+        /**
+         * Read Key as a String. It gets key from String Pool
+         * @return key
+         * @throws IOException
+         */
+        private String getKey() throws IOException {
+            String key = getString().intern();
+            nextClean();
+            return key;
+        }
 
-            final Object value = getValue(nextClean());
-            // If not Empty List
+        /**
+         * Reades an Array. Reader stops at next clean character
+         * @return
+         * @throws IOException
+         */
+        private List getArray() throws IOException {
+            final Object value = getValue();
+            // If not Empty Array
             if (value == this) {
+                nextClean();
                 return Collections.EMPTY_LIST;
             }
             final List list = new ArrayList();
             list.add(value);
             boolean eoa = endOfArray();
             while (!eoa) {
-                list.add(getValue(nextClean()));
+                list.add(getValue());
                 eoa = endOfArray();
             }
-
+            nextClean();
             return Collections.unmodifiableList(list);
         }
 
-        private Object getValue() throws IOException {
-            return getValue(nextClean());
+
+        /**
+         * Skip Spaces and land reader at the valid chartor
+         * @return valid character
+         * @throws IOException
+         */
+        private char nextClean() throws IOException {
+            char character;
+            while (isSpace (character = (char) this.reader.read())) {
+            }
+            current = character;
+            return character;
         }
 
-        private Object getValue(final char character) throws IOException {
-            switch (character) {
-                case '"':
-                    return getString();
-                case 'n':
-                    return getNull();
-                case 't':
-                    return getTrue();
-                case 'f':
-                    return getFalse();
-                case '{':
-                    return getObject();
-                case '[':
-                    return getArray();
-                case ']':
-                    return this;
-                default:
-                    return getNumber(character);
+        /**
+         * Determines if this is a space charecter
+         * @param character
+         * @return
+         */
+        private boolean isSpace(final char character) {
+            return (character == ' '
+                    || character == '\n'
+                    || character == '\r'
+                    || character == '\t');
+        }
+
+        /**
+         * Determines the Object End. By moving till " or }
+         * @return
+         * @throws IOException
+         */
+        private boolean endOfObject() throws IOException {
+            char character;
+            if(current == '}') {
+                return true;
             }
+            if(current == ',') {
+                while (this.reader.read() != '"') {
+                }
+                return false;
+            }
+            while ((character = (char) this.reader.read()) != '"'
+                    && character != '}') {
+            }
+            return character == '}';
+        }
+
+        /**
+         * Determine array close character.
+         * @return
+         * @throws IOException
+         */
+        private boolean endOfArray() throws IOException {
+            char character;
+            if(current == ']') {
+                return true;
+            }
+            if(current == ',') {
+                return false;
+            }
+            while ((character = (char) this.reader.read()) != ','
+                    && character != ']') {
+            }
+            return character == ']';
         }
 
     }
