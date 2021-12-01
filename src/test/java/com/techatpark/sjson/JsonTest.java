@@ -20,6 +20,16 @@ import org.json.JSONObject;
 
 class JsonTest {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
     @Test
     void testParsing() throws IOException {
 
@@ -30,8 +40,8 @@ class JsonTest {
 
         long jacksonsTime, jsonTime, gsonTime, oursTime;
 
-        System.out.format("%40s%25s%25s%25s\n", "File Name","Org Json", "Jackson","Gson");
-        System.out.format("%40s%25s%25s%25s\n", "----------", "----------", "----------", "----------");
+        System.out.format( "%40s%25s%25s%25s\n" , "File Name","Org Json", "Jackson","Gson");
+        System.out.format(ANSI_WHITE +"%40s%25s%25s%25s\n"+ ANSI_RESET, "----------", "----------", "----------", "----------");
 
         for (Path path :
                 getJSONFiles()) {
@@ -46,18 +56,21 @@ class JsonTest {
             start = Instant.now();
             new JSONObject(new BufferedReader(new FileReader(path.toFile())));
             jsonTime = Duration.between(start, Instant.now()).toNanos();
+            jsonTime = Math.round(((jsonTime - oursTime) * 100) / jsonTime);
 
             // 3. Jackson
             start = Instant.now();
             JsonNode jacksonJsonNode = jackson
                     .readTree(new BufferedReader(new FileReader(path.toFile())));
             jacksonsTime = Duration.between(start, Instant.now()).toNanos();
+            jacksonsTime = Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime);
 
             // 4. Gson
             start = Instant.now();
             JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())))
                     .getAsJsonObject();
             gsonTime = Duration.between(start, Instant.now()).toNanos();
+            gsonTime = Math.round(((gsonTime - oursTime) * 100) / gsonTime);
 
             // 3. SJson with Jackson
             String reversedJsonText = jackson
@@ -68,9 +81,9 @@ class JsonTest {
                     ourJsonNode,
                     "Reverse JSON Failed for " + path);
             System.out.format("%40s%25s%25s%25s\n", path.getFileName(),
-                    Math.round(((jsonTime - oursTime) * 100) / jsonTime),
-                     Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime),
-                    Math.round(((gsonTime - oursTime) * 100) / gsonTime));
+                    jsonTime,
+                    jacksonsTime,
+                    gsonTime);
         }
 
     }
