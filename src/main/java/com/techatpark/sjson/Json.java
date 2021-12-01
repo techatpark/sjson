@@ -182,7 +182,6 @@ public final class Json {
         private Number getNumber(final char startingChar) throws IOException {
 
             final StringBuilder builder = new StringBuilder(10);
-            builder.append(startingChar);
             char character;
 
             // Happy Case : Read AllDigits before . character
@@ -208,7 +207,7 @@ public final class Json {
                         decimals.append(character);
                     }
                     current = character;
-                    return getDecimalNumber(builder,decimals);
+                    return getDecimalNumber(startingChar,builder,decimals);
                 }
                 // Exponential Non Decimal Number
                 else {
@@ -220,53 +219,58 @@ public final class Json {
                         builder.append(character);
                     }
                     current = character;
-                    return getExponentialNumber(builder);
+                    return getExponentialNumber(startingChar,builder);
                 }
 
             } else {
                 current = character;
-                return getNumber(builder);
+                return getNumber(startingChar,builder);
             }
 
         }
 
         /**
          * Gets Number from the String.
+         *
+         * @param startingChar
          * @param builder
          * @return
          */
-        private Number getNumber(final StringBuilder builder) {
-            if(builder.length() < 3) {
-                return Byte.parseByte(builder.toString());
+        private Number getNumber(final char startingChar,final StringBuilder builder) {
+            if(builder.length() < 2) {
+                return Byte.parseByte(startingChar + builder.toString());
             }
-            if(builder.length() < 5) {
-                return Short.parseShort(builder.toString());
+            if(builder.length() < 4) {
+                return Short.parseShort(startingChar + builder.toString());
             }
-            if(builder.length() < 10) {
-                return Integer.parseInt(builder.toString());
+            if(builder.length() < 9) {
+                return Integer.parseInt(startingChar + builder.toString());
             }
-            if(builder.length() < 19) {
-                return Long.parseLong(builder.toString());
+            if(builder.length() < 18) {
+                return Long.parseLong(startingChar + builder.toString());
             }
-            return new BigInteger(builder.toString());
+            return new BigInteger(startingChar + builder.toString());
         }
 
         /**
          * Gets Decimal Exponential from the String
+         * @param startingChar
          * @param builder
          * @return
          */
-        private Number getExponentialNumber(final StringBuilder builder) {
-            return new BigDecimal(builder.toString());
+        private Number getExponentialNumber(final char startingChar,final StringBuilder builder) {
+            return new BigDecimal(startingChar + builder.toString());
         }
 
         /**
          * Gets Decimal Number from the String
+         *
+         * @param startingChar
          * @param builder
          * @return
          */
-        private Number getDecimalNumber(final StringBuilder builder,final StringBuilder decimal) {
-            return new BigDecimal(builder.toString() + "." + decimal.toString());
+        private Number getDecimalNumber(final char startingChar,final StringBuilder builder,final StringBuilder decimal) {
+            return new BigDecimal(startingChar + builder.toString() + "." + decimal.toString());
         }
 
         /**
