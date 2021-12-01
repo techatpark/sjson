@@ -33,14 +33,14 @@ public final class Json {
      *
      * string - java.lang.String
      * number - java.lang.Number
-     * object - java.util.Map<String,Object>
+     * object - java.util.Map
      * array  - java.util.List
      * boolean - java.lang.Boolean
      * null - null
      *
-     * @param reader
+     * @param reader - file reader
      * @return object
-     * @throws IOException
+     * @throws IOException - throws io exception
      */
     public Object read(final Reader reader) throws IOException {
         try (reader) {
