@@ -185,7 +185,7 @@ public final class Json {
             builder.append(startingChar);
             char character;
 
-            // Read AllDigits before . character
+            // Happy Case : Read AllDigits before . character
             while ( ( character = (char) reader.read()) != ','
                     && character != '.'
                     && character != '}'

@@ -30,7 +30,7 @@ class JsonTest {
 
         long jacksonsTime, jsonTime, gsonTime, oursTime;
 
-        System.out.format("%40s%25s%25s%25s\n", "File Name", "Jackson","Org Json","Gson");
+        System.out.format("%40s%25s%25s%25s\n", "File Name","Org Json", "Jackson","Gson");
         System.out.format("%40s%25s%25s%25s\n", "----------", "----------", "----------", "----------");
 
         for (Path path :
@@ -42,16 +42,16 @@ class JsonTest {
                     .read(new BufferedReader(new FileReader(path.toFile())));
             oursTime = Duration.between(start, Instant.now()).toNanos();
 
-            // 2. Jackson
+            // 2.  Org Json
+            start = Instant.now();
+            new JSONObject(new BufferedReader(new FileReader(path.toFile())));
+            jsonTime = Duration.between(start, Instant.now()).toNanos();
+
+            // 3. Jackson
             start = Instant.now();
             JsonNode jacksonJsonNode = jackson
                     .readTree(new BufferedReader(new FileReader(path.toFile())));
             jacksonsTime = Duration.between(start, Instant.now()).toNanos();
-
-            // 3.  Org Json
-            start = Instant.now();
-            new JSONObject(new BufferedReader(new FileReader(path.toFile())));
-            jsonTime = Duration.between(start, Instant.now()).toNanos();
 
             // 4. Gson
             start = Instant.now();
@@ -68,8 +68,8 @@ class JsonTest {
                     ourJsonNode,
                     "Reverse JSON Failed for " + path);
             System.out.format("%40s%25s%25s%25s\n", path.getFileName(),
-                     Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime),
                     Math.round(((jsonTime - oursTime) * 100) / jsonTime),
+                     Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime),
                     Math.round(((gsonTime - oursTime) * 100) / gsonTime));
         }
 
