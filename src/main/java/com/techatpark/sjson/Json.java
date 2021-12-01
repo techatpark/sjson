@@ -244,12 +244,27 @@ public final class Json {
                 return Short.parseShort(startingChar + builder.toString());
             }
             if(builder.length() < 9) {
-                return Integer.parseInt(startingChar + builder.toString());
+                return getInteger(startingChar , builder);
             }
             if(builder.length() < 18) {
                 return Long.parseLong(startingChar + builder.toString());
             }
             return new BigInteger(startingChar + builder.toString());
+        }
+
+        /**
+         * Get Integer from String.
+         * @param builder
+         * @return number
+         */
+        private int getInteger(final char startingChar,final StringBuilder builder) {
+            boolean isNegative = (startingChar == '-') ;
+            int length = builder.length();
+            int number = Character.digit(builder.charAt(length-1),10);
+            for (int i = 1; i < length ; i++) {
+                number += ( Character.digit(builder.charAt(i-1),10) * (int) Math.pow(10,length-i));
+            }
+            return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (int) Math.pow(10,length)) ) ;
         }
 
         /**
