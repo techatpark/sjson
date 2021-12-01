@@ -198,15 +198,31 @@ public final class Json {
 
             // May be a double ?!
             if(character == '.' || character == 'e' || character == 'E' ) {
-                builder.append(character);
-                while ( ( character = (char) reader.read()) != ','
-                        && character != '}'
-                        && character != ']'
-                        && !isSpace(character)) {
-                    builder.append(character);
+                // Decimal Number
+                if(character == '.') {
+                    StringBuilder decimals = new StringBuilder(10);
+                    while ( ( character = (char) reader.read()) != ','
+                            && character != '}'
+                            && character != ']'
+                            && !isSpace(character)) {
+                        decimals.append(character);
+                    }
+                    current = character;
+                    return getDecimalNumber(builder,decimals);
                 }
-                current = character;
-                return getDecimalNumber(builder);
+                // Exponential Non Decimal Number
+                else {
+                    builder.append(character);
+                    while ( ( character = (char) reader.read()) != ','
+                            && character != '}'
+                            && character != ']'
+                            && !isSpace(character)) {
+                        builder.append(character);
+                    }
+                    current = character;
+                    return getExponentialNumber(builder);
+                }
+
             } else {
                 current = character;
                 return getNumber(builder);
@@ -236,12 +252,21 @@ public final class Json {
         }
 
         /**
+         * Gets Decimal Exponential from the String
+         * @param builder
+         * @return
+         */
+        private Number getExponentialNumber(final StringBuilder builder) {
+            return new BigDecimal(builder.toString());
+        }
+
+        /**
          * Gets Decimal Number from the String
          * @param builder
          * @return
          */
-        private Number getDecimalNumber(final StringBuilder builder) {
-            return new BigDecimal(builder.toString());
+        private Number getDecimalNumber(final StringBuilder builder,final StringBuilder decimal) {
+            return new BigDecimal(builder.toString() + "." + decimal.toString());
         }
 
         /**
