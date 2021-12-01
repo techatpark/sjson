@@ -29,6 +29,11 @@
             <organization>Techatpark</organization>
             <organizationUrl>http://www.techatpark.com</organizationUrl>
         </developer>
+        <developer>
+            <name>Manikanta Yarramsetti</name>
+            <organization>Techatpark</organization>
+            <organizationUrl>http://www.techatpark.com</organizationUrl>
+        </developer>
     </developers>
 
     <scm>
