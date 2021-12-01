@@ -59,8 +59,15 @@ public final class Json {
          */
         private final Reader reader;
 
+        /**
+         * This holds current character from reader
+         */
         private char current;
 
+        /**
+         * Creates Content extracter for the reader
+         * @param theReader
+         */
         private ContentExtractor(final Reader theReader) {
             this.reader = theReader;
         }
@@ -178,12 +185,13 @@ public final class Json {
             builder.append(startingChar);
             char character;
 
+            // Read AllDigits before . character
             while ( ( character = (char) reader.read()) != ','
                     && character != '.'
-                    && character != 'e'
-                    && character != 'E'
                     && character != '}'
                     && character != ']'
+                    && character != 'e'
+                    && character != 'E'
                     && !isSpace(character)) {
                 builder.append(character);
             }
