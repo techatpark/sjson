@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>SJson</name>
@@ -7,7 +8,7 @@
     <groupId>com.techatpark.sjson</groupId>
     <artifactId>json-parser</artifactId>
     <url>https://github.com/techatpark/sjson</url>
-    <version>1.0.1</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -35,8 +36,7 @@
         <connection>scm:git:git://github.com/techatpark/sjson.git</connection>
         <developerConnection>scm:git:git@github.com:techatpark/techatpark.git</developerConnection>
         <url>http://github.com/techatpark/sjson</url>
-      <tag>json-parser-1.0.1</tag>
-  </scm>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
