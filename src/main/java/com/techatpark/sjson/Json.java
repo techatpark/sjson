@@ -44,7 +44,7 @@ public final class Json {
      */
     public Object read(final Reader reader) throws IOException {
         try (reader) {
-            return new ContentExtractor(reader).getValue();
+            return new ContentExtractor(reader).getNumericValue();
         }
     }
 
@@ -79,7 +79,7 @@ public final class Json {
          * @return object
          * @throws IOException
          */
-        private Object getValue() throws IOException {
+        private Object getNumericValue() throws IOException {
             // 1. move to the first clean character to determine the Data type
             final char character = nextClean();
             // 2. Call corresponding get methods based on the type
@@ -264,15 +264,15 @@ public final class Json {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
             if(length != 0) {
-                byte number = (byte) Character.digit(builder.charAt(length-1),10);
+                byte number = (byte) getNumericValue(builder.charAt(length-1));
                 for (int i = 1; i < length ; i++) {
-                    number += getValue(builder.charAt(i-1),length-i);
+                    number += getNumericValue(builder.charAt(i-1),length-i);
                 }
                 return isNegative ?  (byte) (number * -1)
-                        : (byte) ( number + ( (byte) Character.digit(startingChar,10) * (byte) Math.pow(10,length)) ) ;
+                        : (byte) ( number + ( (byte) getNumericValue(startingChar,length)) ) ;
             }
             else  {
-                return (byte) Character.digit(startingChar,10);
+                return (byte) getNumericValue(startingChar);
             }
         }
 
@@ -284,15 +284,15 @@ public final class Json {
         private Number getShort(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
-            short number = (short) Character.digit(builder.charAt(length-1),10);
+            short number = (short) getNumericValue(builder.charAt(length-1));
             for (int i = 1; i < length ; i++) {
-                number += getValue(builder.charAt(i-1),length-i);
+                number += getNumericValue(builder.charAt(i-1),length-i);
             }
             if(isNegative) {
                 number = (short) (number * -1);
                 return number >= Byte.MIN_VALUE ? (byte) number : number;
             }
-            number = (short) ( number + ( (short) Character.digit(startingChar,10) * (short) Math.pow(10,length)) ) ;
+            number = (short) ( number + ( (short) getNumericValue(startingChar,length)) ) ;
             if(number <= Byte.MAX_VALUE) {
                 return Short.valueOf(number).byteValue();
             }
@@ -307,11 +307,11 @@ public final class Json {
         private int getInteger(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
-            int number = Character.digit(builder.charAt(length-1),10);
+            int number = getNumericValue(builder.charAt(length-1));
             for (int i = 1; i < length ; i++) {
-                number += getValue(builder.charAt(i-1),length-i);
+                number += getNumericValue(builder.charAt(i-1),length-i);
             }
-            return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (int) Math.pow(10,length)) ) ;
+            return isNegative ? (-1 * number)  : (int) (number + getNumericValue(startingChar, length));
         }
 
         /**
@@ -322,15 +322,19 @@ public final class Json {
         private long getLong(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
-            long number = Character.digit(builder.charAt(length-1),10);
+            long number = getNumericValue(builder.charAt(length-1));
             for (int i = 1; i < length ; i++) {
-                number += getValue(builder.charAt(i-1),length-i);
+                number += getNumericValue(builder.charAt(i-1),length-i);
             }
-            return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (long) Math.pow(10,length)) ) ;
+            return isNegative ? (-1 * number)  : (number + getNumericValue(startingChar,length) ) ;
         }
 
-        private long getValue(final char character,final int placement) {
-            return Character.digit(character,10) * (long) Math.pow(10,placement);
+        private int getNumericValue(final char character) {
+            return Character.getNumericValue(character);
+        }
+
+        private long getNumericValue(final char character, final int placement) {
+            return getNumericValue(character) * (long) Math.pow(10,placement);
         }
 
         /**
@@ -434,7 +438,7 @@ public final class Json {
             }
             final Map<String, Object> jsonMap = new HashMap<>();
             while (!eoo) {
-                jsonMap.put(getKey(),getValue());
+                jsonMap.put(getKey(), getNumericValue());
                 eoo = endOfObject();
             }
             nextClean();
@@ -458,7 +462,7 @@ public final class Json {
          * @throws IOException
          */
         private List getArray() throws IOException {
-            final Object value = getValue();
+            final Object value = getNumericValue();
             // If not Empty Array
             if (value == this) {
                 nextClean();
@@ -468,7 +472,7 @@ public final class Json {
             list.add(value);
             boolean eoa = endOfArray();
             while (!eoa) {
-                list.add(getValue());
+                list.add(getNumericValue());
                 eoa = endOfArray();
             }
             nextClean();
