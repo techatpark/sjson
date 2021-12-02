@@ -52,8 +52,10 @@ class JsonTest {
         long jacksonsTime, jsonTime, gsonTime, oursTime;
         long jacksonsSize, jsonSize, gsonSize, oursSize;
 
-        System.out.format( "%40s%25s%25s%25s\n" , "File Name","Org Json", "Jackson","Gson");
-        System.out.format(ANSI_WHITE +"%40s%25s%25s%25s\n"+ ANSI_RESET, "----------", "----------", "----------", "----------");
+        System.out.format( "%60s\n" , "Speed");
+        System.out.format( ANSI_WHITE +"%60s\n"+ ANSI_RESET , "==========");
+        System.out.format( "%30s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson");
+        System.out.format(ANSI_WHITE +"%30s%15s%15s%15s\n"+ ANSI_RESET, "----------", "----------", "----------", "----------");
 
         for (Path path :
                 getJSONFiles()) {
@@ -71,12 +73,6 @@ class JsonTest {
             orgJSONObject = new JSONObject(new BufferedReader(new FileReader(path.toFile())));
             jsonTime = Duration.between(start, Instant.now()).toNanos();
             jsonTime = Math.round(((jsonTime - oursTime) * 100) / jsonTime);
-
-            for (Iterator<String> it = orgJSONObject.keys(); it.hasNext(); ) {
-                String key = it.next();
-                System.out.println(orgJSONObject.get(key));
-            }
-
             jsonSize = meter.measureDeep(orgJSONObject);
 
             // 3. Jackson
@@ -102,17 +98,17 @@ class JsonTest {
             Assertions.assertEquals(jacksonJsonNode,
                     jackson.readTree(new StringReader(reversedJsonText)),
                     "Reverse JSON Failed for " + path);
-            System.out.format("%40s%25s%25s%25s\n",
-                    path.getFileName() + "(" + oursSize + ")" ,
-                    getDisplay(jsonTime,jsonSize),
-                    getDisplay(jacksonsTime,jacksonsSize),
-                    getDisplay(gsonTime,gsonSize));
+            System.out.format("%30s%15s%15s%15s\n",
+                    path.getFileName(),
+                    getDisplay(jsonTime),
+                    getDisplay(jacksonsTime),
+                    getDisplay(gsonTime));
         }
 
     }
 
-    private String getDisplay(final long time,final long size) {
-        return String.valueOf(time) + " (" + String.valueOf(size) + ")";
+    private String getDisplay(final long time) {
+        return String.valueOf(time);
     }
 
     @Test
