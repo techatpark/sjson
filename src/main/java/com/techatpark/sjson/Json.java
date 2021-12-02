@@ -357,7 +357,28 @@ public final class Json {
         }
 
         private long getNumericValue(final char character, final int placement) {
-            return getNumericValue(character) * (long) Math.pow(10,placement);
+            switch (placement) {
+//                case 0: return getNumericValue(character);
+                case 1: return getNumericValue(character) * 10L;
+                case 2: return getNumericValue(character) * 100L;
+                case 3: return getNumericValue(character) * 1000L;
+                case 4: return getNumericValue(character) * 10000L;
+                case 5: return getNumericValue(character) * 100000L;
+                case 6: return getNumericValue(character) * 1000000L;
+                case 7: return getNumericValue(character) * 10000000L;
+                case 8: return getNumericValue(character) * 100000000L;
+                case 9: return getNumericValue(character) * 1000000000L;
+                case 10: return getNumericValue(character) * 10000000000L;
+                case 11: return getNumericValue(character) * 100000000000L;
+                case 12: return getNumericValue(character) * 1000000000000L;
+                case 13: return getNumericValue(character) * 10000000000000L;
+                case 14: return getNumericValue(character) * 100000000000000L;
+                case 15: return getNumericValue(character) * 1000000000000000L;
+                case 16: return getNumericValue(character) * 10000000000000000L;
+                case 17: return getNumericValue(character) * 100000000000000000L;
+                case 18: return getNumericValue(character) * 1000000000000000000L;
+                default: throw new IllegalArgumentException("Invalid JSON");
+            }
         }
 
         /**
