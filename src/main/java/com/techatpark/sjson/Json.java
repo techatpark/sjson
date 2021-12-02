@@ -120,7 +120,7 @@ public final class Json {
             // Normal String
             if(character == '"') {
                 cursor = character;
-                return sb.toString();
+                return getString(sb);
             }
 
             // String with escape characters ?!
@@ -164,12 +164,16 @@ public final class Json {
                     default:
                         if (character == '"') {
                             cursor = character;
-                            return sb.toString();
+                            return getString(sb);
                         }
                         sb.append(character);
                 }
                 character = (char) reader.read();
             }
+        }
+
+        private String getString(final StringBuilder builder) throws IOException {
+            return builder.toString();
         }
 
         /**
