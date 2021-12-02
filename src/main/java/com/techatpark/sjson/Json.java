@@ -62,7 +62,7 @@ public final class Json {
         /**
          * This holds current character from reader
          */
-        private char current;
+        private char cursor;
 
         /**
          * Creates Content extracter for the reader
@@ -119,13 +119,12 @@ public final class Json {
 
             // Normal String
             if(character == '"') {
-                current = character;
+                cursor = character;
                 return sb.toString();
             }
 
             // String with escape characters ?!
             for (; ; ) {
-
                 switch (character) {
                     case 0:
                     case '\n':
@@ -164,7 +163,7 @@ public final class Json {
                         break;
                     default:
                         if (character == '"') {
-                            current = character;
+                            cursor = character;
                             return sb.toString();
                         }
                         sb.append(character);
@@ -206,7 +205,7 @@ public final class Json {
                             && !isSpace(character)) {
                         decimals.append(character);
                     }
-                    current = character;
+                    cursor = character;
                     return getDecimalNumber(startingChar,builder,decimals);
                 }
                 // Exponential Non Decimal Number
@@ -218,12 +217,12 @@ public final class Json {
                             && !isSpace(character)) {
                         builder.append(character);
                     }
-                    current = character;
+                    cursor = character;
                     return getExponentialNumber(startingChar,builder);
                 }
 
             } else {
-                current = character;
+                cursor = character;
                 return getNumber(startingChar,builder);
             }
 
@@ -350,7 +349,7 @@ public final class Json {
             if (charBuffer[0] == 'r'
                     && charBuffer[1] == 'u'
                     && charBuffer[2] == 'e') {
-                current = 'e';
+                cursor = 'e';
                 return true;
             } else {
                 throw new IllegalArgumentException("Illegal value at ");
@@ -368,7 +367,7 @@ public final class Json {
                     && charBuffer[1] == 'l'
                     && charBuffer[2] == 's'
                     && charBuffer[3] == 'e') {
-                current = 'e';
+                cursor = 'e';
                 return false;
             } else {
                 throw new IllegalArgumentException("Illegal value at ");
@@ -385,7 +384,7 @@ public final class Json {
             if (charBuffer[0] == 'u'
                     && charBuffer[1] == 'l'
                     && charBuffer[2] == 'l') {
-                current = 'l';
+                cursor = 'l';
                 return null;
             } else {
                 throw new IllegalArgumentException("Illegal value at ");
@@ -471,8 +470,7 @@ public final class Json {
             char character;
             while (isSpace (character = (char) this.reader.read())) {
             }
-            current = character;
-            return character;
+            return cursor = character;
         }
 
         /**
@@ -494,10 +492,10 @@ public final class Json {
          */
         private boolean endOfObject() throws IOException {
             char character;
-            if(current == '}') {
+            if(cursor == '}') {
                 return true;
             }
-            if(current == ',') {
+            if(cursor == ',') {
                 while (this.reader.read() != '"') {
                 }
                 return false;
@@ -515,10 +513,10 @@ public final class Json {
          */
         private boolean endOfArray() throws IOException {
             char character;
-            if(current == ']') {
+            if(cursor == ']') {
                 return true;
             }
-            if(current == ',') {
+            if(cursor == ',') {
                 return false;
             }
             while ((character = (char) this.reader.read()) != ','
