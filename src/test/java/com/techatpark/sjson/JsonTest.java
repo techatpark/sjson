@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -88,8 +89,14 @@ class JsonTest {
 
     }
 
-    private Set<Path> getJSONFiles() throws IOException {
+    @Test
+    void testNumbers() throws IOException {
+        // numbers=all-comobinations
+        Map<String,Object> numbersMap = (Map<String, Object>) new Json().read(null);
+        System.out.println(numbersMap);
+    }
 
+    private Set<Path> getJSONFiles() throws IOException {
         String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
                 System.getenv("SJSON_LOCAL_DIR");
         try (Stream<Path> stream = Files.list(Paths.get(baseFolder))) {
