@@ -2,7 +2,9 @@ package com.techatpark.sjson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.github.jamm.MemoryMeter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +39,13 @@ class JsonTest {
         final ObjectMapper jackson = new ObjectMapper();
         final Json json = new Json();
 
+        MemoryMeter meter = MemoryMeter.builder().build();
+
+        Object ourJsonObject;
+        JSONObject orgJSONObject;
+        JsonNode jacksonJsonNode;
+        JsonObject gsonObject;
+
         Instant start;
 
         long jacksonsTime, jsonTime, gsonTime, oursTime;
@@ -49,26 +58,26 @@ class JsonTest {
 
             // 1. SJson
             start = Instant.now();
-            Object ourJsonObject = json
+            ourJsonObject = json
                     .read(new BufferedReader(new FileReader(path.toFile())));
             oursTime = Duration.between(start, Instant.now()).toNanos();
 
             // 2.  Org Json
             start = Instant.now();
-            new JSONObject(new BufferedReader(new FileReader(path.toFile())));
+            orgJSONObject = new JSONObject(new BufferedReader(new FileReader(path.toFile())));
             jsonTime = Duration.between(start, Instant.now()).toNanos();
             jsonTime = Math.round(((jsonTime - oursTime) * 100) / jsonTime);
 
             // 3. Jackson
             start = Instant.now();
-            JsonNode jacksonJsonNode = jackson
+            jacksonJsonNode = jackson
                     .readTree(new BufferedReader(new FileReader(path.toFile())));
             jacksonsTime = Duration.between(start, Instant.now()).toNanos();
             jacksonsTime = Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime);
 
             // 4. Gson
             start = Instant.now();
-            JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())))
+            gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())))
                     .getAsJsonObject();
             gsonTime = Duration.between(start, Instant.now()).toNanos();
             gsonTime = Math.round(((gsonTime - oursTime) * 100) / gsonTime);
@@ -76,12 +85,12 @@ class JsonTest {
             // 3. SJson with Jackson
             String reversedJsonText = jackson
                     .writeValueAsString(ourJsonObject);
-            JsonNode ourJsonNode = jackson
-                    .readTree(new StringReader(reversedJsonText));
+
             Assertions.assertEquals(jacksonJsonNode,
-                    ourJsonNode,
+                    jackson.readTree(new StringReader(reversedJsonText)),
                     "Reverse JSON Failed for " + path);
-            System.out.format("%40s%25s%25s%25s\n", path.getFileName(),
+            System.out.format("%40s%25s%25s%25s\n",
+                    path.getFileName(),
                     jsonTime,
                     jacksonsTime,
                     gsonTime);
@@ -95,10 +104,7 @@ class JsonTest {
                 .read(
                 new BufferedReader(new FileReader(Paths.get("src/test/resources/samples/number-all-combinations.json").toFile()))
         );
-
         Assertions.assertEquals(Byte.class,numbersMap.get("2-digit-number").getClass(),"Byte not accommodated in Byte");
-
-
     }
 
     private Set<Path> getJSONFiles() throws IOException {

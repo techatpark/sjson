@@ -84,6 +84,14 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20210307</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.stephankoelle</groupId>
+            <artifactId>jamm</artifactId>
+            <version>0.4.1</version>
+            <scope>test</scope>
         </dependency>
 
 
