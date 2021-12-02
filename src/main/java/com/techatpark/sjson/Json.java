@@ -76,7 +76,7 @@ public final class Json {
          * Entry Method for extraction. This will
          *      1. move to the first clean character to determine the Data type
          *      2. Call corresponding get methods based on the type
-         * @return
+         * @return object
          * @throws IOException
          */
         private Object getValue() throws IOException {
@@ -247,7 +247,7 @@ public final class Json {
                 return getInteger(startingChar , builder);
             }
             if(builder.length() < 18) {
-                return Long.parseLong(startingChar + builder.toString());
+                return getLong(startingChar , builder);
             }
             return new BigInteger(startingChar + builder.toString());
         }
@@ -302,6 +302,21 @@ public final class Json {
                 number += ( Character.digit(builder.charAt(i-1),10) * (int) Math.pow(10,length-i));
             }
             return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (int) Math.pow(10,length)) ) ;
+        }
+
+        /**
+         * Get Long from String.
+         * @param builder
+         * @return number
+         */
+        private long getLong(final char startingChar,final StringBuilder builder) {
+            boolean isNegative = (startingChar == '-') ;
+            int length = builder.length();
+            long number = Character.digit(builder.charAt(length-1),10);
+            for (int i = 1; i < length ; i++) {
+                number += ( Character.digit(builder.charAt(i-1),10) * (long) Math.pow(10,length-i));
+            }
+            return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (long) Math.pow(10,length)) ) ;
         }
 
         /**
