@@ -132,6 +132,8 @@
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
+                <!--Added because, nexus staging plugin doenot support java 11 and above for some reasons
+                -->
                 <dependencies>
                     <dependency>
                         <groupId>com.thoughtworks.xstream</groupId>
