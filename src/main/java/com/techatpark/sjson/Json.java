@@ -76,7 +76,7 @@ public final class Json {
          * Entry Method for extraction. This will
          *      1. move to the first clean character to determine the Data type
          *      2. Call corresponding get methods based on the type
-         * @return
+         * @return object
          * @throws IOException
          */
         private Object getValue() throws IOException {
@@ -182,7 +182,6 @@ public final class Json {
         private Number getNumber(final char startingChar) throws IOException {
 
             final StringBuilder builder = new StringBuilder(10);
-            builder.append(startingChar);
             char character;
 
             // Happy Case : Read AllDigits before . character
@@ -198,50 +197,147 @@ public final class Json {
 
             // May be a double ?!
             if(character == '.' || character == 'e' || character == 'E' ) {
-                builder.append(character);
-                while ( ( character = (char) reader.read()) != ','
-                        && character != '}'
-                        && character != ']'
-                        && !isSpace(character)) {
-                    builder.append(character);
+                // Decimal Number
+                if(character == '.') {
+                    StringBuilder decimals = new StringBuilder(10);
+                    while ( ( character = (char) reader.read()) != ','
+                            && character != '}'
+                            && character != ']'
+                            && !isSpace(character)) {
+                        decimals.append(character);
+                    }
+                    current = character;
+                    return getDecimalNumber(startingChar,builder,decimals);
                 }
-                current = character;
-                return getDecimalNumber(builder);
+                // Exponential Non Decimal Number
+                else {
+                    builder.append(character);
+                    while ( ( character = (char) reader.read()) != ','
+                            && character != '}'
+                            && character != ']'
+                            && !isSpace(character)) {
+                        builder.append(character);
+                    }
+                    current = character;
+                    return getExponentialNumber(startingChar,builder);
+                }
+
             } else {
                 current = character;
-                return getNumber(builder);
+                return getNumber(startingChar,builder);
             }
 
         }
 
         /**
          * Gets Number from the String.
+         *
+         * @param startingChar
          * @param builder
          * @return
          */
-        private Number getNumber(final StringBuilder builder) {
-            if(builder.length() < 3) {
-                return Byte.parseByte(builder.toString());
+        private Number getNumber(final char startingChar,final StringBuilder builder) {
+            if(builder.length() < 2) {
+                return getByte(startingChar , builder);
             }
-            if(builder.length() < 5) {
-                return Short.parseShort(builder.toString());
+            if(builder.length() < 4) {
+                return getShort(startingChar , builder);
             }
-            if(builder.length() < 10) {
-                return Integer.parseInt(builder.toString());
+            if(builder.length() < 9) {
+                return getInteger(startingChar , builder);
             }
-            if(builder.length() < 19) {
-                return Long.parseLong(builder.toString());
+            if(builder.length() < 18) {
+                return getLong(startingChar , builder);
             }
-            return new BigInteger(builder.toString());
+            return new BigInteger(startingChar + builder.toString());
+        }
+
+        /**
+         * Get Byte from String.
+         * @param builder
+         * @return number
+         */
+        private byte getByte(final char startingChar,final StringBuilder builder) {
+            boolean isNegative = (startingChar == '-') ;
+            int length = builder.length();
+            if(length != 0) {
+                byte number = (byte) Character.digit(builder.charAt(length-1),10);
+                for (int i = 1; i < length ; i++) {
+                    number += ( Character.digit(builder.charAt(i-1),10) * (byte) Math.pow(10,length-i));
+                }
+                return isNegative ?  (byte) (number * -1)
+                        : (byte) ( number + ( (byte) Character.digit(startingChar,10) * (byte) Math.pow(10,length)) ) ;
+            }
+            else  {
+                return (byte) Character.digit(startingChar,10);
+            }
+        }
+
+        /**
+         * Get Short from String.
+         * @param builder
+         * @return number
+         */
+        private short getShort(final char startingChar,final StringBuilder builder) {
+            boolean isNegative = (startingChar == '-') ;
+            int length = builder.length();
+            short number = (short) Character.digit(builder.charAt(length-1),10);
+            for (int i = 1; i < length ; i++) {
+                number += ( Character.digit(builder.charAt(i-1),10) * (short) Math.pow(10,length-i));
+            }
+            return isNegative ?  (short) (number * -1)
+                    : (short) ( number + ( (short) Character.digit(startingChar,10) * (short) Math.pow(10,length)) ) ;
+        }
+
+        /**
+         * Get Integer from String.
+         * @param builder
+         * @return number
+         */
+        private int getInteger(final char startingChar,final StringBuilder builder) {
+            boolean isNegative = (startingChar == '-') ;
+            int length = builder.length();
+            int number = Character.digit(builder.charAt(length-1),10);
+            for (int i = 1; i < length ; i++) {
+                number += ( Character.digit(builder.charAt(i-1),10) * (int) Math.pow(10,length-i));
+            }
+            return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (int) Math.pow(10,length)) ) ;
+        }
+
+        /**
+         * Get Long from String.
+         * @param builder
+         * @return number
+         */
+        private long getLong(final char startingChar,final StringBuilder builder) {
+            boolean isNegative = (startingChar == '-') ;
+            int length = builder.length();
+            long number = Character.digit(builder.charAt(length-1),10);
+            for (int i = 1; i < length ; i++) {
+                number += ( Character.digit(builder.charAt(i-1),10) * (long) Math.pow(10,length-i));
+            }
+            return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (long) Math.pow(10,length)) ) ;
+        }
+
+        /**
+         * Gets Decimal Exponential from the String
+         * @param startingChar
+         * @param builder
+         * @return
+         */
+        private Number getExponentialNumber(final char startingChar,final StringBuilder builder) {
+            return new BigDecimal(startingChar + builder.toString());
         }
 
         /**
          * Gets Decimal Number from the String
+         *
+         * @param startingChar
          * @param builder
          * @return
          */
-        private Number getDecimalNumber(final StringBuilder builder) {
-            return new BigDecimal(builder.toString());
+        private Number getDecimalNumber(final char startingChar,final StringBuilder builder,final StringBuilder decimal) {
+            return new BigDecimal(startingChar + builder.toString() + "." + decimal.toString());
         }
 
         /**
