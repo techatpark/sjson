@@ -238,10 +238,10 @@ public final class Json {
          */
         private Number getNumber(final char startingChar,final StringBuilder builder) {
             if(builder.length() < 2) {
-                return Byte.parseByte(startingChar + builder.toString());
+                return getByte(startingChar , builder);
             }
             if(builder.length() < 4) {
-                return Short.parseShort(startingChar + builder.toString());
+                return getShort(startingChar , builder);
             }
             if(builder.length() < 9) {
                 return getInteger(startingChar , builder);
@@ -250,6 +250,43 @@ public final class Json {
                 return Long.parseLong(startingChar + builder.toString());
             }
             return new BigInteger(startingChar + builder.toString());
+        }
+
+        /**
+         * Get Byte from String.
+         * @param builder
+         * @return number
+         */
+        private byte getByte(final char startingChar,final StringBuilder builder) {
+            boolean isNegative = (startingChar == '-') ;
+            int length = builder.length();
+            if(length != 0) {
+                byte number = (byte) Character.digit(builder.charAt(length-1),10);
+                for (int i = 1; i < length ; i++) {
+                    number += ( Character.digit(builder.charAt(i-1),10) * (byte) Math.pow(10,length-i));
+                }
+                return isNegative ?  (byte) (number * -1)
+                        : (byte) ( number + ( (byte) Character.digit(startingChar,10) * (byte) Math.pow(10,length)) ) ;
+            }
+            else  {
+                return (byte) Character.digit(startingChar,10);
+            }
+        }
+
+        /**
+         * Get Short from String.
+         * @param builder
+         * @return number
+         */
+        private short getShort(final char startingChar,final StringBuilder builder) {
+            boolean isNegative = (startingChar == '-') ;
+            int length = builder.length();
+            short number = (short) Character.digit(builder.charAt(length-1),10);
+            for (int i = 1; i < length ; i++) {
+                number += ( Character.digit(builder.charAt(i-1),10) * (short) Math.pow(10,length-i));
+            }
+            return isNegative ?  (short) (number * -1)
+                    : (short) ( number + ( (short) Character.digit(startingChar,10) * (short) Math.pow(10,length)) ) ;
         }
 
         /**
