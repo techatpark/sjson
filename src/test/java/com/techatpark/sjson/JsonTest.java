@@ -91,9 +91,14 @@ class JsonTest {
 
     @Test
     void testNumbers() throws IOException {
-        // numbers=all-comobinations
-        Map<String,Object> numbersMap = (Map<String, Object>) new Json().read(null);
-        System.out.println(numbersMap);
+        Map<String,Object> numbersMap = (Map<String, Object>) new Json()
+                .read(
+                new BufferedReader(new FileReader(Paths.get("src/test/resources/samples/number-all-combinations.json").toFile()))
+        );
+
+        Assertions.assertEquals(Byte.class,numbersMap.get("2-digit-number").getClass(),"Byte not accommodated in Byte");
+
+
     }
 
     private Set<Path> getJSONFiles() throws IOException {
