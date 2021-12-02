@@ -281,15 +281,22 @@ public final class Json {
          * @param builder
          * @return number
          */
-        private short getShort(final char startingChar,final StringBuilder builder) {
+        private Number getShort(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
             short number = (short) Character.digit(builder.charAt(length-1),10);
             for (int i = 1; i < length ; i++) {
                 number += ( Character.digit(builder.charAt(i-1),10) * (short) Math.pow(10,length-i));
             }
-            return isNegative ?  (short) (number * -1)
-                    : (short) ( number + ( (short) Character.digit(startingChar,10) * (short) Math.pow(10,length)) ) ;
+            if(isNegative) {
+                number = (short) (number * -1);
+                return number >= Byte.MIN_VALUE ? (byte) number : number;
+            }
+            number = (short) ( number + ( (short) Character.digit(startingChar,10) * (short) Math.pow(10,length)) ) ;
+            if(number <= Byte.MAX_VALUE) {
+                return Short.valueOf(number).byteValue();
+            }
+            return number;
         }
 
         /**
