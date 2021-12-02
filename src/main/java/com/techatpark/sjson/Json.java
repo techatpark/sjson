@@ -266,7 +266,7 @@ public final class Json {
             if(length != 0) {
                 byte number = (byte) Character.digit(builder.charAt(length-1),10);
                 for (int i = 1; i < length ; i++) {
-                    number += ( Character.digit(builder.charAt(i-1),10) * (byte) Math.pow(10,length-i));
+                    number += getValue(builder.charAt(i-1),length-i);
                 }
                 return isNegative ?  (byte) (number * -1)
                         : (byte) ( number + ( (byte) Character.digit(startingChar,10) * (byte) Math.pow(10,length)) ) ;
@@ -286,7 +286,7 @@ public final class Json {
             int length = builder.length();
             short number = (short) Character.digit(builder.charAt(length-1),10);
             for (int i = 1; i < length ; i++) {
-                number += ( Character.digit(builder.charAt(i-1),10) * (short) Math.pow(10,length-i));
+                number += getValue(builder.charAt(i-1),length-i);
             }
             if(isNegative) {
                 number = (short) (number * -1);
@@ -309,7 +309,7 @@ public final class Json {
             int length = builder.length();
             int number = Character.digit(builder.charAt(length-1),10);
             for (int i = 1; i < length ; i++) {
-                number += ( Character.digit(builder.charAt(i-1),10) * (int) Math.pow(10,length-i));
+                number += getValue(builder.charAt(i-1),length-i);
             }
             return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (int) Math.pow(10,length)) ) ;
         }
@@ -324,9 +324,13 @@ public final class Json {
             int length = builder.length();
             long number = Character.digit(builder.charAt(length-1),10);
             for (int i = 1; i < length ; i++) {
-                number += ( Character.digit(builder.charAt(i-1),10) * (long) Math.pow(10,length-i));
+                number += getValue(builder.charAt(i-1),length-i);
             }
             return isNegative ? (-1 * number)  : (number +(Character.digit(startingChar,10) * (long) Math.pow(10,length)) ) ;
+        }
+
+        private long getValue(final char character,final int placement) {
+            return Character.digit(character,10) * (long) Math.pow(10,placement);
         }
 
         /**
