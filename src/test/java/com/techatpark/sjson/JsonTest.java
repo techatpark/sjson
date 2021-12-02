@@ -105,6 +105,13 @@ class JsonTest {
                 new BufferedReader(new FileReader(Paths.get("src/test/resources/samples/number-all-combinations.json").toFile()))
         );
         Assertions.assertEquals(Byte.class,numbersMap.get("2-digit-number").getClass(),"Byte not accommodated in Byte");
+
+        Assertions.assertEquals(Short.class,numbersMap.get("4-digit-number").getClass(),"Short not accommodated in Short");
+
+        Assertions.assertEquals(Integer.class,numbersMap.get("9-digit-number").getClass(),"Integer not accommodated in Integer");
+
+        Assertions.assertEquals(Long.class,numbersMap.get("18-digit-number").getClass(),"Long not accommodated in Long");
+
     }
 
     private Set<Path> getJSONFiles() throws IOException {
