@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,6 +71,12 @@ class JsonTest {
             orgJSONObject = new JSONObject(new BufferedReader(new FileReader(path.toFile())));
             jsonTime = Duration.between(start, Instant.now()).toNanos();
             jsonTime = Math.round(((jsonTime - oursTime) * 100) / jsonTime);
+
+            for (Iterator<String> it = orgJSONObject.keys(); it.hasNext(); ) {
+                String key = it.next();
+                System.out.println(orgJSONObject.get(key));
+            }
+
             jsonSize = meter.measureDeep(orgJSONObject);
 
             // 3. Jackson

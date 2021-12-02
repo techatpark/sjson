@@ -27,3 +27,11 @@ Below is the code to read JSON as Java Object
    Json json = new Json();
    Object obj = json.read(new StringReader("{ \"abc\" : \"def\" }"));
 ````
+
+## Development
+
+Below VM Options should be added when we run the program.This is required to calculate the size of the objects
+
+````
+-javaagent:<<PATH_TO_JAR>>/jamm-0.4.1.jar --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED
+````
