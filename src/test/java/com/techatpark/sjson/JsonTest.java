@@ -49,6 +49,7 @@ class JsonTest {
         Instant start;
 
         long jacksonsTime, jsonTime, gsonTime, oursTime;
+        long jacksonsSize, jsonSize, gsonSize, oursSize;
 
         System.out.format( "%40s%25s%25s%25s\n" , "File Name","Org Json", "Jackson","Gson");
         System.out.format(ANSI_WHITE +"%40s%25s%25s%25s\n"+ ANSI_RESET, "----------", "----------", "----------", "----------");
@@ -61,12 +62,15 @@ class JsonTest {
             ourJsonObject = json
                     .read(new BufferedReader(new FileReader(path.toFile())));
             oursTime = Duration.between(start, Instant.now()).toNanos();
+            oursSize = meter.measureDeep(ourJsonObject);
+
 
             // 2.  Org Json
             start = Instant.now();
             orgJSONObject = new JSONObject(new BufferedReader(new FileReader(path.toFile())));
             jsonTime = Duration.between(start, Instant.now()).toNanos();
             jsonTime = Math.round(((jsonTime - oursTime) * 100) / jsonTime);
+            jsonSize = meter.measureDeep(orgJSONObject);
 
             // 3. Jackson
             start = Instant.now();
@@ -74,6 +78,7 @@ class JsonTest {
                     .readTree(new BufferedReader(new FileReader(path.toFile())));
             jacksonsTime = Duration.between(start, Instant.now()).toNanos();
             jacksonsTime = Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime);
+            jacksonsSize = meter.measureDeep(jacksonJsonNode);
 
             // 4. Gson
             start = Instant.now();
@@ -81,6 +86,7 @@ class JsonTest {
                     .getAsJsonObject();
             gsonTime = Duration.between(start, Instant.now()).toNanos();
             gsonTime = Math.round(((gsonTime - oursTime) * 100) / gsonTime);
+            gsonSize = meter.measureDeep(gsonObject);
 
             // 3. SJson with Jackson
             String reversedJsonText = jackson
@@ -90,12 +96,16 @@ class JsonTest {
                     jackson.readTree(new StringReader(reversedJsonText)),
                     "Reverse JSON Failed for " + path);
             System.out.format("%40s%25s%25s%25s\n",
-                    path.getFileName(),
-                    jsonTime,
-                    jacksonsTime,
-                    gsonTime);
+                    path.getFileName() + "(" + oursSize + ")" ,
+                    getDisplay(jsonTime,jsonSize),
+                    getDisplay(jacksonsTime,jacksonsSize),
+                    getDisplay(gsonTime,gsonSize));
         }
 
+    }
+
+    private String getDisplay(final long time,final long size) {
+        return String.valueOf(time) + " (" + String.valueOf(size) + ")";
     }
 
     @Test
