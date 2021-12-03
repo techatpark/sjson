@@ -1,3 +1,5 @@
+[![Build](https://github.com/techatpark/sjson/actions/workflows/develop.yml/badge.svg)](https://github.com/techatpark/sjson/actions/workflows/develop.yml)
+
 # SJson
 
 SJson is a json parser for server side workloads. It tries to get optimized memory and performance with below goals.
