@@ -44,7 +44,7 @@ public final class Json {
      */
     public Object read(final Reader reader) throws IOException {
         try (reader) {
-            return new ContentExtractor(reader).getNumericValue();
+            return new ContentExtractor(reader).getValue();
         }
     }
 
@@ -79,7 +79,7 @@ public final class Json {
          * @return object
          * @throws IOException
          */
-        private Object getNumericValue() throws IOException {
+        private Object getValue() throws IOException {
             // 1. move to the first clean character to determine the Data type
             final char character = nextClean();
             // 2. Call corresponding get methods based on the type
@@ -264,15 +264,15 @@ public final class Json {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
             if(length != 0) {
-                byte number = (byte) getNumericValue(builder.charAt(length-1));
+                byte number = (byte) getValue(builder.charAt(length-1));
                 for (int i = 1; i < length ; i++) {
-                    number += getNumericValue(builder.charAt(i-1),length-i);
+                    number += getValue(builder.charAt(i-1),length-i);
                 }
                 return isNegative ?  (byte) (number * -1)
-                        : (byte) ( number + ( (byte) getNumericValue(startingChar,length)) ) ;
+                        : (byte) ( number + ( (byte) getValue(startingChar,length)) ) ;
             }
             else  {
-                return (byte) getNumericValue(startingChar);
+                return (byte) getValue(startingChar);
             }
         }
 
@@ -284,15 +284,15 @@ public final class Json {
         private Number getShort(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
-            short number = (short) getNumericValue(builder.charAt(length-1));
+            short number = (short) getValue(builder.charAt(length-1));
             for (int i = 1; i < length ; i++) {
-                number += getNumericValue(builder.charAt(i-1),length-i);
+                number += getValue(builder.charAt(i-1),length-i);
             }
             if(isNegative) {
                 number = (short) (number * -1);
                 return number >= Byte.MIN_VALUE ? (byte) number : number;
             }
-            number = (short) ( number + ( (short) getNumericValue(startingChar,length)) ) ;
+            number = (short) ( number + ( (short) getValue(startingChar,length)) ) ;
             if(number <= Byte.MAX_VALUE) {
                 return Short.valueOf(number).byteValue();
             }
@@ -307,11 +307,11 @@ public final class Json {
         private int getInteger(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
-            int number = getNumericValue(builder.charAt(length-1));
+            int number = getValue(builder.charAt(length-1));
             for (int i = 1; i < length ; i++) {
-                number += getNumericValue(builder.charAt(i-1),length-i);
+                number += getValue(builder.charAt(i-1),length-i);
             }
-            return isNegative ? (-1 * number)  : (int) (number + getNumericValue(startingChar, length));
+            return isNegative ? (-1 * number)  : (int) (number + getValue(startingChar, length));
         }
 
         /**
@@ -322,14 +322,14 @@ public final class Json {
         private long getLong(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
-            long number = getNumericValue(builder.charAt(length-1));
+            long number = getValue(builder.charAt(length-1));
             for (int i = 1; i < length ; i++) {
-                number += getNumericValue(builder.charAt(i-1),length-i);
+                number += getValue(builder.charAt(i-1),length-i);
             }
-            return isNegative ? (-1 * number)  : (number + getNumericValue(startingChar,length) ) ;
+            return isNegative ? (-1 * number)  : (number + getValue(startingChar,length) ) ;
         }
 
-        private int getNumericValue(final char character) {
+        private int getValue(final char character) {
             switch (character) {
                 case '0':
                     return 0;
@@ -356,27 +356,27 @@ public final class Json {
             }
         }
 
-        private long getNumericValue(final char character, final int placement) {
+        private long getValue(final char character, final int placement) {
             switch (placement) {
 //                case 0: return getNumericValue(character);
-                case 1: return getNumericValue(character) * 10L;
-                case 2: return getNumericValue(character) * 100L;
-                case 3: return getNumericValue(character) * 1000L;
-                case 4: return getNumericValue(character) * 10000L;
-                case 5: return getNumericValue(character) * 100000L;
-                case 6: return getNumericValue(character) * 1000000L;
-                case 7: return getNumericValue(character) * 10000000L;
-                case 8: return getNumericValue(character) * 100000000L;
-                case 9: return getNumericValue(character) * 1000000000L;
-                case 10: return getNumericValue(character) * 10000000000L;
-                case 11: return getNumericValue(character) * 100000000000L;
-                case 12: return getNumericValue(character) * 1000000000000L;
-                case 13: return getNumericValue(character) * 10000000000000L;
-                case 14: return getNumericValue(character) * 100000000000000L;
-                case 15: return getNumericValue(character) * 1000000000000000L;
-                case 16: return getNumericValue(character) * 10000000000000000L;
-                case 17: return getNumericValue(character) * 100000000000000000L;
-                case 18: return getNumericValue(character) * 1000000000000000000L;
+                case 1: return getValue(character) * 10L;
+                case 2: return getValue(character) * 100L;
+                case 3: return getValue(character) * 1000L;
+                case 4: return getValue(character) * 10000L;
+                case 5: return getValue(character) * 100000L;
+                case 6: return getValue(character) * 1000000L;
+                case 7: return getValue(character) * 10000000L;
+                case 8: return getValue(character) * 100000000L;
+                case 9: return getValue(character) * 1000000000L;
+                case 10: return getValue(character) * 10000000000L;
+                case 11: return getValue(character) * 100000000000L;
+                case 12: return getValue(character) * 1000000000000L;
+                case 13: return getValue(character) * 10000000000000L;
+                case 14: return getValue(character) * 100000000000000L;
+                case 15: return getValue(character) * 1000000000000000L;
+                case 16: return getValue(character) * 10000000000000000L;
+                case 17: return getValue(character) * 100000000000000000L;
+                case 18: return getValue(character) * 1000000000000000000L;
                 default: throw new IllegalArgumentException("Invalid JSON");
             }
         }
@@ -482,7 +482,7 @@ public final class Json {
             }
             final Map<String, Object> jsonMap = new HashMap<>();
             while (!eoo) {
-                jsonMap.put(getKey(), getNumericValue());
+                jsonMap.put(getKey(), getValue());
                 eoo = endOfObject();
             }
             nextClean();
@@ -506,7 +506,7 @@ public final class Json {
          * @throws IOException
          */
         private List getArray() throws IOException {
-            final Object value = getNumericValue();
+            final Object value = getValue();
             // If not Empty Array
             if (value == this) {
                 nextClean();
@@ -516,7 +516,7 @@ public final class Json {
             list.add(value);
             boolean eoa = endOfArray();
             while (!eoa) {
-                list.add(getNumericValue());
+                list.add(getValue());
                 eoa = endOfArray();
             }
             nextClean();
