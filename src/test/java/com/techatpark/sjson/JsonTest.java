@@ -54,8 +54,9 @@ class JsonTest {
         System.out.format( "%60s%45s\n" , "Memory", "Speed");
         System.out.format( ANSI_WHITE +"%60s%45s\n"+ ANSI_RESET , "=========", "=========");
 
-        System.out.format( "%30s%15s%15s%15s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson","Org Json", "Jackson","Gson");
-        System.out.format(ANSI_WHITE +"%30s%15s%15s%15s%15s%15s%15s\n"+ ANSI_RESET, "----------", "----------", "----------", "----------", "----------", "----------", "----------");
+        System.out.format( "%30s%15s%15s%15s%4s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson","|","Org Json", "Jackson","Gson");
+        System.out.format(ANSI_WHITE +"%30s%15s%15s%15s%4s%15s%15s%15s\n"+ ANSI_RESET, "----------", "----------", "----------"
+                ,"----------", "|", "----------", "----------", "----------");
 
         for (Path path :
                 getJSONFiles()) {
@@ -98,11 +99,12 @@ class JsonTest {
             Assertions.assertEquals(jacksonJsonNode,
                     jackson.readTree(new StringReader(reversedJsonText)),
                     "Reverse JSON Failed for " + path);
-            System.out.format("%33s%20s%20s%20s%20s%20s%20s\n",
+            System.out.format("%33s%20s%20s%20s%10s%20s%20s%20s\n",
                     ANSI_RESET + path.getFileName(),
                     getSizeDisplay(jsonSize,oursSize),
                     getSizeDisplay(jacksonsSize,oursSize),
                     getSizeDisplay(gsonSize,oursSize),
+                    ANSI_WHITE +"|",
                     getTimeDisplay(jsonTime),
                     getTimeDisplay(jacksonsTime),
                     getTimeDisplay(gsonTime)

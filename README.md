@@ -7,7 +7,9 @@ SJson is a json parser for server side workloads. It tries to get optimized memo
 3. Represent Json in native format.
 4. No external dependencies
 
-**Note:** This is **not** general purpose parser. This is useful for Microservices and REST Clients.
+**Note:** This is **not** general purpose parser. This is specifically written for REST Client use case. 
+1. Service to Service Communications in microservices
+2. Client SDK such as Elastic REST Client.
 
 ## Usage
 
@@ -30,7 +32,7 @@ Below is the code to read JSON as Java Object
 
 ## Development
 
-Below VM Options should be added when we run the program.This is required to calculate the size of the objects
+Below VM Options should be added for JVM. This is required to calculate the size of the objects
 
 ````
 -javaagent:<<PATH_TO_JAR>>/jamm-0.4.1.jar --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED
