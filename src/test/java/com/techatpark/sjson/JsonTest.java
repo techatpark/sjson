@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,10 +51,11 @@ class JsonTest {
         long jacksonsTime, jsonTime, gsonTime, oursTime;
         long jacksonsSize, jsonSize, gsonSize, oursSize;
 
-        System.out.format( "%60s\n" , "Speed");
-        System.out.format( ANSI_WHITE +"%60s\n"+ ANSI_RESET , "==========");
-        System.out.format( "%30s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson");
-        System.out.format(ANSI_WHITE +"%30s%15s%15s%15s\n"+ ANSI_RESET, "----------", "----------", "----------", "----------");
+        System.out.format( "%60s%45s\n" , "Speed", "Memory");
+        System.out.format( ANSI_WHITE +"%60s%45s\n"+ ANSI_RESET , "=========", "=========");
+
+        System.out.format( "%30s%15s%15s%15s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson","Org Json", "Jackson","Gson");
+        System.out.format(ANSI_WHITE +"%30s%15s%15s%15s%15s%15s%15s\n"+ ANSI_RESET, "----------", "----------", "----------", "----------", "----------", "----------", "----------");
 
         for (Path path :
                 getJSONFiles()) {
@@ -98,17 +98,39 @@ class JsonTest {
             Assertions.assertEquals(jacksonJsonNode,
                     jackson.readTree(new StringReader(reversedJsonText)),
                     "Reverse JSON Failed for " + path);
-            System.out.format("%30s%15s%15s%15s\n",
-                    path.getFileName(),
-                    getDisplay(jsonTime),
-                    getDisplay(jacksonsTime),
-                    getDisplay(gsonTime));
+            System.out.format("%33s%20s%20s%20s%20s%20s%20s\n",
+                    ANSI_RESET + path.getFileName(),
+                    getTimeDisplay(jsonTime),
+                    getTimeDisplay(jacksonsTime),
+                    getTimeDisplay(gsonTime),
+                    getSizeDisplay(jsonSize,oursSize),
+                    getSizeDisplay(jacksonsSize,oursSize),
+                    getSizeDisplay(gsonSize,oursSize));
         }
 
     }
 
-    private String getDisplay(final long time) {
-        return String.valueOf(time);
+    private String getTimeDisplay(final long time) {
+        StringBuilder builder = new StringBuilder();
+        if(time < 0) {
+            builder.append(ANSI_RED);
+        }
+        else {
+            builder.append(ANSI_GREEN);
+        }
+        return builder.append(time).toString();
+    }
+
+    private String getSizeDisplay(final long size,final long ourSize) {
+        StringBuilder builder = new StringBuilder();
+        long gap = size-ourSize;
+        if(gap < 0) {
+            builder.append(ANSI_RED);
+        }
+        else {
+            builder.append(ANSI_GREEN);
+        }
+        return builder.append(gap).toString();
     }
 
     @Test
