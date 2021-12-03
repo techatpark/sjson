@@ -300,7 +300,7 @@ public final class Json {
                 if(number <= Byte.MAX_VALUE) {
                     return Short.valueOf(number).byteValue();
                 }else {
-                    return null;
+                    return number;
                 }
             }
 
