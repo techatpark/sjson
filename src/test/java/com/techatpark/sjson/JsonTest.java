@@ -34,11 +34,11 @@ class JsonTest {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
+    public final ObjectMapper jackson = new ObjectMapper();
+    public final Json json = new Json();
+
     @Test
     void testParsing() throws IOException {
-
-        final ObjectMapper jackson = new ObjectMapper();
-        final Json json = new Json();
 
         MemoryMeter meter = MemoryMeter.builder().build();
 
@@ -139,29 +139,36 @@ class JsonTest {
 
     @Test
     void testNumbers() throws IOException {
-        final ObjectMapper jackson = new ObjectMapper();
         Map<String,Object> numbersMap = new HashMap<>();
 
         // Byte
         numbersMap.put("a-Byte",Long.valueOf(1L));
         numbersMap.put("a-min-Byte",Byte.MIN_VALUE);
-        numbersMap.put("a-max-Byte",Byte.MIN_VALUE);
+        numbersMap.put("a-max-Byte",Byte.MAX_VALUE);
 
         // Short
-        numbersMap.put("a-Short",Long.valueOf(1455L));
+        numbersMap.put("a-Short",Long.valueOf(-1455L));
         numbersMap.put("a-min-Short",Short.MIN_VALUE);
-        numbersMap.put("a-max-Short",Short.MIN_VALUE);
+        numbersMap.put("a-max-Short",Short.MAX_VALUE);
 
         // Integer
-        numbersMap.put("a-Short",Short.valueOf((short) 1234));
-        numbersMap.put("a-min-Short",Short.MIN_VALUE);
-        numbersMap.put("a-max-Short",Short.MIN_VALUE);
+        numbersMap.put("a-Integer",Integer.valueOf(567896));
+        numbersMap.put("a-min-Integer",Integer.MIN_VALUE);
+        numbersMap.put("a-max-Integer",Integer.MAX_VALUE);
+
         // Long
+        numbersMap.put("a-Long",Long.valueOf(568957854));
+        numbersMap.put("a-min-Long",Long.MIN_VALUE);
+        numbersMap.put("a-max-Long",Long.MAX_VALUE);
 
-        numbersMap = (Map<String, Object>) new Json().read(new StringReader(jackson.writeValueAsString(numbersMap)));
+        final Map<String,Object> map = (Map<String, Object>) json.read(new StringReader(jackson.writeValueAsString(numbersMap)));
 
-
-        Assertions.assertEquals(Byte.class,numbersMap.get("a-Byte").getClass(),"Byte not accommodated in Byte");
+        // Check Bytes
+        Assertions.assertAll("Byte Should be accomodated by Byte",
+                () -> Assertions.assertEquals(Byte.class, map.get("a-Byte").getClass()),
+                () -> Assertions.assertEquals(Byte.class, map.get("a-min-Byte").getClass()),
+                () -> Assertions.assertEquals(Byte.class, map.get("a-max-Byte").getClass())
+        );
 
     }
 

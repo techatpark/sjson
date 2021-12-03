@@ -290,13 +290,20 @@ public final class Json {
             }
             if(isNegative) {
                 number = (short) (number * -1);
-                return number >= Byte.MIN_VALUE ? (byte) number : number;
+                if(number >= Byte.MIN_VALUE) {
+                    return Short.valueOf(number).byteValue();
+                }
+                return number;
+
+            }else {
+                number = (short) ( number + ( (short) getValue(startingChar,length)) ) ;
+                if(number <= Byte.MAX_VALUE) {
+                    return Short.valueOf(number).byteValue();
+                }else {
+                    return null;
+                }
             }
-            number = (short) ( number + ( (short) getValue(startingChar,length)) ) ;
-            if(number <= Byte.MAX_VALUE) {
-                return Short.valueOf(number).byteValue();
-            }
-            return number;
+
         }
 
         /**
