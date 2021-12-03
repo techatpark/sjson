@@ -51,7 +51,7 @@ class JsonTest {
         long jacksonsTime, jsonTime, gsonTime, oursTime;
         long jacksonsSize, jsonSize, gsonSize, oursSize;
 
-        System.out.format( "%60s%45s\n" , "Speed", "Memory");
+        System.out.format( "%60s%45s\n" , "Memory", "Speed");
         System.out.format( ANSI_WHITE +"%60s%45s\n"+ ANSI_RESET , "=========", "=========");
 
         System.out.format( "%30s%15s%15s%15s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson","Org Json", "Jackson","Gson");
@@ -100,12 +100,13 @@ class JsonTest {
                     "Reverse JSON Failed for " + path);
             System.out.format("%33s%20s%20s%20s%20s%20s%20s\n",
                     ANSI_RESET + path.getFileName(),
-                    getTimeDisplay(jsonTime),
-                    getTimeDisplay(jacksonsTime),
-                    getTimeDisplay(gsonTime),
                     getSizeDisplay(jsonSize,oursSize),
                     getSizeDisplay(jacksonsSize,oursSize),
-                    getSizeDisplay(gsonSize,oursSize));
+                    getSizeDisplay(gsonSize,oursSize),
+                    getTimeDisplay(jsonTime),
+                    getTimeDisplay(jacksonsTime),
+                    getTimeDisplay(gsonTime)
+                    );
         }
 
     }
