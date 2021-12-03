@@ -53,6 +53,8 @@
     <properties>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.source>11</maven.compiler.source>
+        <jamm.version>0.4.1</jamm.version>
+        <jvm.options>-javaagent:${user.home}/.m2/repository/io/github/stephankoelle/jamm/${jamm.version}/jamm-${jamm.version}.jar --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens json.parser/com.techatpark.sjson=ALL-UNNAMED</jvm.options>
     </properties>
 
     <dependencyManagement>
@@ -60,7 +62,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.8.1</version>
+                <version>5.8.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -90,10 +92,9 @@
         <dependency>
             <groupId>io.github.stephankoelle</groupId>
             <artifactId>jamm</artifactId>
-            <version>0.4.1</version>
+            <version>${jamm.version}</version>
             <scope>test</scope>
         </dependency>
-
 
 
         <dependency>
@@ -105,6 +106,29 @@
 
     <build>
         <plugins>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>3.8.1</version>-->
+<!--                <configuration>-->
+<!--                    <compilerArgs>-->
+<!--&lt;!&ndash;                        <arg>${jvm.options}</arg>&ndash;&gt;-->
+<!--                    </compilerArgs>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                    <configuration>
+                        <argLine>${jvm.options}</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.22.2</version>
+                </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
