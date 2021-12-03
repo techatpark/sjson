@@ -45,10 +45,6 @@
     </scm>
 
     <distributionManagement>
-<!--        <snapshotRepository>-->
-<!--            <id>ossrh</id>-->
-<!--            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
-<!--        </snapshotRepository>-->
         <repository>
             <id>github</id>
             <name>GitHub OWNER Apache Maven Packages</name>
@@ -141,14 +137,18 @@
             </plugin>
 
 
-
-
         </plugins>
     </build>
 
     <profiles>
         <profile>
             <id>release</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>
