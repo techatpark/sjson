@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -138,13 +139,29 @@ class JsonTest {
 
     @Test
     void testNumbers() throws IOException {
-        Map<String,Object> numbersMap = (Map<String, Object>) new Json()
-                .read(
-                new BufferedReader(new FileReader(Paths.get("src/test/resources/samples/number-all-combinations.json").toFile()))
-        );
+        final ObjectMapper jackson = new ObjectMapper();
+        Map<String,Object> numbersMap = new HashMap<>();
+
+        // Byte
+        numbersMap.put("a-Byte",Long.valueOf(1L));
+        numbersMap.put("a-min-Byte",Byte.MIN_VALUE);
+        numbersMap.put("a-max-Byte",Byte.MIN_VALUE);
+
+        // Short
+        numbersMap.put("a-Short",Long.valueOf(1455L));
+        numbersMap.put("a-min-Short",Short.MIN_VALUE);
+        numbersMap.put("a-max-Short",Short.MIN_VALUE);
+
+        // Integer
+        numbersMap.put("a-Short",Short.valueOf((short) 1234));
+        numbersMap.put("a-min-Short",Short.MIN_VALUE);
+        numbersMap.put("a-max-Short",Short.MIN_VALUE);
+        // Long
+
+        numbersMap = (Map<String, Object>) new Json().read(new StringReader(jackson.writeValueAsString(numbersMap)));
 
 
-        Assertions.assertEquals(Byte.class,numbersMap.get("3-digit-byte-number").getClass(),"Byte not accommodated in Byte");
+        Assertions.assertEquals(Byte.class,numbersMap.get("a-Byte").getClass(),"Byte not accommodated in Byte");
 
     }
 
