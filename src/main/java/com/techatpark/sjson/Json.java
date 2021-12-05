@@ -311,14 +311,29 @@ public final class Json {
          * @param builder
          * @return number
          */
-        private int getInteger(final char startingChar,final StringBuilder builder) {
+        private Number getInteger(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
             int number = getValue(builder.charAt(length-1));
             for (int i = 1; i < length ; i++) {
                 number += getValue(builder.charAt(i-1),length-i);
             }
-            return isNegative ? (-1 * number)  : (int) (number + getValue(startingChar, length));
+            if(isNegative) {
+                number = (int) (number * -1);
+                if(number >= Short.MIN_VALUE) {
+                    return Integer.valueOf(number).shortValue();
+                }
+                return number;
+
+            }else {
+                number = (int) ( number + ( (int) getValue(startingChar,length)) ) ;
+                if(number <= Short.MAX_VALUE) {
+                    return Integer.valueOf(number).shortValue();
+                }else {
+                    return number;
+                }
+            }
+
         }
 
         /**
@@ -326,14 +341,29 @@ public final class Json {
          * @param builder
          * @return number
          */
-        private long getLong(final char startingChar,final StringBuilder builder) {
+        private Number getLong(final char startingChar,final StringBuilder builder) {
             boolean isNegative = (startingChar == '-') ;
             int length = builder.length();
             long number = getValue(builder.charAt(length-1));
             for (int i = 1; i < length ; i++) {
                 number += getValue(builder.charAt(i-1),length-i);
             }
-            return isNegative ? (-1 * number)  : (number + getValue(startingChar,length) ) ;
+            if(isNegative) {
+                number = (long) (number * -1);
+                if(number >= Integer.MIN_VALUE) {
+                    return Long.valueOf(number).intValue();
+                }
+                return number;
+
+            }else {
+                number = (long) ( number + ( (long) getValue(startingChar,length)) ) ;
+                if(number <= Integer.MAX_VALUE) {
+                    return Long.valueOf(number).intValue();
+                }else {
+                    return number;
+                }
+            }
+
         }
 
         private int getValue(final char character) {

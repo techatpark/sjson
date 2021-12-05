@@ -137,7 +137,7 @@ class JsonTest {
         numbersMap.put("a-max-Byte",Byte.MAX_VALUE);
 
         // Short
-        numbersMap.put("a-Short",Long.valueOf(-1455L));
+        numbersMap.put("a-Short",new BigInteger("1234"));
         numbersMap.put("a-min-Short",Short.MIN_VALUE);
         numbersMap.put("a-max-Short",Short.MAX_VALUE);
 
@@ -154,12 +154,25 @@ class JsonTest {
         final Map<String,Object> map = (Map<String, Object>) json.read(new StringReader(jackson.writeValueAsString(numbersMap)));
 
         // Check Bytes
-        Assertions.assertAll("Byte Should be accomodated by Byte",
+        Assertions.assertAll("Byte Should be accommodated by Byte",
                 () -> Assertions.assertEquals(Byte.class, map.get("a-Byte").getClass()),
                 () -> Assertions.assertEquals(Byte.class, map.get("a-min-Byte").getClass()),
                 () -> Assertions.assertEquals(Byte.class, map.get("a-max-Byte").getClass())
         );
 
+        // Check Short
+        Assertions.assertAll("Short Should be accommodated by Short",
+                () -> Assertions.assertEquals(Short.class, map.get("a-Short").getClass()),
+                () -> Assertions.assertEquals(Short.class, map.get("a-min-Short").getClass()),
+                () -> Assertions.assertEquals(Short.class, map.get("a-max-Short").getClass())
+        );
+
+        // Check Integer
+        Assertions.assertAll("Integer Should be accommodated by Integer",
+                () -> Assertions.assertEquals(Integer.class, map.get("a-Integer").getClass()),
+                () -> Assertions.assertEquals(Integer.class, map.get("a-min-Integer").getClass()),
+                () -> Assertions.assertEquals(Integer.class, map.get("a-max-Integer").getClass())
+        );
     }
 
     private Set<Path> getJSONFiles() throws IOException {
