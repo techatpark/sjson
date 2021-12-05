@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -114,35 +115,24 @@ class JsonTest {
 
     }
 
-    private String getTimeDisplay(final long time) {
-        StringBuilder builder = new StringBuilder();
-        if(time < 0) {
-            builder.append(ANSI_RED);
-        }
-        else {
-            builder.append(ANSI_GREEN);
-        }
-        return builder.append(time).toString();
-    }
 
-    private String getSizeDisplay(final long size,final long ourSize) {
-        StringBuilder builder = new StringBuilder();
-        long gap = size-ourSize;
-        if(gap < 0) {
-            builder.append(ANSI_RED);
-        }
-        else {
-            builder.append(ANSI_GREEN);
-        }
-        return builder.append(gap).toString();
-    }
 
+    /**
+     * Tests whether the numbers are accomadated in proper buckets.
+     *
+     * We will use BigInteger and BigDecimals to place the values.
+     * But when we get the JSON Object we should see
+     * 1. Byte,Short,Integer,Long or BigInteger for Numbers
+     * 2. Float, Double or BigDecimal for Decimal Numbers
+     *
+     * @throws IOException
+     */
     @Test
     void testNumbers() throws IOException {
         Map<String,Object> numbersMap = new HashMap<>();
 
         // Byte
-        numbersMap.put("a-Byte",Long.valueOf(1L));
+        numbersMap.put("a-Byte",new BigInteger("1"));
         numbersMap.put("a-min-Byte",Byte.MIN_VALUE);
         numbersMap.put("a-max-Byte",Byte.MAX_VALUE);
 
@@ -180,6 +170,29 @@ class JsonTest {
                     .filter(file -> !Files.isDirectory(file))
                     .collect(Collectors.toSet());
         }
+    }
+
+    private String getTimeDisplay(final long time) {
+        StringBuilder builder = new StringBuilder();
+        if(time < 0) {
+            builder.append(ANSI_RED);
+        }
+        else {
+            builder.append(ANSI_GREEN);
+        }
+        return builder.append(time).toString();
+    }
+
+    private String getSizeDisplay(final long size,final long ourSize) {
+        StringBuilder builder = new StringBuilder();
+        long gap = size-ourSize;
+        if(gap < 0) {
+            builder.append(ANSI_RED);
+        }
+        else {
+            builder.append(ANSI_GREEN);
+        }
+        return builder.append(gap).toString();
     }
 
 }
