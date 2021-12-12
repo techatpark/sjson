@@ -319,14 +319,14 @@ public final class Json {
                 number += getValue(builder.charAt(i-1),length-i);
             }
             if(isNegative) {
-                number = (int) (number * -1);
+                number =  (number * -1);
                 if(number >= Short.MIN_VALUE) {
                     return Integer.valueOf(number).shortValue();
                 }
                 return number;
 
             }else {
-                number = (int) ( number + ( (int) getValue(startingChar,length)) ) ;
+                number =  ( number + ( (int) getValue(startingChar,length)) ) ;
                 if(number <= Short.MAX_VALUE) {
                     return Integer.valueOf(number).shortValue();
                 }else {
@@ -349,14 +349,14 @@ public final class Json {
                 number += getValue(builder.charAt(i-1),length-i);
             }
             if(isNegative) {
-                number = (long) (number * -1);
+                number =  (number * -1);
                 if(number >= Integer.MIN_VALUE) {
                     return Long.valueOf(number).intValue();
                 }
                 return number;
 
             }else {
-                number = (long) ( number + ( (long) getValue(startingChar,length)) ) ;
+                number =  ( number + (  getValue(startingChar,length)) ) ;
                 if(number <= Integer.MAX_VALUE) {
                     return Long.valueOf(number).intValue();
                 }else {
@@ -436,7 +436,15 @@ public final class Json {
          * @return
          */
         private Number getDecimalNumber(final char startingChar,final StringBuilder builder,final StringBuilder decimal) {
-            return new BigDecimal(startingChar + builder.toString() + "." + decimal.toString());
+            BigDecimal bigDecimal = new BigDecimal(startingChar + builder.toString() + "." + decimal.toString());
+            // TODO Better Way to check if this is float / double
+            if(bigDecimal.equals(new BigDecimal(bigDecimal.floatValue()))) {
+                return bigDecimal.floatValue();
+            }
+            if(bigDecimal.equals(new BigDecimal(bigDecimal.doubleValue()))) {
+                return bigDecimal.doubleValue();
+            }
+            return bigDecimal;
         }
 
         /**
