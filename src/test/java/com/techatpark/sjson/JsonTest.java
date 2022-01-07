@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,20 +26,15 @@ import org.json.JSONObject;
 class JsonTest {
 
     public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
+
+    public final ObjectMapper jackson = new ObjectMapper();
+    public final Json json = new Json();
 
     @Test
     void testParsing() throws IOException {
-
-        final ObjectMapper jackson = new ObjectMapper();
-        final Json json = new Json();
 
         MemoryMeter meter = MemoryMeter.builder().build();
 
@@ -114,6 +110,76 @@ class JsonTest {
 
     }
 
+
+
+    /**
+     * Tests whether the numbers are accomadated in proper buckets.
+     *
+     * We will use BigInteger and BigDecimals to place the values.
+     * But when we get the JSON Object we should see
+     * 1. Byte,Short,Integer,Long or BigInteger for Numbers
+     * 2. Float, Double or BigDecimal for Decimal Numbers
+     *
+     * @throws IOException
+     */
+    @Test
+    void testNumbers() throws IOException {
+        Map<String,Object> numbersMap = new HashMap<>();
+
+        // Byte
+        numbersMap.put("a-Byte",new BigInteger("1"));
+        numbersMap.put("a-min-Byte",Byte.MIN_VALUE);
+        numbersMap.put("a-max-Byte",Byte.MAX_VALUE);
+
+        // Short
+        numbersMap.put("a-Short",new BigInteger("1234"));
+        numbersMap.put("a-min-Short",Short.MIN_VALUE);
+        numbersMap.put("a-max-Short",Short.MAX_VALUE);
+
+        // Integer
+        numbersMap.put("a-Integer",Integer.valueOf(567896));
+        numbersMap.put("a-min-Integer",Integer.MIN_VALUE);
+        numbersMap.put("a-max-Integer",Integer.MAX_VALUE);
+
+        // Long
+        numbersMap.put("a-Long",Long.valueOf(568957854));
+        numbersMap.put("a-min-Long",Long.MIN_VALUE);
+        numbersMap.put("a-max-Long",Long.MAX_VALUE);
+
+        final Map<String,Object> map = (Map<String, Object>) json.read(new StringReader(jackson.writeValueAsString(numbersMap)));
+
+        // Check Bytes
+        Assertions.assertAll("Byte Should be accommodated by Byte",
+                () -> Assertions.assertEquals(Byte.class, map.get("a-Byte").getClass()),
+                () -> Assertions.assertEquals(Byte.class, map.get("a-min-Byte").getClass()),
+                () -> Assertions.assertEquals(Byte.class, map.get("a-max-Byte").getClass())
+        );
+
+        // Check Short
+        Assertions.assertAll("Short Should be accommodated by Short",
+                () -> Assertions.assertEquals(Short.class, map.get("a-Short").getClass()),
+                () -> Assertions.assertEquals(Short.class, map.get("a-min-Short").getClass()),
+                () -> Assertions.assertEquals(Short.class, map.get("a-max-Short").getClass())
+        );
+
+        // Check Integer
+        Assertions.assertAll("Integer Should be accommodated by Integer",
+                () -> Assertions.assertEquals(Integer.class, map.get("a-Integer").getClass()),
+                () -> Assertions.assertEquals(Integer.class, map.get("a-min-Integer").getClass()),
+                () -> Assertions.assertEquals(Integer.class, map.get("a-max-Integer").getClass())
+        );
+    }
+
+    private Set<Path> getJSONFiles() throws IOException {
+        String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
+                System.getenv("SJSON_LOCAL_DIR");
+        try (Stream<Path> stream = Files.list(Paths.get(baseFolder))) {
+            return stream
+                    .filter(file -> !Files.isDirectory(file))
+                    .collect(Collectors.toSet());
+        }
+    }
+
     private String getTimeDisplay(final long time) {
         StringBuilder builder = new StringBuilder();
         if(time < 0) {
@@ -135,44 +201,6 @@ class JsonTest {
             builder.append(ANSI_GREEN);
         }
         return builder.append(gap).toString();
-    }
-
-    @Test
-    void testNumbers() throws IOException {
-        final ObjectMapper jackson = new ObjectMapper();
-        Map<String,Object> numbersMap = new HashMap<>();
-
-        // Byte
-        numbersMap.put("a-Byte",Long.valueOf(1L));
-        numbersMap.put("a-min-Byte",Byte.MIN_VALUE);
-        numbersMap.put("a-max-Byte",Byte.MIN_VALUE);
-
-        // Short
-        numbersMap.put("a-Short",Long.valueOf(1455L));
-        numbersMap.put("a-min-Short",Short.MIN_VALUE);
-        numbersMap.put("a-max-Short",Short.MIN_VALUE);
-
-        // Integer
-        numbersMap.put("a-Short",Short.valueOf((short) 1234));
-        numbersMap.put("a-min-Short",Short.MIN_VALUE);
-        numbersMap.put("a-max-Short",Short.MIN_VALUE);
-        // Long
-
-        numbersMap = (Map<String, Object>) new Json().read(new StringReader(jackson.writeValueAsString(numbersMap)));
-
-
-        Assertions.assertEquals(Byte.class,numbersMap.get("a-Byte").getClass(),"Byte not accommodated in Byte");
-
-    }
-
-    private Set<Path> getJSONFiles() throws IOException {
-        String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
-                System.getenv("SJSON_LOCAL_DIR");
-        try (Stream<Path> stream = Files.list(Paths.get(baseFolder))) {
-            return stream
-                    .filter(file -> !Files.isDirectory(file))
-                    .collect(Collectors.toSet());
-        }
     }
 
 }
