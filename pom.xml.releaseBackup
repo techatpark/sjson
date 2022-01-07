@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>SJson</name>
+    <description>JSON Parser for Serverside workloads</description>
+    <groupId>com.techatpark.sjson</groupId>
+    <artifactId>json-parser</artifactId>
+    <url>https://github.com/techatpark/sjson</url>
+    <version>1.0.8-SNAPSHOT</version>
+
+    <licenses>
+        <license>
+            <name>BSD-style</name>
+            <url>https://github.com/techatpark/sjson/blob/main/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Haripriya Ravichandran</name>
+            <organization>OurKadai</organization>
+            <email>haripriya.ravichandran@ourkadai.com</email>
+            <organizationUrl>http://www.ourkadai.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Sathish Kumar Thiyagarajan</name>
+            <organization>Techatpark</organization>
+            <organizationUrl>http://www.techatpark.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Manikanta Yarramsetti</name>
+            <organization>Techatpark</organization>
+            <organizationUrl>http://www.techatpark.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/techatpark/sjson.git</connection>
+        <developerConnection>scm:git:git@github.com:techatpark/techatpark.git</developerConnection>
+        <url>http://github.com/techatpark/sjson</url>
+        <tag>json-parser-1.0.1</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/techatpark/sjson</url>
+        </repository>
+    </distributionManagement>
+
+    <properties>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <jamm.version>0.4.1</jamm.version>
+        <jvm.options>
+            -javaagent:${user.home}/.m2/repository/io/github/stephankoelle/jamm/${jamm.version}/jamm-${jamm.version}.jar
+            --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
+            java.base/java.math=ALL-UNNAMED --add-opens json.parser/com.techatpark.sjson=ALL-UNNAMED
+        </jvm.options>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.8.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.stephankoelle</groupId>
+            <artifactId>jamm</artifactId>
+            <version>${jamm.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-compiler-plugin</artifactId>-->
+            <!--                <version>3.8.1</version>-->
+            <!--                <configuration>-->
+            <!--                    <compilerArgs>-->
+            <!--&lt;!&ndash;                        <arg>${jvm.options}</arg>&ndash;&gt;-->
+            <!--                    </compilerArgs>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <argLine>${jvm.options}</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.3</version>
+                        <configuration>
+                            <!--
+                              During release:perform, enable the "release" profile
+                             -->
+                            <releaseProfiles>release</releaseProfiles>
+                        </configuration>
+                    </plugin>
+
+                    <!--            <plugin>-->
+                    <!--                <groupId>org.sonatype.plugins</groupId>-->
+                    <!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
+                    <!--                <version>1.6.8</version>-->
+                    <!--                <extensions>true</extensions>-->
+                    <!--                <configuration>-->
+                    <!--                    <serverId>ossrh</serverId>-->
+                    <!--                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
+                    <!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+                    <!--                </configuration>-->
+                    <!--            </plugin>-->
+
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                        <!--Added because, nexus staging plugin doenot support java 11 and above for some reasons
+                        -->
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.thoughtworks.xstream</groupId>
+                                <artifactId>xstream</artifactId>
+                                <version>1.4.15</version> <!-- apparently this needs to be exactly this version -->
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Sign artifacts for uploading to maven central -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
