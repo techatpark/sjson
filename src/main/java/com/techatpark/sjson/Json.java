@@ -761,7 +761,7 @@ public final class Json {
             // This is Empty Object
             if (eoo) {
                 nextClean();
-                return Collections.EMPTY_MAP;
+                return Collections.emptyMap();
             }
             final Map<String, Object> jsonMap = new HashMap<>();
             while (!eoo) {
@@ -790,14 +790,14 @@ public final class Json {
          * @return list
          * @throws IOException
          */
-        private List getArray() throws IOException {
+        private List<Object> getArray() throws IOException {
             final Object value = getValue();
             // If not Empty Array
             if (value == this) {
                 nextClean();
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
-            final List list = new ArrayList();
+            final List<Object> list = new ArrayList();
             list.add(value);
             boolean eoa = endOfArray();
             while (!eoa) {
