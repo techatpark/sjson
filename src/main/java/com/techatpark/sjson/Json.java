@@ -669,10 +669,12 @@ public final class Json {
             BigDecimal bigDecimal = new BigDecimal(startingChar
                     + builder.toString() + "." + decimal.toString());
             // TODO Better Way to check if this is float / double
-            if (bigDecimal.equals(BigDecimal.valueOf(bigDecimal.floatValue()))) {
+            if (bigDecimal
+                    .equals(BigDecimal.valueOf(bigDecimal.floatValue()))) {
                 return bigDecimal.floatValue();
             }
-            if (bigDecimal.equals(BigDecimal.valueOf(bigDecimal.doubleValue()))) {
+            if (bigDecimal
+                    .equals(BigDecimal.valueOf(bigDecimal.doubleValue()))) {
                 return bigDecimal.doubleValue();
             }
             return bigDecimal;
