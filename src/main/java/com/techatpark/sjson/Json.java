@@ -210,6 +210,11 @@ public final class Json {
      */
     public static final long TEN_POW_18 = 1000000000000000000L;
 
+    /**
+     * For invalid JSON.
+     */
+    public static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
+
 
     /**
      * Reads JSON as a Java Object.
@@ -393,7 +398,7 @@ public final class Json {
                 builder.append(character);
             }
 
-            // May be a double ?!
+            // Maybe a double ?!
             if (character == '.' || character == 'e' || character == 'E') {
                 // Decimal Number
                 if (character == '.') {
@@ -694,7 +699,7 @@ public final class Json {
                 cursor = 'e';
                 return true;
             } else {
-                throw new IllegalArgumentException("Illegal value at ");
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
             }
         }
 
@@ -713,7 +718,7 @@ public final class Json {
                 cursor = 'e';
                 return false;
             } else {
-                throw new IllegalArgumentException("Illegal value at ");
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
             }
         }
 
@@ -731,7 +736,7 @@ public final class Json {
                 cursor = 'l';
                 return null;
             } else {
-                throw new IllegalArgumentException("Illegal value at ");
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
             }
         }
 
