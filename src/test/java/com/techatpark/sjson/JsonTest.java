@@ -48,7 +48,7 @@ class JsonTest {
         long jacksonsTime, jsonTime, gsonTime, oursTime;
         long jacksonsSize, jsonSize, gsonSize, oursSize;
 
-        System.out.format( "%60s%45s\n" , "Memory", "Speed");
+        System.out.format( "%60s%45s\n" , "Memory", "Performance");
         System.out.format( ANSI_WHITE +"%60s%45s\n"+ ANSI_RESET , "=========", "=========");
 
         System.out.format( "%30s%15s%15s%15s%4s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson","|","Org Json", "Jackson","Gson");

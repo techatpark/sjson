@@ -210,6 +210,11 @@ public final class Json {
      */
     public static final long TEN_POW_18 = 1000000000000000000L;
 
+    /**
+     * For invalid JSON.
+     */
+    public static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
+
 
     /**
      * Reads JSON as a Java Object.
@@ -403,7 +408,7 @@ public final class Json {
                 builder.append(character);
             }
 
-            // May be a double ?!
+            // Maybe a double ?!
             if (character == '.' || character == 'e' || character == 'E') {
                 // Decimal Number
                 if (character == '.') {
@@ -612,7 +617,6 @@ public final class Json {
 
         private long getValue(final char character, final int placement) {
             switch (placement) {
-//                case 0: return getNumericValue(character);
                 case NUMBER_ONE:
                     return getValue(character) * TEN_POW_1;
                 case NUMBER_TWO:
@@ -680,10 +684,12 @@ public final class Json {
             BigDecimal bigDecimal = new BigDecimal(startingChar
                     + builder.toString() + "." + decimal.toString());
             // TODO Better Way to check if this is float / double
-            if (bigDecimal.equals(new BigDecimal(bigDecimal.floatValue()))) {
+            if (bigDecimal
+                    .equals(BigDecimal.valueOf(bigDecimal.floatValue()))) {
                 return bigDecimal.floatValue();
             }
-            if (bigDecimal.equals(new BigDecimal(bigDecimal.doubleValue()))) {
+            if (bigDecimal
+                    .equals(BigDecimal.valueOf(bigDecimal.doubleValue()))) {
                 return bigDecimal.doubleValue();
             }
             return bigDecimal;
@@ -703,7 +709,7 @@ public final class Json {
                 cursor = 'e';
                 return true;
             } else {
-                throw new IllegalArgumentException("Illegal value at ");
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
             }
         }
 
@@ -722,7 +728,7 @@ public final class Json {
                 cursor = 'e';
                 return false;
             } else {
-                throw new IllegalArgumentException("Illegal value at ");
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
             }
         }
 
@@ -740,7 +746,7 @@ public final class Json {
                 cursor = 'l';
                 return null;
             } else {
-                throw new IllegalArgumentException("Illegal value at ");
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
             }
         }
 
@@ -807,7 +813,7 @@ public final class Json {
                 nextClean();
                 return Collections.emptyList();
             }
-            final List<Object> list = new ArrayList();
+            final List<Object> list = new ArrayList<>();
             list.add(value);
             boolean eoa = endOfArray();
             while (!eoa) {
