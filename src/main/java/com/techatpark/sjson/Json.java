@@ -236,6 +236,16 @@ public final class Json {
     }
 
     /**
+     * Get Json text for the Map.
+     * @param jsonMap
+     * @return jsonText
+     */
+    public String jsonText(final Map<String, Object> jsonMap) {
+        return null;
+    }
+
+
+    /**
      * ContentExtractor is responsible to interact with underlying reader to
      * extract the content.
      */
