@@ -33,15 +33,5 @@ public class CodeReviewTest {
 
         rule.check(classes);
 
-
-        GivenMethodsConjunction methods
-                = methods().that().areDeclaredInClassesThat()
-                .resideInAPackage("com.techatpark.sjson")
-                .and()
-                .arePublic();
-
-        rule = methods.should().beFinal();
-
-        rule.check(classes);
     }
 }
