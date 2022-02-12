@@ -1,5 +1,6 @@
 package com.techatpark.sjson;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
@@ -123,7 +124,7 @@ class JsonTest {
      * @throws IOException
      */
     @Test
-    void testNumbers() throws IOException {
+    void testNumberBuckets() throws IOException {
         Map<String,Object> numbersMap = new HashMap<>();
 
         // Byte
@@ -168,6 +169,24 @@ class JsonTest {
                 () -> Assertions.assertEquals(Integer.class, map.get("a-min-Integer").getClass()),
                 () -> Assertions.assertEquals(Integer.class, map.get("a-max-Integer").getClass())
         );
+    }
+
+    @Test
+    void testGetJsonText() throws JsonProcessingException {
+        Map<String,Object> jsonMap = new HashMap<>();
+
+        jsonMap.put("a-String","Hello");
+        jsonMap.put("a-Number",12);
+        jsonMap.put("a-Decimal-Number",12.3);
+        jsonMap.put("a-boolean",true);
+        jsonMap.put("a-null",null);
+
+        JsonNode jsonNode = jackson.valueToTree(jsonMap);
+
+        JsonNode ourJsonNode = jackson.readTree(json.jsonText(jsonMap));
+
+        Assertions.assertEquals(jsonNode,ourJsonNode,"Json Text is wrong");
+        
     }
 
     private Set<Path> getJSONFiles() throws IOException {

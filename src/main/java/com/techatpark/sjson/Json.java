@@ -246,7 +246,32 @@ public final class Json {
      * @return jsonText
      */
     public String jsonText(final Map<String, Object> jsonMap) {
-        return null;
+        StringBuffer buffer = new StringBuffer();
+        boolean isFirst = true ;
+        buffer.append("{");
+        for (Map.Entry<String,Object> entry:jsonMap.entrySet()) {
+            if(isFirst) {
+                isFirst = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\"");
+            buffer.append(entry.getKey());
+            buffer.append("\":");
+            if(entry.getValue() == null) {
+                buffer.append("null");
+            } else {
+                if(entry.getValue() instanceof String) {
+                    buffer.append("\"");
+                    buffer.append(entry.getValue());
+                    buffer.append("\"");
+                } else {
+                    buffer.append(entry.getValue());
+                }
+            }
+        }
+        buffer.append("}");
+        return buffer.toString();
     }
 
 
