@@ -265,6 +265,8 @@ public final class Json {
                     buffer.append("\"");
                     buffer.append(entry.getValue());
                     buffer.append("\"");
+                }else if(entry.getValue() instanceof Map) {
+                    buffer.append(jsonText((Map<String, Object>) entry.getValue()));
                 } else {
                     buffer.append(entry.getValue());
                 }
@@ -359,7 +361,7 @@ public final class Json {
                     case 0:
                     case '\n':
                     case '\r':
-                        throw new IllegalArgumentException("Invalid Token at ");
+                        throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                     case '\\':
                         character = (char) reader.read();
                         switch (character) {
@@ -391,7 +393,7 @@ public final class Json {
                                 break;
                             default:
                                 throw new IllegalArgumentException(
-                                        "Invalid Token at ");
+                                        ILLEGAL_JSON_VALUE);
                         }
                         break;
                     default:

@@ -180,6 +180,16 @@ class JsonTest {
         jsonMap.put("a-Decimal-Number",12.3);
         jsonMap.put("a-boolean",true);
         jsonMap.put("a-null",null);
+        jsonMap.put("a-empty-map",new HashMap<>());
+
+        Map<String,Object> innerMap = new HashMap<>();
+        innerMap.put("a-String","Hello");
+        innerMap.put("a-Number",12);
+        innerMap.put("a-Decimal-Number",12.3);
+        innerMap.put("a-boolean",true);
+        innerMap.put("a-null",null);
+        innerMap.put("a-empty-map",new HashMap<>());
+        jsonMap.put("a-inner-map",innerMap);
 
         JsonNode jsonNode = jackson.valueToTree(jsonMap);
 
