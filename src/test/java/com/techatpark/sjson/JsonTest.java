@@ -171,12 +171,23 @@ class JsonTest {
         );
     }
 
+    /**
+     * Test Plan.
+     * 1. Create a JSON Map ( Map of String and Objects )
+     * 2. Get a JsonNode from Jackson
+     * 3. Get a String from JSON and create our JSONNode using Jackson
+     * 4. Compare Both JSON Nodes and verify they are equal.
+     *
+     * @throws JsonProcessingException
+     */
     @Test
     void testGetJsonText() throws JsonProcessingException {
+        // 1. Create a JSON Map ( Map of String and Objects )
         Map<String,Object> jsonMap = new HashMap<>();
 
         jsonMap.put("a-String","Hello");
         jsonMap.put("a-Number",12);
+        jsonMap.put("a-Number",12L);
         jsonMap.put("a-Decimal-Number",12.3);
         jsonMap.put("a-boolean",true);
         jsonMap.put("a-null",null);
@@ -191,10 +202,14 @@ class JsonTest {
         innerMap.put("a-empty-map",new HashMap<>());
         jsonMap.put("a-inner-map",innerMap);
 
+        // 2. Get a JsonNode from Jackson
         JsonNode jsonNode = jackson.valueToTree(jsonMap);
 
-        JsonNode ourJsonNode = jackson.readTree(json.jsonText(jsonMap));
+        // 3. Get a String from JSON and create our JSONNode using Jackson
+        String ourJsonText  = json.jsonText(jsonMap);
+        JsonNode ourJsonNode = jackson.readTree(ourJsonText);
 
+        // 4. Compare Both JSON Nodes and verify they are equal.
         Assertions.assertEquals(jsonNode,ourJsonNode,"Json Text is wrong");
         
     }
