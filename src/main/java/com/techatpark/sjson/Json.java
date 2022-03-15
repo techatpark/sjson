@@ -247,10 +247,10 @@ public final class Json {
      */
     public String jsonText(final Map<String, Object> jsonMap) {
         StringBuffer buffer = new StringBuffer();
-        boolean isFirst = true ;
+        boolean isFirst = true;
         buffer.append("{");
-        for (Map.Entry<String,Object> entry:jsonMap.entrySet()) {
-            if(isFirst) {
+        for (Map.Entry<String, Object> entry:jsonMap.entrySet()) {
+            if (isFirst) {
                 isFirst = false;
             } else {
                 buffer.append(",");
@@ -258,15 +258,16 @@ public final class Json {
             buffer.append("\"");
             buffer.append(entry.getKey());
             buffer.append("\":");
-            if(entry.getValue() == null) {
+            if (entry.getValue() == null) {
                 buffer.append("null");
             } else {
-                if(entry.getValue() instanceof String) {
+                if (entry.getValue() instanceof String) {
                     buffer.append("\"");
                     buffer.append(entry.getValue());
                     buffer.append("\"");
-                }else if(entry.getValue() instanceof Map) {
-                    buffer.append(jsonText((Map<String, Object>) entry.getValue()));
+                } else if (entry.getValue() instanceof Map) {
+                    buffer.append(jsonText((Map<String, Object>)
+                            entry.getValue()));
                 } else {
                     buffer.append(entry.getValue());
                 }
