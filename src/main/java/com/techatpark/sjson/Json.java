@@ -246,35 +246,40 @@ public final class Json {
      * @return jsonText
      */
     public String jsonText(final Map<String, Object> jsonMap) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         boolean isFirst = true;
-        buffer.append("{");
+        builder.append("{");
         for (Map.Entry<String, Object> entry:jsonMap.entrySet()) {
             if (isFirst) {
                 isFirst = false;
             } else {
-                buffer.append(",");
+                builder.append(",");
             }
-            buffer.append("\"");
-            buffer.append(entry.getKey());
-            buffer.append("\":");
+            // Create Key enclosed with "
+            builder.append("\"");
+            builder.append(entry.getKey());
+
+            // Create Key value separator
+            builder.append("\":");
+
+            // Create Value in according to the Type
             if (entry.getValue() == null) {
-                buffer.append("null");
+                builder.append("null");
             } else {
                 if (entry.getValue() instanceof String) {
-                    buffer.append("\"");
-                    buffer.append(entry.getValue());
-                    buffer.append("\"");
+                    builder.append("\"");
+                    builder.append(entry.getValue());
+                    builder.append("\"");
                 } else if (entry.getValue() instanceof Map) {
-                    buffer.append(jsonText((Map<String, Object>)
+                    builder.append(jsonText((Map<String, Object>)
                             entry.getValue()));
                 } else {
-                    buffer.append(entry.getValue());
+                    builder.append(entry.getValue());
                 }
             }
         }
-        buffer.append("}");
-        return buffer.toString();
+        builder.append("}");
+        return builder.toString();
     }
 
 
