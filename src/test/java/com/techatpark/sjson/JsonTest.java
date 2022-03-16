@@ -187,7 +187,7 @@ class JsonTest {
 
         jsonMap.put("a-String","Hello");
         jsonMap.put("a-Number",12);
-        jsonMap.put("a-Number",12L);
+        jsonMap.put("a-Number",2147483649L);
         jsonMap.put("a-Decimal-Number",12.3);
         jsonMap.put("a-boolean",true);
         jsonMap.put("a-null",null);
