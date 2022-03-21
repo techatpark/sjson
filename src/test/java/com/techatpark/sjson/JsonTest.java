@@ -108,7 +108,6 @@ class JsonTest {
                     getTimeDisplay(gsonTime)
                     );
         }
-
     }
 
 
@@ -187,7 +186,7 @@ class JsonTest {
 
         jsonMap.put("a-String","Hello");
         jsonMap.put("a-Number",12);
-        jsonMap.put("a-Number",2147483649L);
+        jsonMap.put("a-Number",12L);
         jsonMap.put("a-Decimal-Number",12.3);
         jsonMap.put("a-boolean",true);
         jsonMap.put("a-null",null);
@@ -210,8 +209,7 @@ class JsonTest {
         JsonNode ourJsonNode = jackson.readTree(ourJsonText);
 
         // 4. Compare Both JSON Nodes and verify they are equal.
-        Assertions.assertEquals(jsonNode,ourJsonNode,"Json Text is wrong");
-        
+        Assertions.assertEquals(jsonNode.toString(),ourJsonNode.toString(),"Json Text is wrong");
     }
 
     private Set<Path> getJSONFiles() throws IOException {
@@ -246,5 +244,4 @@ class JsonTest {
         }
         return builder.append(gap).toString();
     }
-
 }
