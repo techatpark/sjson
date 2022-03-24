@@ -186,7 +186,7 @@ class JsonTest {
 
         jsonMap.put("a-String","Hello");
         jsonMap.put("a-Number",12);
-        jsonMap.put("a-Number",12L);
+        jsonMap.put("a-long",12L);
         jsonMap.put("a-Decimal-Number",12.3);
         jsonMap.put("a-boolean",true);
         jsonMap.put("a-null",null);
@@ -207,7 +207,7 @@ class JsonTest {
         // 3. Get a String from JSON and create our JSONNode using Jackson
         String ourJsonText  = json.jsonText(jsonMap);
         JsonNode ourJsonNode = jackson.readTree(ourJsonText);
-
+        System.out.println("--->" + ourJsonText);
         // 4. Compare Both JSON Nodes and verify they are equal.
         Assertions.assertEquals(jsonNode.toString(),ourJsonNode.toString(),"Json Text is wrong");
     }
