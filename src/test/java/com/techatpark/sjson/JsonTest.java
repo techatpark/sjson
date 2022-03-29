@@ -193,12 +193,24 @@ class JsonTest {
         jsonMap.put("a-empty-map",new HashMap<>());
 
         Map<String,Object> innerMap = new HashMap<>();
-        innerMap.put("a-String","Hello");
+        innerMap.put("a-String","Inner Hello");
         innerMap.put("a-Number",12);
+        innerMap.put("a-long",12L);
         innerMap.put("a-Decimal-Number",12.3);
         innerMap.put("a-boolean",true);
         innerMap.put("a-null",null);
-        innerMap.put("a-empty-map",new HashMap<>());
+
+
+        Map<String,Object> innerInnerMap = new HashMap<>();
+        innerInnerMap.put("a-String","Inner Inner Hello");
+        innerInnerMap.put("a-Number",13);
+        innerInnerMap.put("a-long",13L);
+        innerInnerMap.put("a-Decimal-Number",13.4);
+        innerInnerMap.put("a-boolean",true);
+        innerInnerMap.put("a-null",null);
+        innerInnerMap.put("a-empty-map",new HashMap<>());
+
+        innerMap.put("a-inner-inner-map",innerInnerMap);
         jsonMap.put("a-inner-map",innerMap);
 
         // 2. Get a JsonNode from Jackson
@@ -207,7 +219,7 @@ class JsonTest {
         // 3. Get a String from JSON and create our JSONNode using Jackson
         String ourJsonText  = json.jsonText(jsonMap);
         JsonNode ourJsonNode = jackson.readTree(ourJsonText);
-        System.out.println("--->" + ourJsonText);
+
         // 4. Compare Both JSON Nodes and verify they are equal.
         Assertions.assertEquals(jsonNode.toString(),ourJsonNode.toString(),"Json Text is wrong");
     }
