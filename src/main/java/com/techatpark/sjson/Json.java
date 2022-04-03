@@ -285,23 +285,24 @@ public final class Json {
     }
 
     /**
-     * Process String Array
+     * Process String Array.
      *
      * @param builder String builder object
      * @param arrayVal String Array
      */
-    private void processStringArray(StringBuilder builder, String[] arrayVal) {
+    private void processStringArray(final StringBuilder builder,
+                                    final String[] arrayVal) {
 
         int length = arrayVal.length;
 
         // Start of JSON Array
         builder.append("[");
 
-        for (int i = 0; i < length; i++){
+        for (int i = 0; i < length; i++) {
 
             processString(builder, arrayVal[i]);
 
-            if(i != (length - 1)) {
+            if (i != (length - 1)) {
                 builder.append(",");
             }
         }
@@ -311,34 +312,36 @@ public final class Json {
     }
 
     /**
-     * Process String
+     * Process String.
      *
      * @param builder
      * @param value
      */
-    private void processString(StringBuilder builder, String value) {
+    private void processString(final StringBuilder builder,
+                               final String value) {
         builder.append("\"");
         builder.append(value);
         builder.append("\"");
     }
 
     /**
-     *  Process Integer Array
+     *  Process Integer Array.
      *
      * @param builder String builder object
      * @param arrayVal Integer Array
      */
-    private void processIntegerArray(StringBuilder builder, Integer[] arrayVal) {
+    private void processIntegerArray(final StringBuilder builder,
+                                     final Integer[] arrayVal) {
         int length = arrayVal.length;
 
         // Start of JSON Array
         builder.append("[");
 
-        for (int i = 0; i < length; i++){
+        for (int i = 0; i < length; i++) {
 
             builder.append(arrayVal[i]);
 
-            if(i != (length - 1)) {
+            if (i != (length - 1)) {
                 builder.append(",");
             }
         }
