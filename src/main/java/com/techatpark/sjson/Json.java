@@ -268,8 +268,8 @@ public final class Json {
             } else {
                 if (entry.getValue() instanceof String[]) {
                     processStringArray(builder, (String[]) entry.getValue());
-                } else if (entry.getValue() instanceof Integer[]) {
-                    processIntegerArray(builder, (Integer[]) entry.getValue());
+                } else if (entry.getValue() instanceof Number[]) {
+                    processNumberArray(builder, (Number[]) entry.getValue());
                 } else if (entry.getValue() instanceof String) {
                     processString(builder, (String) entry.getValue());
                 } else if (entry.getValue() instanceof Map) {
@@ -330,8 +330,8 @@ public final class Json {
      * @param builder String builder object
      * @param arrayVal Integer Array
      */
-    private void processIntegerArray(final StringBuilder builder,
-                                     final Integer[] arrayVal) {
+    private void processNumberArray(final StringBuilder builder,
+                                    final Number[] arrayVal) {
         int length = arrayVal.length;
 
         // Start of JSON Array
