@@ -266,10 +266,12 @@ public final class Json {
             if (entry.getValue() == null) {
                 builder.append("null");
             } else {
-                if (entry.getValue() instanceof String) {
-                    builder.append("\"");
-                    builder.append(entry.getValue());
-                    builder.append("\"");
+                if (entry.getValue() instanceof String[]) {
+                    processStringArray(builder, (String[]) entry.getValue());
+                } else if (entry.getValue() instanceof Integer[]) {
+                    processIntegerArray(builder, (Integer[]) entry.getValue());
+                } else if (entry.getValue() instanceof String) {
+                    processString(builder, (String) entry.getValue());
                 } else if (entry.getValue() instanceof Map) {
                     builder.append(jsonText((Map<String, Object>)
                             entry.getValue()));
@@ -282,6 +284,68 @@ public final class Json {
         return builder.toString();
     }
 
+    /**
+     * Process String Array
+     *
+     * @param builder String builder object
+     * @param arrayVal String Array
+     */
+    private void processStringArray(StringBuilder builder, String[] arrayVal) {
+
+        int length = arrayVal.length;
+
+        // Start of JSON Array
+        builder.append("[");
+
+        for (int i = 0; i < length; i++){
+
+            processString(builder, arrayVal[i]);
+
+            if(i != (length - 1)) {
+                builder.append(",");
+            }
+        }
+
+        // End of JSON Array
+        builder.append("]");
+    }
+
+    /**
+     * Process String
+     *
+     * @param builder
+     * @param value
+     */
+    private void processString(StringBuilder builder, String value) {
+        builder.append("\"");
+        builder.append(value);
+        builder.append("\"");
+    }
+
+    /**
+     *  Process Integer Array
+     *
+     * @param builder String builder object
+     * @param arrayVal Integer Array
+     */
+    private void processIntegerArray(StringBuilder builder, Integer[] arrayVal) {
+        int length = arrayVal.length;
+
+        // Start of JSON Array
+        builder.append("[");
+
+        for (int i = 0; i < length; i++){
+
+            builder.append(arrayVal[i]);
+
+            if(i != (length - 1)) {
+                builder.append(",");
+            }
+        }
+
+        // End of JSON Array
+        builder.append("]");
+    }
 
     /**
      * ContentExtractor is responsible to interact with underlying reader to
@@ -930,6 +994,7 @@ public final class Json {
             }
             return character == ']';
         }
+
 
     }
 }

@@ -184,6 +184,9 @@ class JsonTest {
         // 1. Create a JSON Map ( Map of String and Objects )
         Map<String,Object> jsonMap = new HashMap<>();
 
+        String[] alpha = {"aaa", "bbb", "ccc", "ddd"};
+        Integer[] num = {100, 200, 300, 400};
+
         jsonMap.put("a-String","Hello");
         jsonMap.put("a-Number",12);
         jsonMap.put("a-long",12L);
@@ -191,6 +194,8 @@ class JsonTest {
         jsonMap.put("a-boolean",true);
         jsonMap.put("a-null",null);
         jsonMap.put("a-empty-map",new HashMap<>());
+        jsonMap.put("a-array-string", alpha);
+        jsonMap.put("a-array-integer", num);
 
         Map<String,Object> innerMap = new HashMap<>();
         innerMap.put("a-String","Inner Hello");
@@ -199,7 +204,6 @@ class JsonTest {
         innerMap.put("a-Decimal-Number",12.3);
         innerMap.put("a-boolean",true);
         innerMap.put("a-null",null);
-
 
         Map<String,Object> innerInnerMap = new HashMap<>();
         innerInnerMap.put("a-String","Inner Inner Hello");
@@ -218,6 +222,7 @@ class JsonTest {
 
         // 3. Get a String from JSON and create our JSONNode using Jackson
         String ourJsonText  = json.jsonText(jsonMap);
+        System.out.println("ourJsonText -> " + ourJsonText);
         JsonNode ourJsonNode = jackson.readTree(ourJsonText);
 
         // 4. Compare Both JSON Nodes and verify they are equal.
