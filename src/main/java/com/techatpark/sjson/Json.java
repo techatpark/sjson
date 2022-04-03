@@ -287,20 +287,20 @@ public final class Json {
     /**
      * Process String Array.
      *
-     * @param builder String builder object
-     * @param arrayVal String Array
+     * @param builder StringBuilder object
+     * @param arrayValue String Array
      */
     private void processStringArray(final StringBuilder builder,
-                                    final String[] arrayVal) {
+                                    final String[] arrayValue) {
 
-        int length = arrayVal.length;
+        int length = arrayValue.length;
 
         // Start of JSON Array
         builder.append("[");
 
         for (int i = 0; i < length; i++) {
 
-            processString(builder, arrayVal[i]);
+            processString(builder, arrayValue[i]);
 
             if (i != (length - 1)) {
                 builder.append(",");
@@ -325,23 +325,23 @@ public final class Json {
     }
 
     /**
-     *  Process Integer Array.
+     *  Process Number Array.
      *
-     * @param builder String builder object
-     * @param arrayVal Integer Array
+     * @param builder StringBuilder object
+     * @param arrayValue Number Array
      */
     private void processNumberArray(final StringBuilder builder,
-                                    final Number[] arrayVal) {
-        int length = arrayVal.length;
+                                    final Number[] arrayValue) {
+        int length = arrayValue.length;
 
         // Start of JSON Array
         builder.append("[");
 
         for (int i = 0; i < length; i++) {
 
-            builder.append(arrayVal[i]);
+            builder.append(arrayValue[i]);
 
-            if (i != (length - 1)) {
+            if (i != (length - NUMBER_ONE)) {
                 builder.append(",");
             }
         }
