@@ -174,7 +174,7 @@ class JsonTest {
      * Test Plan.
      * 1. Create a JSON Map ( Map of String and Objects )
      * 2. Get a JsonNode from Jackson
-     * 3. Get a String from JSON and create our JSONNode using Jackson
+     * 3. Get a String from SJson and create our JSONNode using Jackson
      * 4. Compare Both JSON Nodes and verify they are equal.
      *
      * @throws JsonProcessingException
@@ -220,7 +220,7 @@ class JsonTest {
         // 2. Get a JsonNode from Jackson
         JsonNode jsonNode = jackson.valueToTree(jsonMap);
 
-        // 3. Get a String from JSON and create our JSONNode using Jackson
+        // 3. Get a String from SJson and create our JSONNode using Jackson
         String ourJsonText  = json.jsonText(jsonMap);
         JsonNode ourJsonNode = jackson.readTree(ourJsonText);
 
@@ -228,6 +228,11 @@ class JsonTest {
         Assertions.assertEquals(jsonNode.toString(),ourJsonNode.toString(),"Json Text is wrong");
     }
 
+    /**
+     * Utility to get Json Files from Test Resources directory.
+     * @return Set of Paths
+     * @throws IOException
+     */
     private Set<Path> getJSONFiles() throws IOException {
         String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
                 System.getenv("SJSON_LOCAL_DIR");
@@ -238,6 +243,11 @@ class JsonTest {
         }
     }
 
+    /**
+     * Get Timing in Color Coded Format.
+     * @param time
+     * @return time as text
+     */
     private String getTimeDisplay(final long time) {
         StringBuilder builder = new StringBuilder();
         if(time < 0) {
@@ -249,6 +259,11 @@ class JsonTest {
         return builder.append(time).toString();
     }
 
+    /**
+     * Get Size in Color Coded Format.
+     * @param size
+     * @return size as text
+     */
     private String getSizeDisplay(final long size,final long ourSize) {
         StringBuilder builder = new StringBuilder();
         long gap = size-ourSize;
