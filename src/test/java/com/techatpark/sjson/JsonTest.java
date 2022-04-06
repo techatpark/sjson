@@ -113,7 +113,7 @@ class JsonTest {
 
 
     /**
-     * Tests whether the numbers are accomadated in proper buckets.
+     * Tests whether the numbers are accommodated in proper buckets.
      *
      * We will use BigInteger and BigDecimals to place the values.
      * But when we get the JSON Object we should see
@@ -221,8 +221,7 @@ class JsonTest {
         JsonNode jsonNode = jackson.valueToTree(jsonMap);
 
         // 3. Get a String from SJson and create our JSONNode using Jackson
-        String ourJsonText  = json.jsonText(jsonMap);
-        JsonNode ourJsonNode = jackson.readTree(ourJsonText);
+        JsonNode ourJsonNode = jackson.readTree(json.jsonText(jsonMap));
 
         // 4. Compare Both JSON Nodes and verify they are equal.
         Assertions.assertEquals(jsonNode.toString(),ourJsonNode.toString(),"Json Text is wrong");
@@ -244,7 +243,7 @@ class JsonTest {
     }
 
     /**
-     * Get Timing in Color Coded Format.
+     * Get Timing in a Color Coded Format.
      * @param time
      * @return time as text
      */
@@ -260,7 +259,7 @@ class JsonTest {
     }
 
     /**
-     * Get Size in Color Coded Format.
+     * Get Size in a Color Coded Format.
      * @param size
      * @return size as text
      */
