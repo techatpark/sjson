@@ -35,7 +35,7 @@ class JsonTest {
     public final Json json = new Json();
 
     @Test
-    void testParsing() throws IOException {
+    void testRead() throws IOException {
 
         MemoryMeter meter = MemoryMeter.builder().build();
 
@@ -172,59 +172,41 @@ class JsonTest {
 
     /**
      * Test Plan.
-     * 1. Create a JSON Map ( Map of String and Objects )
-     * 2. Get a JsonNode from Jackson
-     * 3. Get a String from SJson and create our JSONNode using Jackson
-     * 4. Compare Both JSON Nodes and verify they are equal.
-     *
+     * 1. Get JSON Object from Local Folder and Iterate
+     *      1. Get a JsonNode from Jackson
+     *      2. Get a String from SJson and create our JSONNode using Jackson
+     *      3. Compare Both JSON Nodes and verify they are equal.
      * @throws JsonProcessingException
      */
     @Test
-    void testGetJsonText() throws JsonProcessingException {
-        // 1. Create a JSON Map ( Map of String and Objects )
-        Map<String,Object> jsonMap = new HashMap<>();
+    void testGetJsonText() throws IOException {
 
-        String[] stringArray = {"aaa", "bbb", "ccc", "ddd"};
-        Number[] numberArray = {100, 200L, 200.40, 12};
+        Object ourJsonObject ;
 
-        jsonMap.put("a-String","Hello");
-        jsonMap.put("a-Number",12);
-        jsonMap.put("a-long",12L);
-        jsonMap.put("a-Decimal-Number",12.3);
-        jsonMap.put("a-boolean",true);
-        jsonMap.put("a-null",null);
-        jsonMap.put("a-empty-map",new HashMap<>());
-        jsonMap.put("a-array-string", stringArray);
-        jsonMap.put("a-array-integer-number", numberArray);
+        for (Path path :
+                getJSONFiles()) {
+            ourJsonObject = json
+                    .read(new BufferedReader(new FileReader(path.toFile())));
 
-        Map<String,Object> innerMap = new HashMap<>();
-        innerMap.put("a-String","Inner Hello");
-        innerMap.put("a-Number",12);
-        innerMap.put("a-long",12L);
-        innerMap.put("a-Decimal-Number",12.3);
-        innerMap.put("a-boolean",true);
-        innerMap.put("a-null",null);
+            if(ourJsonObject instanceof Map) {
+                // Limit One At File
+                if(path.toString().contains("object.json")) {
 
-        Map<String,Object> innerInnerMap = new HashMap<>();
-        innerInnerMap.put("a-String","Inner Inner Hello");
-        innerInnerMap.put("a-Number",13);
-        innerInnerMap.put("a-long",13L);
-        innerInnerMap.put("a-Decimal-Number",13.4);
-        innerInnerMap.put("a-boolean",true);
-        innerInnerMap.put("a-null",null);
-        innerInnerMap.put("a-empty-map",new HashMap<>());
+                    Map<String,Object> ourJsonAsMap = (Map<String, Object>) ourJsonObject;
+                    // 1. Get a JsonNode from Jackson
+                    JsonNode jsonNode = jackson.valueToTree(ourJsonAsMap);
 
-        innerMap.put("a-inner-inner-map",innerInnerMap);
-        jsonMap.put("a-inner-map",innerMap);
+                    // 2. Get a String from SJson and create our JSONNode using Jackson
+                    JsonNode ourJsonNode = jackson.readTree(json.jsonText(ourJsonAsMap));
 
-        // 2. Get a JsonNode from Jackson
-        JsonNode jsonNode = jackson.valueToTree(jsonMap);
+                    // 3. Compare Both JSON Nodes and verify they are equal.
+                    Assertions.assertEquals(jsonNode.toString(),ourJsonNode.toString(),"Json Text is wrong for "
+                            + path);
+                }
 
-        // 3. Get a String from SJson and create our JSONNode using Jackson
-        JsonNode ourJsonNode = jackson.readTree(json.jsonText(jsonMap));
 
-        // 4. Compare Both JSON Nodes and verify they are equal.
-        Assertions.assertEquals(jsonNode.toString(),ourJsonNode.toString(),"Json Text is wrong");
+            }
+        }
     }
 
     /**

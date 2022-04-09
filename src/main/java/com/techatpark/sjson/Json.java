@@ -285,6 +285,15 @@ public final class Json {
     }
 
     /**
+     * Get Json Array Text for the List.
+     * @param jsonArray
+     * @return
+     */
+    public String jsonText(final List<Object> jsonArray) {
+        return null;
+    }
+
+    /**
      * Process String Array.
      *
      * @param builder StringBuilder object
