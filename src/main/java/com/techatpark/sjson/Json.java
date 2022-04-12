@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Json parser for server side workloads.
@@ -284,7 +288,7 @@ public final class Json {
         } else if (value instanceof List) {
             builder.append(jsonText((List)
                     value));
-        }else {
+        } else {
             builder.append(value);
         }
 
@@ -299,14 +303,13 @@ public final class Json {
     public String jsonText(final List<Object> jsonArray) {
         final StringBuilder builder = new StringBuilder("[");
         boolean isFirst = true;
-        for (Object value:
-                jsonArray) {
-            if(isFirst) {
+        for (Object value: jsonArray) {
+            if (isFirst) {
                 isFirst = false;
-            }else {
+            } else {
                 builder.append(",");
             }
-            valueText(builder,value);
+            valueText(builder, value);
         }
         builder.append("]");
         return builder.toString();
@@ -430,7 +433,7 @@ public final class Json {
             }
 
             // String with escape characters ?!
-            for (; ; ) {
+            for (;;) {
                 switch (character) {
                     case 0:
                     case '\n':
