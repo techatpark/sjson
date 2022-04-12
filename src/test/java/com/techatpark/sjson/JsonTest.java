@@ -190,17 +190,18 @@ class JsonTest {
 
             if(ourJsonObject instanceof Map) {
                 // Limit One At File
-                if(path.toString().contains("object.json")) {
+                if(path.toString().contains("all-in-all.json")) {
 
                     Map<String,Object> ourJsonAsMap = (Map<String, Object>) ourJsonObject;
                     // 1. Get a JsonNode from Jackson
                     JsonNode jsonNode = jackson.valueToTree(ourJsonAsMap);
 
+                    System.out.printf(json.jsonText(ourJsonAsMap));
                     // 2. Get a String from SJson and create our JSONNode using Jackson
                     JsonNode ourJsonNode = jackson.readTree(json.jsonText(ourJsonAsMap));
 
                     // 3. Compare Both JSON Nodes and verify they are equal.
-                    Assertions.assertEquals(jsonNode.toString(),ourJsonNode.toString(),"Json Text is wrong for "
+                    Assertions.assertEquals(jsonNode,ourJsonNode,"Json Text is wrong for "
                             + path);
                 }
 

@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Json parser for server side workloads.
@@ -242,6 +238,7 @@ public final class Json {
 
     /**
      * Get Json text for the Map.
+     *
      * @param jsonMap
      * @return jsonText
      */
@@ -249,7 +246,7 @@ public final class Json {
         StringBuilder builder = new StringBuilder();
         boolean isFirst = true;
         builder.append("{");
-        for (Map.Entry<String, Object> entry:jsonMap.entrySet()) {
+        for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
             if (isFirst) {
                 isFirst = false;
             } else {
@@ -262,62 +259,57 @@ public final class Json {
             // Create Key value separator
             builder.append("\":");
 
-            // Create Value in according to the Type
-            if (entry.getValue() == null) {
-                builder.append("null");
-            } else {
-                if (entry.getValue() instanceof String[]) {
-                    processStringArray(builder, (String[]) entry.getValue());
-                } else if (entry.getValue() instanceof Number[]) {
-                    processNumberArray(builder, (Number[]) entry.getValue());
-                } else if (entry.getValue() instanceof String) {
-                    processString(builder, (String) entry.getValue());
-                } else if (entry.getValue() instanceof Map) {
-                    builder.append(jsonText((Map<String, Object>)
-                            entry.getValue()));
-                } else {
-                    builder.append(entry.getValue());
-                }
-            }
+            Object value = entry.getValue();
+
+            valueText(builder, value);
         }
         builder.append("}");
         return builder.toString();
     }
 
     /**
-     * Get Json Array Text for the List.
-     * @param jsonArray
-     * @return
+     * Create Value in according to the Type.
+     *
+     * @param builder
+     * @param value
      */
-    public String jsonText(final List<Object> jsonArray) {
-        return null;
+    private void valueText(final StringBuilder builder, final Object value) {
+        if (value == null) {
+            builder.append("null");
+        } else if (value instanceof String) {
+            processString(builder, (String) value);
+        } else if (value instanceof Map) {
+            builder.append(jsonText((Map<String, Object>)
+                    value));
+        } else if (value instanceof List) {
+            builder.append(jsonText((List)
+                    value));
+        }else {
+            builder.append(value);
+        }
+
     }
 
     /**
-     * Process String Array.
+     * Get Json Array Text for the List.
      *
-     * @param builder StringBuilder object
-     * @param arrayValue String Array
+     * @param jsonArray
+     * @return jsonTxt
      */
-    private void processStringArray(final StringBuilder builder,
-                                    final String[] arrayValue) {
-
-        int length = arrayValue.length;
-
-        // Start of JSON Array
-        builder.append("[");
-
-        for (int i = 0; i < length; i++) {
-
-            processString(builder, arrayValue[i]);
-
-            if (i != (length - 1)) {
+    public String jsonText(final List<Object> jsonArray) {
+        final StringBuilder builder = new StringBuilder("[");
+        boolean isFirst = true;
+        for (Object value:
+                jsonArray) {
+            if(isFirst) {
+                isFirst = false;
+            }else {
                 builder.append(",");
             }
+            valueText(builder,value);
         }
-
-        // End of JSON Array
         builder.append("]");
+        return builder.toString();
     }
 
     /**
@@ -328,15 +320,15 @@ public final class Json {
      */
     private void processString(final StringBuilder builder,
                                final String value) {
-        builder.append("\"");
-        builder.append(value);
-        builder.append("\"");
+        builder.append("\"")
+                .append(value)
+                .append("\"");
     }
 
     /**
-     *  Process Number Array.
+     * Process Number Array.
      *
-     * @param builder StringBuilder object
+     * @param builder    StringBuilder object
      * @param arrayValue Number Array
      */
     private void processNumberArray(final StringBuilder builder,
@@ -438,7 +430,7 @@ public final class Json {
             }
 
             // String with escape characters ?!
-            for ( ; ;) {
+            for (; ; ) {
                 switch (character) {
                     case 0:
                     case '\n':
@@ -590,7 +582,7 @@ public final class Json {
                     number += getValue(builder.charAt(i - 1), length - i);
                 }
                 return isNegative ? (byte) (number * -1)
-                    : (byte) (number
+                        : (byte) (number
                         + ((byte) getValue(startingChar, length)));
             } else {
                 return (byte) getValue(startingChar);

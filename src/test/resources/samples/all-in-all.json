@@ -1,0 +1,52 @@
+{
+  "a-string": "a-string-value",
+  "a-number": 12,
+  "a-decimal-number": 12.23,
+  "a-boolean": false,
+  "a-null": null,
+  "a-object": {
+    "a-string": "a-string-value",
+    "a-number": 12,
+    "a-decimal-number": 12.23,
+    "a-boolean": false,
+    "a-null": null
+  },
+  "a-string-array": [
+    "1",
+    "12"
+  ],
+  "a-number-array": [
+    1,
+    12
+  ],
+  "a-mixed-array": [
+    "1",
+    "12",
+    {
+      "a-string": "a-string-value",
+      "a-number": 12,
+      "a-decimal-number": 12.23,
+      "a-boolean": false,
+      "a-null": null,
+      "a-object": {
+        "a-string": "a-string-value",
+        "a-number": 12,
+        "a-decimal-number": 12.23,
+        "a-boolean": false,
+        "a-null": null
+      },
+      "a-string-array": [
+        "1",
+        "12"
+      ],
+      "a-number-array": [
+        1,
+        12
+      ],
+      "a-mixed-array": [
+        "1",
+        "12"
+      ]
+    }
+  ]
+}
