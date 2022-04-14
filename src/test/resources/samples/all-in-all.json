@@ -1,4 +1,5 @@
 {
+  "geometry":[0.0047,-0.25,0.25],
   "a-string": "a-string-value",
   "a\b": "a-escape-key",
   "a-escape-string": "a\\b",
