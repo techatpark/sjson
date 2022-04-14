@@ -267,8 +267,7 @@ public final class Json {
 
             valueText(builder, value);
         }
-        builder.append("}");
-        return builder.toString();
+        return builder.append("}").toString();
     }
 
     /**
@@ -311,8 +310,7 @@ public final class Json {
             }
             valueText(builder, value);
         }
-        builder.append("]");
-        return builder.toString();
+        return builder.append("]").toString();
     }
 
     /**

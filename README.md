@@ -43,6 +43,6 @@ Below VM Options should be added for JVM. This is required to calculate the size
 
 SJson was part of the tech talk series at Bangalore Opensource Java User Group. This will give an idea behind this work.
 
-Setup : https://www.youtube.com/watch?v=q_1H8ZJceA8
-Optimization: https://www.youtube.com/watch?v=XMRaLCRfvlQ
-Collection: https://www.youtube.com/watch?v=tMgy5PxPFQ4
+1. Setup : https://www.youtube.com/watch?v=q_1H8ZJceA8
+2. Optimization: https://www.youtube.com/watch?v=XMRaLCRfvlQ
+3. Collection: https://www.youtube.com/watch?v=tMgy5PxPFQ4
