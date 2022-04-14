@@ -1,6 +1,7 @@
 {
   "a-string": "a-string-value",
-  "a\b": "a-string-value",
+  "a\b": "a-escape-key",
+  "a-escape-string": "a\\b",
   "a-number": 12,
   "a-decimal-number": 12.23,
   "a-boolean": false,
