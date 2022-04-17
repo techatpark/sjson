@@ -190,9 +190,6 @@ class JsonTest {
                     .read(new BufferedReader(new FileReader(path.toFile())));
 
             if(sJsonObject instanceof Map) {
-                // Limit One At File
-                if(path.toString().contains("all-in-all.json")) {
-
                     Map<String,Object> sJsonAsMap = (Map<String, Object>) sJsonObject;
 
                     // 1. Get a JsonNode from Jackson
@@ -204,9 +201,6 @@ class JsonTest {
                     // 3. Compare Both JSON Nodes and verify they are equal.
                     Assertions.assertEquals(jsonNode,ourJsonNode,"Json Text is wrong for "
                             + path);
-                }
-
-
             }
         }
     }
