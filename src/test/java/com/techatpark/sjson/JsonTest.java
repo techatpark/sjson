@@ -32,7 +32,7 @@ class JsonTest {
     public static final String ANSI_WHITE = "\u001B[37m";
 
     public final ObjectMapper jackson = new ObjectMapper();
-    public final Json json = new Json();
+    public final Json sJson = new Json();
 
     @Test
     void testRead() throws IOException {
@@ -61,7 +61,7 @@ class JsonTest {
 
             // 1. SJson
             start = Instant.now();
-            ourJsonObject = json
+            ourJsonObject = sJson
                     .read(new BufferedReader(new FileReader(path.toFile())));
             oursTime = Duration.between(start, Instant.now()).toNanos();
             oursSize = meter.measureDeep(ourJsonObject);
@@ -146,7 +146,7 @@ class JsonTest {
         numbersMap.put("a-min-Long",Long.MIN_VALUE);
         numbersMap.put("a-max-Long",Long.MAX_VALUE);
 
-        final Map<String,Object> map = (Map<String, Object>) json.read(new StringReader(jackson.writeValueAsString(numbersMap)));
+        final Map<String,Object> map = (Map<String, Object>) sJson.read(new StringReader(jackson.writeValueAsString(numbersMap)));
 
         // Check Bytes
         Assertions.assertAll("Byte Should be accommodated by Byte",
@@ -181,24 +181,25 @@ class JsonTest {
     @Test
     void testGetJsonText() throws IOException {
 
-        Object ourJsonObject ;
+        Object sJsonObject ;
 
         for (Path path :
                 getJSONFiles()) {
-            ourJsonObject = json
+            // This is our Code
+            sJsonObject = sJson
                     .read(new BufferedReader(new FileReader(path.toFile())));
 
-            if(ourJsonObject instanceof Map) {
+            if(sJsonObject instanceof Map) {
                 // Limit One At File
                 if(path.toString().contains("all-in-all.json")) {
 
-                    Map<String,Object> ourJsonAsMap = (Map<String, Object>) ourJsonObject;
-                    // 1. Get a JsonNode from Jackson
-                    JsonNode jsonNode = jackson.valueToTree(ourJsonAsMap);
+                    Map<String,Object> sJsonAsMap = (Map<String, Object>) sJsonObject;
 
+                    // 1. Get a JsonNode from Jackson
+                    JsonNode jsonNode = jackson.readTree(path.toFile());
 
                     // 2. Get a String from SJson and create our JSONNode using Jackson
-                    JsonNode ourJsonNode = jackson.readTree(json.jsonText(ourJsonAsMap));
+                    JsonNode ourJsonNode = jackson.readTree(sJson.jsonText(sJsonAsMap));
 
                     // 3. Compare Both JSON Nodes and verify they are equal.
                     Assertions.assertEquals(jsonNode,ourJsonNode,"Json Text is wrong for "
