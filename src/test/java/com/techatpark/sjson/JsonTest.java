@@ -196,7 +196,7 @@ class JsonTest {
                     // 1. Get a JsonNode from Jackson
                     JsonNode jsonNode = jackson.valueToTree(ourJsonAsMap);
 
-                    System.out.printf(json.jsonText(ourJsonAsMap));
+
                     // 2. Get a String from SJson and create our JSONNode using Jackson
                     JsonNode ourJsonNode = jackson.readTree(json.jsonText(ourJsonAsMap));
 

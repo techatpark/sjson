@@ -271,6 +271,26 @@ public final class Json {
     }
 
     /**
+     * Get Json Array Text for the List.
+     *
+     * @param jsonArray
+     * @return jsonTxt
+     */
+    public String jsonText(final List<Object> jsonArray) {
+        final StringBuilder builder = new StringBuilder("[");
+        boolean isFirst = true;
+        for (Object value: jsonArray) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                builder.append(",");
+            }
+            valueText(builder, value);
+        }
+        return builder.append("]").toString();
+    }
+
+    /**
      * Create Value in according to the Type.
      *
      * @param builder
@@ -293,25 +313,7 @@ public final class Json {
 
     }
 
-    /**
-     * Get Json Array Text for the List.
-     *
-     * @param jsonArray
-     * @return jsonTxt
-     */
-    public String jsonText(final List<Object> jsonArray) {
-        final StringBuilder builder = new StringBuilder("[");
-        boolean isFirst = true;
-        for (Object value: jsonArray) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                builder.append(",");
-            }
-            valueText(builder, value);
-        }
-        return builder.append("]").toString();
-    }
+
 
     /**
      * Process String.
