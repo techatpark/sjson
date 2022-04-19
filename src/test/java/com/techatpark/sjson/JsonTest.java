@@ -3,6 +3,7 @@ package com.techatpark.sjson;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.github.jamm.MemoryMeter;
@@ -42,7 +43,7 @@ class JsonTest {
         Object ourJsonObject;
         JSONObject orgJSONObject;
         JsonNode jacksonJsonNode;
-        JsonObject gsonObject;
+        JsonElement gsonObject;
 
         Instant start;
 
@@ -84,8 +85,7 @@ class JsonTest {
 
             // 4. Gson
             start = Instant.now();
-            gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())))
-                    .getAsJsonObject();
+            gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())));
             gsonTime = Duration.between(start, Instant.now()).toNanos();
             gsonTime = Math.round(((gsonTime - oursTime) * 100) / gsonTime);
             gsonSize = meter.measureDeep(gsonObject);
