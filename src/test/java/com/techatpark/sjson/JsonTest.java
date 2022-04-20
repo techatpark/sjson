@@ -1,7 +1,9 @@
 package com.techatpark.sjson;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.github.jamm.MemoryMeter;
@@ -31,24 +33,24 @@ class JsonTest {
     public static final String ANSI_WHITE = "\u001B[37m";
 
     public final ObjectMapper jackson = new ObjectMapper();
-    public final Json json = new Json();
+    public final Json sJson = new Json();
 
     @Test
-    void testParsing() throws IOException {
+    void testRead() throws IOException {
 
         MemoryMeter meter = MemoryMeter.builder().build();
 
         Object ourJsonObject;
         JSONObject orgJSONObject;
         JsonNode jacksonJsonNode;
-        JsonObject gsonObject;
+        JsonElement gsonObject;
 
         Instant start;
 
         long jacksonsTime, jsonTime, gsonTime, oursTime;
         long jacksonsSize, jsonSize, gsonSize, oursSize;
 
-        System.out.format( "%60s%45s\n" , "Memory", "Speed");
+        System.out.format( "%60s%45s\n" , "Memory", "Performance");
         System.out.format( ANSI_WHITE +"%60s%45s\n"+ ANSI_RESET , "=========", "=========");
 
         System.out.format( "%30s%15s%15s%15s%4s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson","|","Org Json", "Jackson","Gson");
@@ -60,7 +62,7 @@ class JsonTest {
 
             // 1. SJson
             start = Instant.now();
-            ourJsonObject = json
+            ourJsonObject = sJson
                     .read(new BufferedReader(new FileReader(path.toFile())));
             oursTime = Duration.between(start, Instant.now()).toNanos();
             oursSize = meter.measureDeep(ourJsonObject);
@@ -83,8 +85,7 @@ class JsonTest {
 
             // 4. Gson
             start = Instant.now();
-            gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())))
-                    .getAsJsonObject();
+            gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())));
             gsonTime = Duration.between(start, Instant.now()).toNanos();
             gsonTime = Math.round(((gsonTime - oursTime) * 100) / gsonTime);
             gsonSize = meter.measureDeep(gsonObject);
@@ -107,13 +108,12 @@ class JsonTest {
                     getTimeDisplay(gsonTime)
                     );
         }
-
     }
 
 
 
     /**
-     * Tests whether the numbers are accomadated in proper buckets.
+     * Tests whether the numbers are accommodated in proper buckets.
      *
      * We will use BigInteger and BigDecimals to place the values.
      * But when we get the JSON Object we should see
@@ -123,7 +123,7 @@ class JsonTest {
      * @throws IOException
      */
     @Test
-    void testNumbers() throws IOException {
+    void testNumberBuckets() throws IOException {
         Map<String,Object> numbersMap = new HashMap<>();
 
         // Byte
@@ -146,7 +146,7 @@ class JsonTest {
         numbersMap.put("a-min-Long",Long.MIN_VALUE);
         numbersMap.put("a-max-Long",Long.MAX_VALUE);
 
-        final Map<String,Object> map = (Map<String, Object>) json.read(new StringReader(jackson.writeValueAsString(numbersMap)));
+        final Map<String,Object> map = (Map<String, Object>) sJson.read(new StringReader(jackson.writeValueAsString(numbersMap)));
 
         // Check Bytes
         Assertions.assertAll("Byte Should be accommodated by Byte",
@@ -170,6 +170,46 @@ class JsonTest {
         );
     }
 
+    /**
+     * Test Plan.
+     * 1. Get JSON Object from Local Folder and Iterate
+     *      1. Get a JsonNode from Jackson
+     *      2. Get a String from SJson and create our JSONNode using Jackson
+     *      3. Compare Both JSON Nodes and verify they are equal.
+     * @throws JsonProcessingException
+     */
+    @Test
+    void testGetJsonText() throws IOException {
+
+        Object sJsonObject ;
+
+        for (Path path :
+                getJSONFiles()) {
+            // This is our Code
+            sJsonObject = sJson
+                    .read(new BufferedReader(new FileReader(path.toFile())));
+
+            if(sJsonObject instanceof Map) {
+                    Map<String,Object> sJsonAsMap = (Map<String, Object>) sJsonObject;
+
+                    // 1. Get a JsonNode from Jackson
+                    JsonNode jsonNode = jackson.readTree(path.toFile());
+
+                    // 2. Get a String from SJson and create our JSONNode using Jackson
+                    JsonNode ourJsonNode = jackson.readTree(sJson.jsonText(sJsonAsMap));
+
+                    // 3. Compare Both JSON Nodes and verify they are equal.
+                    Assertions.assertEquals(jsonNode,ourJsonNode,"Json Text is wrong for "
+                            + path);
+            }
+        }
+    }
+
+    /**
+     * Utility to get Json Files from Test Resources directory.
+     * @return Set of Paths
+     * @throws IOException
+     */
     private Set<Path> getJSONFiles() throws IOException {
         String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
                 System.getenv("SJSON_LOCAL_DIR");
@@ -180,6 +220,11 @@ class JsonTest {
         }
     }
 
+    /**
+     * Get Timing in a Color Coded Format.
+     * @param time
+     * @return time as text
+     */
     private String getTimeDisplay(final long time) {
         StringBuilder builder = new StringBuilder();
         if(time < 0) {
@@ -191,6 +236,11 @@ class JsonTest {
         return builder.append(time).toString();
     }
 
+    /**
+     * Get Size in a Color Coded Format.
+     * @param size
+     * @return size as text
+     */
     private String getSizeDisplay(final long size,final long ourSize) {
         StringBuilder builder = new StringBuilder();
         long gap = size-ourSize;
@@ -202,5 +252,4 @@ class JsonTest {
         }
         return builder.append(gap).toString();
     }
-
 }

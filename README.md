@@ -39,3 +39,10 @@ Below VM Options should be added for JVM. This is required to calculate the size
 ````
 -javaagent:<<PATH_TO_JAR>>/jamm-0.4.1.jar --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED
 ````
+## How it works
+
+SJson was part of the tech talk series at Bangalore Opensource Java User Group. This will give an idea behind this work.
+
+1. Setup : https://www.youtube.com/watch?v=q_1H8ZJceA8
+2. Optimization: https://www.youtube.com/watch?v=XMRaLCRfvlQ
+3. Collection: https://www.youtube.com/watch?v=tMgy5PxPFQ4
