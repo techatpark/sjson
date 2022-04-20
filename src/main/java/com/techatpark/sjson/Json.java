@@ -257,11 +257,9 @@ public final class Json {
                 builder.append(",");
             }
             // Create Key enclosed with "
-            builder.append("\"");
-            builder.append(escapeJsonTxt(entry.getKey()));
-
-            // Create Key value separator
-            builder.append("\":");
+            builder.append("\"")
+                    .append(escapeJsonTxt(entry.getKey()))
+                    .append("\":"); // Create Key value separator
 
             Object value = entry.getValue();
 
@@ -339,7 +337,7 @@ public final class Json {
         if (s == null) {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         escape(s, sb);
         return sb.toString();
     }
@@ -349,7 +347,7 @@ public final class Json {
      * @param s - Must not be null.
      * @param sb
      */
-    private void escape(final String s, final StringBuffer sb) {
+    private void escape(final String s, final StringBuilder sb) {
         final int len = s.length();
         for (int i = 0; i < len; i++) {
             char ch = s.charAt(i);
@@ -394,31 +392,6 @@ public final class Json {
                     }
             }
         }
-    }
-    /**
-     * Process Number Array.
-     *
-     * @param builder    StringBuilder object
-     * @param arrayValue Number Array
-     */
-    private void processNumberArray(final StringBuilder builder,
-                                    final Number[] arrayValue) {
-        int length = arrayValue.length;
-
-        // Start of JSON Array
-        builder.append("[");
-
-        for (int i = 0; i < length; i++) {
-
-            builder.append(arrayValue[i]);
-
-            if (i != (length - NUMBER_ONE)) {
-                builder.append(",");
-            }
-        }
-
-        // End of JSON Array
-        builder.append("]");
     }
 
     /**
