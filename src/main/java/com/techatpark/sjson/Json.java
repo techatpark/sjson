@@ -570,6 +570,7 @@ public final class Json {
 
             // Happy Case : Read AllDigits before . character
             while ((character = (char) reader.read()) != ','
+                    && Character.isDigit(character)
                     && character != '.'
                     && character != '}'
                     && character != ']'
