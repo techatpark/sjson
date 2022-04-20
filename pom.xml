@@ -55,7 +55,18 @@
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.source>11</maven.compiler.source>
         <jamm.version>0.4.1</jamm.version>
+        <jackson.version>2.13.2.2</jackson.version>
+        <gson.version>2.9.0</gson.version>
+        <org.json.version>20220320</org.json.version>
+        <junit.version>5.8.2</junit.version>
+        <archunit.version>0.23.1</archunit.version>
+        <sonar.version>3.7.0.1746</sonar.version>
+        <surefire.version>2.22.2</surefire.version>
+        <jacoco.version>0.8.7</jacoco.version>
         <maven.checkstyle.version>3.1.2</maven.checkstyle.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-javadoc.version>3.3.1</maven-javadoc.version>
+        <maven-gpg.version>3.0.1</maven-gpg.version>
         <checkstyle.version>9.0.1</checkstyle.version>
         <jvm.options>
             -javaagent:${user.home}/.m2/repository/io/github/stephankoelle/jamm/${jamm.version}/jamm-${jamm.version}.jar
@@ -69,7 +80,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.8.2</version>
+                <version>${junit.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -80,19 +91,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.0</version>
+            <version>${jackson.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.9</version>
+            <version>${gson.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20210307</version>
+            <version>${org.json.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -113,7 +124,7 @@
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit</artifactId>
-            <version>0.22.0</version>
+            <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -151,13 +162,13 @@
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.7.0.1746</version>
+                <version>${sonar.version}</version>
             </plugin>
             <!--JaCoCo Maven Plugin-->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.7</version>
+                <version>${jacoco.version}</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -203,7 +214,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>${surefire.version}</version>
                 <configuration>
                     <argLine>${jvm.options}</argLine>
                 </configuration>
@@ -211,7 +222,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>${surefire.version}</version>
             </plugin>
 
 
@@ -232,7 +243,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
-                        <version>2.5.3</version>
+                        <version>${maven-release-plugin.version}</version>
                         <configuration>
                             <!--
                               During release:perform, enable the "release" profile
@@ -291,7 +302,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.3.1</version>
+                        <version>${maven-javadoc.version}</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -305,7 +316,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>${maven-gpg.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
