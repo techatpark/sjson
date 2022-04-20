@@ -586,8 +586,13 @@ public final class Json {
                 if (character == '.') {
                     StringBuilder decimals = new StringBuilder(CAPACITY);
                     while ((character = (char) reader.read()) != ','
+                            && (Character.isDigit(character)
+                            || character == '-'
+                            || character == 'e'
+                            || character == 'E')
                             && character != '}'
                             && character != ']'
+
                             && !isSpace(character)) {
                         decimals.append(character);
                     }
@@ -596,6 +601,10 @@ public final class Json {
                 } else { // Exponential Non Decimal Number
                     builder.append(character);
                     while ((character = (char) reader.read()) != ','
+                            && (Character.isDigit(character)
+                            || character == '-'
+                            || character == 'e'
+                            || character == 'E')
                             && character != '}'
                             && character != ']'
                             && !isSpace(character)) {
