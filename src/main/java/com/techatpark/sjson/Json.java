@@ -308,7 +308,6 @@ public final class Json {
         } else {
             builder.append(value);
         }
-
     }
 
 

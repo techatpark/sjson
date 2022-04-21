@@ -204,6 +204,19 @@ class JsonTest {
         }
     }
 
+    @Test
+    void testNullJsonText() {
+
+        // Kindly review this test case.
+        String nullJson = "{\"null\":null}";
+
+        Map<String,Object> sJsonAsMap = new HashMap<>();
+        sJsonAsMap.put(null, null);
+
+        String nullSJson = sJson.jsonText(sJsonAsMap);
+
+        Assertions.assertEquals(nullJson, nullSJson);
+    }
     /**
      * Utility to get Json Files from Test Resources directory.
      * @return Set of Paths
