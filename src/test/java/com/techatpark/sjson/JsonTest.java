@@ -109,6 +109,26 @@ class JsonTest {
         }
     }
 
+    /**
+     * Test Illegal JSON Texts.
+     * @throws IOException
+     */
+    @Test
+    void testIllegal() throws IOException {
+        try (Stream<Path> stream
+                     = Files.list(Paths.get("src/test/resources/illegal"))) {
+            stream
+                    .filter(path -> !Files.isDirectory(path))
+                    .forEach(path -> {
+
+                            Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+                                sJson.read(new FileReader(path.toFile()));
+                            });
+
+                    });
+        }
+    }
+
 
 
     /**
