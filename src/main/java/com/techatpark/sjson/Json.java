@@ -460,7 +460,7 @@ public final class Json {
             final StringBuilder sb = new StringBuilder();
             char character;
 
-            while ((character = (char) reader.read()) != '\\'
+            while ((character = getCharacter(reader.read())) != '\\'
                     && character != '"') {
                 sb.append(character);
             }
@@ -468,7 +468,7 @@ public final class Json {
             // Normal String
             if (character == '"') {
                 cursor = character;
-                return getString(sb);
+                return sb.toString();
             }
 
             // String with escape characters ?!
@@ -479,7 +479,7 @@ public final class Json {
                     case '\r':
                         throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                     case '\\':
-                        character = (char) reader.read();
+                        character = getCharacter(reader.read());
                         switch (character) {
                             case 'b':
                                 sb.append('\b');
@@ -515,7 +515,7 @@ public final class Json {
                     default:
                         if (character == '"') {
                             cursor = character;
-                            return getString(sb);
+                            return sb.toString();
                         }
                         sb.append(character);
                 }
@@ -523,8 +523,17 @@ public final class Json {
             }
         }
 
-        private String getString(final StringBuilder builder) {
-            return builder.toString();
+        /**
+         * get Character.
+         * @throws IllegalArgumentException if EOF
+         * @param value
+         * @return char value
+         */
+        private char getCharacter(final int value) {
+            if (value == -1) {
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
+            }
+            return (char) value;
         }
 
         /**
