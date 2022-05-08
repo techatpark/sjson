@@ -1027,12 +1027,12 @@ public final class Json {
                 return true;
             }
             if (cursor == ',') {
-                while (this.reader.read() != '"') {
+                while (getCharacter(this.reader.read()) != '"') {
                     continue;
                 }
                 return false;
             }
-            while ((character = (char) this.reader.read()) != '"'
+            while ((character = getCharacter(this.reader.read())) != '"'
                     && character != '}') {
                 continue;
             }
@@ -1053,7 +1053,7 @@ public final class Json {
             if (cursor == ',') {
                 return false;
             }
-            while ((character = (char) this.reader.read()) != ','
+            while ((character = getCharacter(this.reader.read())) != ','
                     && character != ']') {
                 continue;
             }
