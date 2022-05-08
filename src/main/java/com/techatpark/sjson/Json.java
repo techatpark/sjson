@@ -519,7 +519,7 @@ public final class Json {
                         }
                         sb.append(character);
                 }
-                character = (char) reader.read();
+                character = getCharacter(reader.read());
             }
         }
 
