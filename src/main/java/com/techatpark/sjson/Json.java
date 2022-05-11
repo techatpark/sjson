@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Json parser for server side workloads.
@@ -620,7 +616,7 @@ public final class Json {
             if (builder.length() < INTEGER_LENGTH) {
                 return getInteger(startingChar, builder);
             }
-            if (builder.length() < LONG_LENGTH) {
+            if (builder.length() <= LONG_LENGTH) {
                 return getLong(startingChar, builder);
             }
             return new BigInteger(startingChar + builder.toString());
