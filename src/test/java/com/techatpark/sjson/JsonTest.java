@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.github.jamm.MemoryMeter;
 import org.junit.jupiter.api.Assertions;
@@ -110,6 +109,26 @@ class JsonTest {
         }
     }
 
+    /**
+     * Test Illegal JSON Texts.
+     * @throws IOException
+     */
+    @Test
+    void testIllegal() throws IOException {
+        try (Stream<Path> stream
+                     = Files.list(Paths.get("src/test/resources/illegal"))) {
+            stream
+                    .filter(path -> !Files.isDirectory(path))
+                    .forEach(path -> {
+
+                            Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+                                sJson.read(new FileReader(path.toFile()));
+                            });
+
+                    });
+        }
+    }
+
 
 
     /**
@@ -205,6 +224,19 @@ class JsonTest {
         }
     }
 
+    @Test
+    void testNullJsonText() {
+
+        // Kindly review this test case.
+        String nullJson = "{\"null\":null}";
+
+        Map<String,Object> sJsonAsMap = new HashMap<>();
+        sJsonAsMap.put(null, null);
+
+        String nullSJson = sJson.jsonText(sJsonAsMap);
+
+        Assertions.assertEquals(nullJson, nullSJson);
+    }
     /**
      * Utility to get Json Files from Test Resources directory.
      * @return Set of Paths

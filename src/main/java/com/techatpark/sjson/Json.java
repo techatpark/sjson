@@ -257,11 +257,9 @@ public final class Json {
                 builder.append(",");
             }
             // Create Key enclosed with "
-            builder.append("\"");
-            builder.append(escapeJsonTxt(entry.getKey()));
-
-            // Create Key value separator
-            builder.append("\":");
+            builder.append("\"")
+                    .append(escapeJsonTxt(entry.getKey()))
+                    .append("\":"); // Create Key value separator
 
             Object value = entry.getValue();
 
@@ -310,7 +308,6 @@ public final class Json {
         } else {
             builder.append(value);
         }
-
     }
 
 
@@ -339,7 +336,7 @@ public final class Json {
         if (s == null) {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         escape(s, sb);
         return sb.toString();
     }
@@ -349,7 +346,7 @@ public final class Json {
      * @param s - Must not be null.
      * @param sb
      */
-    private void escape(final String s, final StringBuffer sb) {
+    private void escape(final String s, final StringBuilder sb) {
         final int len = s.length();
         for (int i = 0; i < len; i++) {
             char ch = s.charAt(i);
@@ -394,31 +391,6 @@ public final class Json {
                     }
             }
         }
-    }
-    /**
-     * Process Number Array.
-     *
-     * @param builder    StringBuilder object
-     * @param arrayValue Number Array
-     */
-    private void processNumberArray(final StringBuilder builder,
-                                    final Number[] arrayValue) {
-        int length = arrayValue.length;
-
-        // Start of JSON Array
-        builder.append("[");
-
-        for (int i = 0; i < length; i++) {
-
-            builder.append(arrayValue[i]);
-
-            if (i != (length - NUMBER_ONE)) {
-                builder.append(",");
-            }
-        }
-
-        // End of JSON Array
-        builder.append("]");
     }
 
     /**
@@ -488,15 +460,14 @@ public final class Json {
             final StringBuilder sb = new StringBuilder();
             char character;
 
-            while ((character = (char) reader.read()) != '\\'
+            while ((character = getCharacter(reader.read())) != '\\'
                     && character != '"') {
                 sb.append(character);
             }
 
             // Normal String
             if (character == '"') {
-                cursor = character;
-                return getString(sb);
+                return sb.toString();
             }
 
             // String with escape characters ?!
@@ -507,7 +478,7 @@ public final class Json {
                     case '\r':
                         throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                     case '\\':
-                        character = (char) reader.read();
+                        character = getCharacter(reader.read());
                         switch (character) {
                             case 'b':
                                 sb.append('\b');
@@ -542,17 +513,25 @@ public final class Json {
                         break;
                     default:
                         if (character == '"') {
-                            cursor = character;
-                            return getString(sb);
+                            return sb.toString();
                         }
                         sb.append(character);
                 }
-                character = (char) reader.read();
+                character = getCharacter(reader.read());
             }
         }
 
-        private String getString(final StringBuilder builder) {
-            return builder.toString();
+        /**
+         * get Character.
+         * @throws IllegalArgumentException if EOF
+         * @param value
+         * @return char value
+         */
+        private char getCharacter(final int value) {
+            if (value == -1) {
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
+            }
+            return (char) value;
         }
 
         /**
@@ -596,7 +575,7 @@ public final class Json {
                             && !isSpace(character)) {
                         decimals.append(character);
                     }
-                    cursor = character;
+                    setCursor(character);
                     return getDecimalNumber(startingChar, builder, decimals);
                 } else { // Exponential Non Decimal Number
                     builder.append(character);
@@ -610,15 +589,13 @@ public final class Json {
                             && !isSpace(character)) {
                         builder.append(character);
                     }
-                    cursor = character;
+                    setCursor(character);
                     return getExponentialNumber(startingChar, builder);
                 }
-
             } else {
-                cursor = character;
+                setCursor(character);
                 return getNumber(startingChar, builder);
             }
-
         }
 
         /**
@@ -639,7 +616,7 @@ public final class Json {
             if (builder.length() < INTEGER_LENGTH) {
                 return getInteger(startingChar, builder);
             }
-            if (builder.length() < LONG_LENGTH) {
+            if (builder.length() <= LONG_LENGTH) {
                 return getLong(startingChar, builder);
             }
             return new BigInteger(startingChar + builder.toString());
@@ -887,7 +864,7 @@ public final class Json {
             if (charBuffer[0] == 'r'
                     && charBuffer[1] == 'u'
                     && charBuffer[2] == 'e') {
-                cursor = 'e';
+                // cursor = 'e';
                 return true;
             } else {
                 throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
@@ -895,7 +872,7 @@ public final class Json {
         }
 
         /**
-         * Reads False from Reader. Reader will stip at the "e" symbol.
+         * Reads False from Reader. Reader will strip at the "e" symbol.
          *
          * @return string
          * @throws IOException
@@ -906,7 +883,7 @@ public final class Json {
                     && charBuffer[NUMBER_ONE] == 'l'
                     && charBuffer[NUMBER_TWO] == 's'
                     && charBuffer[NUMBER_THREE] == 'e') {
-                cursor = 'e';
+                // cursor = 'e';
                 return false;
             } else {
                 throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
@@ -924,7 +901,7 @@ public final class Json {
             if (charBuffer[NUMBER_ZERO] == 'u'
                     && charBuffer[NUMBER_ONE] == 'l'
                     && charBuffer[NUMBER_TWO] == 'l') {
-                cursor = 'l';
+                // cursor = 'l';
                 return null;
             } else {
                 throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
@@ -976,7 +953,7 @@ public final class Json {
          * @throws IOException
          */
         private String getKey() throws IOException {
-            String key = getString().intern();
+            final String key = getString().intern();
             nextClean();
             return key;
         }
@@ -1017,7 +994,7 @@ public final class Json {
             do {
                 character = (char) this.reader.read();
             } while (isSpace(character));
-            cursor = character;
+            setCursor(character);
             return cursor;
         }
 
@@ -1046,12 +1023,12 @@ public final class Json {
                 return true;
             }
             if (cursor == ',') {
-                while (this.reader.read() != '"') {
+                while (getCharacter(this.reader.read()) != '"') {
                     continue;
                 }
                 return false;
             }
-            while ((character = (char) this.reader.read()) != '"'
+            while ((character = getCharacter(this.reader.read())) != '"'
                     && character != '}') {
                 continue;
             }
@@ -1072,11 +1049,19 @@ public final class Json {
             if (cursor == ',') {
                 return false;
             }
-            while ((character = (char) this.reader.read()) != ','
+            while ((character = getCharacter(this.reader.read())) != ','
                     && character != ']') {
                 continue;
             }
             return character == ']';
+        }
+
+        /**
+         * Sets Cursor at given Character.
+         * @param character
+         */
+        private void setCursor(final Character character) {
+            cursor = character;
         }
 
 
