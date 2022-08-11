@@ -28,7 +28,3 @@ jobs:
       run: mvn -B jacoco:prepare-agent test jacoco:report -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Packaging
-      run: mvn -B install -DskipTests -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
