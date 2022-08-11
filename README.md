@@ -4,10 +4,10 @@
 
 SJson is a json parser for server side workloads. It tries to get optimized memory and performance with below goals.
 
-1. Trust the validity of json documents
-2. It is just enough to say invalid, reasoning is optional
-3. Represent Json in native format.
-4. No external dependencies
+1. Represent Json in native format.
+2. No external dependencies
+3. Trust the validity of json documents
+4. It is just enough to say invalid, reasoning is optional
 
 **Note:** This is **not** general purpose parser. This is specifically written for REST Client use case. 
 1. Service to Service Communications in microservices
