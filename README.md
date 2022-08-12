@@ -1,11 +1,13 @@
+[![Build](https://github.com/techatpark/sjson/actions/workflows/develop.yml/badge.svg)](https://github.com/techatpark/sjson/actions/workflows/develop.yml)
+
 # SJson
 
 SJson is a json parser for server side workloads. It tries to get optimized memory and performance with below goals.
 
-1. Trust the validity of json documents
-2. It is just enough to say invalid, reasoning is optional
-3. Represent Json in native format.
-4. No external dependencies
+1. Represent Json in native format.
+2. No external dependencies
+3. Trust the validity of json documents
+4. It is just enough to say invalid, reasoning is optional
 
 **Note:** This is **not** general purpose parser. This is specifically written for REST Client use case. 
 1. Service to Service Communications in microservices
@@ -37,3 +39,10 @@ Below VM Options should be added for JVM. This is required to calculate the size
 ````
 -javaagent:<<PATH_TO_JAR>>/jamm-0.4.1.jar --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED
 ````
+## How it works
+
+SJson was part of the tech talk series at Bangalore Opensource Java User Group. This will give an idea behind this work.
+
+1. Setup : https://www.youtube.com/watch?v=q_1H8ZJceA8
+2. Optimization: https://www.youtube.com/watch?v=XMRaLCRfvlQ
+3. Collection: https://www.youtube.com/watch?v=tMgy5PxPFQ4
