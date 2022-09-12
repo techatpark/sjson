@@ -87,6 +87,12 @@ class NumberParserTest {
                 BigInteger.class,
                 parser.parseNumber(BigInteger.valueOf(Long.MAX_VALUE).multiply(BigInteger.TWO).toString(),false),
                 "BigInteger Max not identified properly");
+
+        Assertions.assertEquals(
+                new BigInteger("-999999999999987777777"),
+                parser.parseNumber("999999999999987777777",true),
+                "BigInteger Max not identified properly");
+
     }
 
     @Test
