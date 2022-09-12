@@ -5,7 +5,6 @@ import com.techatpark.sjson.util.NumberParser;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -611,12 +610,13 @@ public final class Json {
                                  final StringBuilder builder) {
             switch (startingChar) {
                 case '-':
-                    return NumberParser.parseNumber(builder.toString(),true);
+                    return NumberParser.parseNumber(builder.toString(), true);
                 case '+':
-                    return NumberParser.parseNumber(builder.toString(),false);
+                    return NumberParser.parseNumber(builder.toString(), false);
                 default:
-                    return NumberParser.parseNumber(builder.insert(0,startingChar)
-                            .toString(),false);
+                    return NumberParser.parseNumber(builder
+                            .insert(0, startingChar)
+                            .toString(), false);
             }
         }
 
@@ -671,18 +671,8 @@ public final class Json {
         private Number getDecimalNumber(final char startingChar,
                                         final StringBuilder builder,
                                         final StringBuilder decimal) {
-            BigDecimal bigDecimal = new BigDecimal(startingChar
+            return NumberParser.parseDecimalNumber(startingChar
                     + builder.toString() + "." + decimal.toString());
-            // TODO Better Way to check if this is float / double
-            if (bigDecimal
-                    .equals(BigDecimal.valueOf(bigDecimal.floatValue()))) {
-                return bigDecimal.floatValue();
-            }
-            if (bigDecimal
-                    .equals(BigDecimal.valueOf(bigDecimal.doubleValue()))) {
-                return bigDecimal.doubleValue();
-            }
-            return bigDecimal;
         }
 
         /**

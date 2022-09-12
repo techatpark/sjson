@@ -216,16 +216,24 @@ public final class NumberParser {
      * @return Float,Double or BigDecimal
      */
     public static Number parseDecimalNumber(final String source) {
-        float aFloat = Float.parseFloat(source);
-        if (aFloat == Float.POSITIVE_INFINITY) {
-            double aDouble = Double.parseDouble(source);
-            if (aDouble == Double.POSITIVE_INFINITY) {
-                return new BigDecimal(source);
+        BigDecimal bigDecimal = new BigDecimal(source);
+        // TODO Better Way to check if this is float / double
+        try {
+            if (bigDecimal
+                    .equals(new BigDecimal(
+                            Float.toString(bigDecimal.floatValue())))) {
+                return bigDecimal.floatValue();
             }
-            return aDouble;
+            if (bigDecimal
+                    .equals(BigDecimal.valueOf(bigDecimal.doubleValue()))) {
+                return bigDecimal.doubleValue();
+            }
+        } catch (java.lang.NumberFormatException ne) {
+            return bigDecimal;
         }
 
-        return aFloat;
+        return bigDecimal;
+
     }
 
 }
