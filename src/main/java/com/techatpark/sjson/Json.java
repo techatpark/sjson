@@ -1,5 +1,7 @@
 package com.techatpark.sjson;
 
+import com.techatpark.sjson.util.NumberParser;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -607,144 +609,17 @@ public final class Json {
          */
         private Number getNumber(final char startingChar,
                                  final StringBuilder builder) {
-            if (builder.length() < BYTE_LENGTH) {
-                return getByte(startingChar, builder);
-            }
-            if (builder.length() < SHORT_LENGTH) {
-                return getShort(startingChar, builder);
-            }
-            if (builder.length() < INTEGER_LENGTH) {
-                return getInteger(startingChar, builder);
-            }
-            if (builder.length() <= LONG_LENGTH) {
-                return getLong(startingChar, builder);
-            }
-            return new BigInteger(startingChar + builder.toString());
-        }
-
-        /**
-         * Get Byte from String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private byte getByte(final char startingChar,
-                             final StringBuilder builder) {
-            boolean isNegative = (startingChar == '-');
-            int length = builder.length();
-            if (length != 0) {
-                byte number = (byte) getValue(builder.charAt(length - 1));
-                for (int i = 1; i < length; i++) {
-                    number += getValue(builder.charAt(i - 1), length - i);
-                }
-                return isNegative ? (byte) (number * -1)
-                        : (byte) (number
-                        + ((byte) getValue(startingChar, length)));
-            } else {
-                return (byte) getValue(startingChar);
+            switch (startingChar) {
+                case '-':
+                    return NumberParser.parseNumber(builder.toString(),true);
+                case '+':
+                    return NumberParser.parseNumber(builder.toString(),false);
+                default:
+                    return NumberParser.parseNumber(builder.insert(0,startingChar)
+                            .toString(),false);
             }
         }
 
-        /**
-         * Get Short from String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getShort(final char startingChar,
-                                final StringBuilder builder) {
-            boolean isNegative = (startingChar == '-');
-            int length = builder.length();
-            short number = (short) getValue(builder.charAt(length - 1));
-            for (int i = 1; i < length; i++) {
-                number += getValue(builder.charAt(i - 1), length - i);
-            }
-            if (isNegative) {
-                number = (short) (number * -1);
-                if (number >= Byte.MIN_VALUE) {
-                    return Short.valueOf(number).byteValue();
-                }
-                return number;
-
-            } else {
-                number = (short) (number
-                        + ((short) getValue(startingChar, length)));
-                if (number <= Byte.MAX_VALUE) {
-                    return Short.valueOf(number).byteValue();
-                } else {
-                    return number;
-                }
-            }
-
-        }
-
-        /**
-         * Get Integer from String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getInteger(final char startingChar,
-                                  final StringBuilder builder) {
-            boolean isNegative = (startingChar == '-');
-            int length = builder.length();
-            int number = getValue(builder.charAt(length - 1));
-            for (int i = 1; i < length; i++) {
-                number += getValue(builder.charAt(i - 1), length - i);
-            }
-            if (isNegative) {
-                number = (number * -1);
-                if (number >= Short.MIN_VALUE) {
-                    return Integer.valueOf(number).shortValue();
-                }
-                return number;
-
-            } else {
-                number = (number + ((int) getValue(startingChar, length)));
-                if (number <= Short.MAX_VALUE) {
-                    return Integer.valueOf(number).shortValue();
-                } else {
-                    return number;
-                }
-            }
-
-        }
-
-        /**
-         * Get Long from String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getLong(final char startingChar,
-                               final StringBuilder builder) {
-            boolean isNegative = (startingChar == '-');
-            int length = builder.length();
-            long number = getValue(builder.charAt(length - 1));
-            for (int i = 1; i < length; i++) {
-                number += getValue(builder.charAt(i - 1), length - i);
-            }
-            if (isNegative) {
-                number = (number * -1);
-                if (number >= Integer.MIN_VALUE) {
-                    return Long.valueOf(number).intValue();
-                }
-                return number;
-
-            } else {
-                number = (number + (getValue(startingChar, length)));
-                if (number <= Integer.MAX_VALUE) {
-                    return Long.valueOf(number).intValue();
-                } else {
-                    return number;
-                }
-            }
-
-        }
 
         private int getValue(final char character) {
             switch (character) {
@@ -770,49 +645,6 @@ public final class Json {
                     return NUMBER_NINE;
                 default:
                     throw new IllegalArgumentException("Invalid JSON at");
-            }
-        }
-
-        private long getValue(final char character, final int placement) {
-            switch (placement) {
-                case NUMBER_ONE:
-                    return getValue(character) * TEN_POW_1;
-                case NUMBER_TWO:
-                    return getValue(character) * TEN_POW_2;
-                case NUMBER_THREE:
-                    return getValue(character) * TEN_POW_3;
-                case NUMBER_FOUR:
-                    return getValue(character) * TEN_POW_4;
-                case NUMBER_FIVE:
-                    return getValue(character) * TEN_POW_5;
-                case NUMBER_SIX:
-                    return getValue(character) * TEN_POW_6;
-                case NUMBER_SEVEN:
-                    return getValue(character) * TEN_POW_7;
-                case NUMBER_EIGHT:
-                    return getValue(character) * TEN_POW_8;
-                case NUMBER_NINE:
-                    return getValue(character) * TEN_POW_9;
-                case NUMBER_TEN:
-                    return getValue(character) * TEN_POW_10;
-                case NUMBER_ELEVEN:
-                    return getValue(character) * TEN_POW_11;
-                case NUMBER_TWELVE:
-                    return getValue(character) * TEN_POW_12;
-                case NUMBER_THIRTEEN:
-                    return getValue(character) * TEN_POW_13;
-                case NUMBER_FOURTEEN:
-                    return getValue(character) * TEN_POW_14;
-                case NUMBER_FIFTEEN:
-                    return getValue(character) * TEN_POW_15;
-                case NUMBER_SIXTEEN:
-                    return getValue(character) * TEN_POW_16;
-                case NUMBER_SEVENTEEN:
-                    return getValue(character) * TEN_POW_17;
-                case NUMBER_EIGHTEEN:
-                    return getValue(character) * TEN_POW_18;
-                default:
-                    throw new IllegalArgumentException("Invalid JSON");
             }
         }
 

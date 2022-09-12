@@ -3,7 +3,7 @@ package com.techatpark.sjson.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class NumberParser {
+public final class NumberParser {
 
     /**
      * Number 1.
@@ -83,12 +83,19 @@ public class NumberParser {
     public static final int NUMBER_NINETEEN = 19;
 
     /**
+     * Utility Class.
+     */
+    private NumberParser() {
+    }
+
+    /**
      * Gets Compact Number of a source String.
      * @param source
      * @param isNegative
      * @return Byte, Short, Integer, Long or BigInteger
      */
-    public Number parseNumber(final String source, final boolean isNegative) {
+    public static Number parseNumber(final String source,
+                                     final boolean isNegative) {
         switch (source.length()) {
             case NUMBER_ONE:
             case NUMBER_TWO:
@@ -122,13 +129,14 @@ public class NumberParser {
             case NUMBER_NINETEEN:
                 return getLongOrBigNumber(source, isNegative);
             default:
-                return new BigInteger(source);
+                return isNegative ? new BigInteger("-" + source)
+                        : new BigInteger(source);
         }
     }
 
 
 
-    private Number getByteOrShort(final String source,
+    private static Number getByteOrShort(final String source,
                                   final boolean isNegative) {
         short aShort = Short.parseShort(source);
         if (isNegative) {
@@ -148,7 +156,7 @@ public class NumberParser {
 
     }
 
-    private Number getShortOrInteger(final String source,
+    private static Number getShortOrInteger(final String source,
                                      final boolean isNegative) {
         int integer = Integer.parseUnsignedInt(source);
         if (isNegative) {
@@ -166,7 +174,7 @@ public class NumberParser {
 
     }
 
-    private Number getIntegerOrLong(final String source,
+    private static Number getIntegerOrLong(final String source,
                                     final boolean isNegative) {
         long aLong = Long.parseUnsignedLong(source);
         if (isNegative) {
@@ -184,7 +192,7 @@ public class NumberParser {
 
     }
 
-    private Number getLongOrBigNumber(final String source,
+    private static Number getLongOrBigNumber(final String source,
                                       final boolean isNegative) {
         BigInteger bigInteger = new BigInteger(source);
         if (isNegative) {
@@ -207,7 +215,7 @@ public class NumberParser {
      * @param source
      * @return Float,Double or BigDecimal
      */
-    public Number parseDecimalNumber(final String source) {
+    public static Number parseDecimalNumber(final String source) {
         float aFloat = Float.parseFloat(source);
         if (aFloat == Float.POSITIVE_INFINITY) {
             double aDouble = Double.parseDouble(source);
