@@ -100,8 +100,6 @@ class NumberParserTest {
                 NumberParser.parseDecimalNumber(Float.toString(Float.MAX_VALUE)),
                 "Float Max not identified properly");
 
-
-
         Assertions.assertInstanceOf(
                 BigDecimal.class,
                 NumberParser.parseDecimalNumber(BigDecimal.valueOf(Double.MAX_VALUE)
@@ -112,11 +110,6 @@ class NumberParserTest {
                 8787878.9898,
                 NumberParser.parseDecimalNumber("8787878.9898"),
                 "Double not identified properly");
-
-//        Assertions.assertInstanceOf(
-//                Double.class,
-//                NumberParser.parseDecimalNumber(Double.toString(Double.MAX_VALUE)),
-//                "Double Max not identified properly");
 
     }
 }

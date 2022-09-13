@@ -41,25 +41,7 @@ public final class Json {
      */
     public static final int CAPACITY = 10;
 
-    /**
-     * Max length A Byte can accommodate.
-     */
-    public static final int BYTE_LENGTH = 2;
 
-    /**
-     * Max length A Short can accommodate.
-     */
-    public static final int SHORT_LENGTH = 4;
-
-    /**
-     * Max length A Integer can accommodate.
-     */
-    public static final int INTEGER_LENGTH = 9;
-
-    /**
-     * Max length A Long can accommodate.
-     */
-    public static final int LONG_LENGTH = 18;
 
     /**
      * Number 0.
@@ -81,135 +63,6 @@ public final class Json {
      * Number 4.
      */
     public static final int NUMBER_FOUR = 4;
-    /**
-     * Number 5.
-     */
-    public static final int NUMBER_FIVE = 5;
-    /**
-     * Number 6.
-     */
-    public static final int NUMBER_SIX = 6;
-    /**
-     * Number 7.
-     */
-    public static final int NUMBER_SEVEN = 7;
-    /**
-     * Number 8.
-     */
-    public static final int NUMBER_EIGHT = 8;
-    /**
-     * Number 9.
-     */
-    public static final int NUMBER_NINE = 9;
-    /**
-     * Number 10.
-     */
-    public static final int NUMBER_TEN = 10;
-    /**
-     * Number 11.
-     */
-    public static final int NUMBER_ELEVEN = 11;
-    /**
-     * Number 12.
-     */
-    public static final int NUMBER_TWELVE = 12;
-    /**
-     * Number 13.
-     */
-    public static final int NUMBER_THIRTEEN = 13;
-    /**
-     * Number 14.
-     */
-    public static final int NUMBER_FOURTEEN = 14;
-    /**
-     * Number 15.
-     */
-    public static final int NUMBER_FIFTEEN = 15;
-    /**
-     * Number 16.
-     */
-    public static final int NUMBER_SIXTEEN = 16;
-    /**
-     * Number 17.
-     */
-    public static final int NUMBER_SEVENTEEN = 17;
-    /**
-     * Number 18.
-     */
-    public static final int NUMBER_EIGHTEEN = 18;
-
-    /**
-     * 10 power of 1.
-     */
-    public static final long TEN_POW_1 = 10L;
-    /**
-     * 10 power of 2.
-     */
-    public static final long TEN_POW_2 = 100L;
-    /**
-     * 10 power of 3.
-     */
-    public static final long TEN_POW_3 = 1000L;
-    /**
-     * 10 power of 4.
-     */
-    public static final long TEN_POW_4 = 10000L;
-    /**
-     * 10 power of 5.
-     */
-    public static final long TEN_POW_5 = 100000L;
-    /**
-     * 10 power of 6.
-     */
-    public static final long TEN_POW_6 = 1000000L;
-    /**
-     * 10 power of 7.
-     */
-    public static final long TEN_POW_7 = 10000000L;
-    /**
-     * 10 power of 8.
-     */
-    public static final long TEN_POW_8 = 100000000L;
-    /**
-     * 10 power of 9.
-     */
-    public static final long TEN_POW_9 = 1000000000L;
-    /**
-     * 10 power of 10.
-     */
-    public static final long TEN_POW_10 = 10000000000L;
-    /**
-     * 10 power of 11.
-     */
-    public static final long TEN_POW_11 = 100000000000L;
-    /**
-     * 10 power of 12.
-     */
-    public static final long TEN_POW_12 = 1000000000000L;
-    /**
-     * 10 power of 13.
-     */
-    public static final long TEN_POW_13 = 10000000000000L;
-    /**
-     * 10 power of 14.
-     */
-    public static final long TEN_POW_14 = 100000000000000L;
-    /**
-     * 10 power of 15.
-     */
-    public static final long TEN_POW_15 = 1000000000000000L;
-    /**
-     * 10 power of 16.
-     */
-    public static final long TEN_POW_16 = 10000000000000000L;
-    /**
-     * 10 power of 17.
-     */
-    public static final long TEN_POW_17 = 100000000000000000L;
-    /**
-     * 10 power of 18.
-     */
-    public static final long TEN_POW_18 = 1000000000000000000L;
 
     /**
      * For invalid JSON.
@@ -617,34 +470,6 @@ public final class Json {
                     return NumberParser.parseNumber(builder
                             .insert(0, startingChar)
                             .toString(), false);
-            }
-        }
-
-
-        private int getValue(final char character) {
-            switch (character) {
-                case '0':
-                    return NUMBER_ZERO;
-                case '1':
-                    return NUMBER_ONE;
-                case '2':
-                    return NUMBER_TWO;
-                case '3':
-                    return NUMBER_THREE;
-                case '4':
-                    return NUMBER_FOUR;
-                case '5':
-                    return NUMBER_FIVE;
-                case '6':
-                    return NUMBER_SIX;
-                case '7':
-                    return NUMBER_SEVEN;
-                case '8':
-                    return NUMBER_EIGHT;
-                case '9':
-                    return NUMBER_NINE;
-                default:
-                    throw new IllegalArgumentException("Invalid JSON at");
             }
         }
 
