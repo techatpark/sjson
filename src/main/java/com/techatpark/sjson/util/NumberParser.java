@@ -3,6 +3,9 @@ package com.techatpark.sjson.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+/**
+ * Parser for Numbers.
+ */
 public final class NumberParser {
 
     /**
@@ -24,63 +27,63 @@ public final class NumberParser {
     /**
      * Number 5.
      */
-    public static final int NUMBER_FIVE = 5;
+    private static final int NUMBER_FIVE = 5;
     /**
      * Number 6.
      */
-    public static final int NUMBER_SIX = 6;
+    private static final int NUMBER_SIX = 6;
     /**
      * Number 7.
      */
-    public static final int NUMBER_SEVEN = 7;
+    private static final int NUMBER_SEVEN = 7;
     /**
      * Number 8.
      */
-    public static final int NUMBER_EIGHT = 8;
+    private static final int NUMBER_EIGHT = 8;
     /**
      * Number 9.
      */
-    public static final int NUMBER_NINE = 9;
+    private static final int NUMBER_NINE = 9;
     /**
      * Number 10.
      */
-    public static final int NUMBER_TEN = 10;
+    private static final int NUMBER_TEN = 10;
     /**
      * Number 11.
      */
-    public static final int NUMBER_ELEVEN = 11;
+    private static final int NUMBER_ELEVEN = 11;
     /**
      * Number 12.
      */
-    public static final int NUMBER_TWELVE = 12;
+    private static final int NUMBER_TWELVE = 12;
     /**
      * Number 13.
      */
-    public static final int NUMBER_THIRTEEN = 13;
+    private static final int NUMBER_THIRTEEN = 13;
     /**
      * Number 14.
      */
-    public static final int NUMBER_FOURTEEN = 14;
+    private static final int NUMBER_FOURTEEN = 14;
     /**
      * Number 15.
      */
-    public static final int NUMBER_FIFTEEN = 15;
+    private static final int NUMBER_FIFTEEN = 15;
     /**
      * Number 16.
      */
-    public static final int NUMBER_SIXTEEN = 16;
+    private static final int NUMBER_SIXTEEN = 16;
     /**
      * Number 17.
      */
-    public static final int NUMBER_SEVENTEEN = 17;
+    private static final int NUMBER_SEVENTEEN = 17;
     /**
      * Number 18.
      */
-    public static final int NUMBER_EIGHTEEN = 18;
+    private static final int NUMBER_EIGHTEEN = 18;
     /**
      * Number 19.
      */
-    public static final int NUMBER_NINETEEN = 19;
+    private static final int NUMBER_NINETEEN = 19;
 
     /**
      * Utility Class.

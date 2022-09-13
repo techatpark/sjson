@@ -29,45 +29,29 @@ public final class Json {
     /**
      * Length for hex char.
      */
-    public static final int LENGTH = 4;
+    private static final int LENGTH = 4;
 
     /**
      * Radix for hex char.
      */
-    public static final int RADIX = 16;
+    private static final int RADIX = 16;
 
     /**
      * Capacity.
      */
-    public static final int CAPACITY = 10;
+    private static final int CAPACITY = 10;
 
 
 
     /**
      * Number 0.
      */
-    public static final int NUMBER_ZERO = 0;
-    /**
-     * Number 1.
-     */
-    public static final int NUMBER_ONE = 1;
-    /**
-     * Number 2.
-     */
-    public static final int NUMBER_TWO = 2;
-    /**
-     * Number 3.
-     */
-    public static final int NUMBER_THREE = 3;
-    /**
-     * Number 4.
-     */
-    public static final int NUMBER_FOUR = 4;
+    private static final int NUMBER_ZERO = 0;
 
     /**
      * For invalid JSON.
      */
-    public static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
+    private static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
 
 
     /**
@@ -236,7 +220,8 @@ public final class Json {
                             || (ch >= '\u2000' && ch <= '\u20FF')) {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
-                        for (int k = 0; k < NUMBER_FOUR - ss.length(); k++) {
+                        for (int k = 0; k < NumberParser.NUMBER_FOUR
+                                - ss.length(); k++) {
                             sb.append('0');
                         }
                         sb.append(ss.toUpperCase());
@@ -507,7 +492,7 @@ public final class Json {
          * @throws IOException
          */
         private boolean getTrue() throws IOException {
-            char[] charBuffer = next(NUMBER_THREE);
+            char[] charBuffer = next(NumberParser.NUMBER_THREE);
             if (charBuffer[0] == 'r'
                     && charBuffer[1] == 'u'
                     && charBuffer[2] == 'e') {
@@ -525,11 +510,11 @@ public final class Json {
          * @throws IOException
          */
         private boolean getFalse() throws IOException {
-            char[] charBuffer = next(NUMBER_FOUR);
+            char[] charBuffer = next(NumberParser.NUMBER_FOUR);
             if (charBuffer[NUMBER_ZERO] == 'a'
-                    && charBuffer[NUMBER_ONE] == 'l'
-                    && charBuffer[NUMBER_TWO] == 's'
-                    && charBuffer[NUMBER_THREE] == 'e') {
+                    && charBuffer[NumberParser.NUMBER_ONE] == 'l'
+                    && charBuffer[NumberParser.NUMBER_TWO] == 's'
+                    && charBuffer[NumberParser.NUMBER_THREE] == 'e') {
                 // cursor = 'e';
                 return false;
             } else {
@@ -544,10 +529,10 @@ public final class Json {
          * @throws IOException
          */
         private Object getNull() throws IOException {
-            char[] charBuffer = next(NUMBER_THREE);
+            char[] charBuffer = next(NumberParser.NUMBER_THREE);
             if (charBuffer[NUMBER_ZERO] == 'u'
-                    && charBuffer[NUMBER_ONE] == 'l'
-                    && charBuffer[NUMBER_TWO] == 'l') {
+                    && charBuffer[NumberParser.NUMBER_ONE] == 'l'
+                    && charBuffer[NumberParser.NUMBER_TWO] == 'l') {
                 // cursor = 'l';
                 return null;
             } else {
