@@ -129,66 +129,6 @@ class JsonTest {
         }
     }
 
-
-
-    /**
-     * Tests whether the numbers are accommodated in proper buckets.
-     *
-     * We will use BigInteger and BigDecimals to place the values.
-     * But when we get the JSON Object we should see
-     * 1. Byte,Short,Integer,Long or BigInteger for Numbers
-     * 2. Float, Double or BigDecimal for Decimal Numbers
-     *
-     * @throws IOException
-     */
-    @Test
-    void testNumberBuckets() throws IOException {
-        Map<String,Object> numbersMap = new HashMap<>();
-
-        // Byte
-        numbersMap.put("a-Byte",new BigInteger("1"));
-        numbersMap.put("a-min-Byte",Byte.MIN_VALUE);
-        numbersMap.put("a-max-Byte",Byte.MAX_VALUE);
-
-        // Short
-        numbersMap.put("a-Short",new BigInteger("1234"));
-        numbersMap.put("a-min-Short",Short.MIN_VALUE);
-        numbersMap.put("a-max-Short",Short.MAX_VALUE);
-
-        // Integer
-        numbersMap.put("a-Integer",Integer.valueOf(567896));
-        numbersMap.put("a-min-Integer",Integer.MIN_VALUE);
-        numbersMap.put("a-max-Integer",Integer.MAX_VALUE);
-
-        // Long
-        numbersMap.put("a-Long",Long.valueOf(568957854));
-        numbersMap.put("a-min-Long",Long.MIN_VALUE);
-        numbersMap.put("a-max-Long",Long.MAX_VALUE);
-
-        final Map<String,Object> map = (Map<String, Object>) sJson.read(new StringReader(jackson.writeValueAsString(numbersMap)));
-
-        // Check Bytes
-        Assertions.assertAll("Byte Should be accommodated by Byte",
-                () -> Assertions.assertEquals(Byte.class, map.get("a-Byte").getClass()),
-                () -> Assertions.assertEquals(Byte.class, map.get("a-min-Byte").getClass()),
-                () -> Assertions.assertEquals(Byte.class, map.get("a-max-Byte").getClass())
-        );
-
-        // Check Short
-        Assertions.assertAll("Short Should be accommodated by Short",
-                () -> Assertions.assertEquals(Short.class, map.get("a-Short").getClass()),
-                () -> Assertions.assertEquals(Short.class, map.get("a-min-Short").getClass()),
-                () -> Assertions.assertEquals(Short.class, map.get("a-max-Short").getClass())
-        );
-
-        // Check Integer
-        Assertions.assertAll("Integer Should be accommodated by Integer",
-                () -> Assertions.assertEquals(Integer.class, map.get("a-Integer").getClass()),
-                () -> Assertions.assertEquals(Integer.class, map.get("a-min-Integer").getClass()),
-                () -> Assertions.assertEquals(Integer.class, map.get("a-max-Integer").getClass())
-        );
-    }
-
     /**
      * Test Plan.
      * 1. Get JSON Object from Local Folder and Iterate

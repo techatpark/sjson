@@ -1,9 +1,10 @@
 package com.techatpark.sjson;
 
+import com.techatpark.sjson.util.NumberParser;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,192 +29,29 @@ public final class Json {
     /**
      * Length for hex char.
      */
-    public static final int LENGTH = 4;
+    private static final int LENGTH = 4;
 
     /**
      * Radix for hex char.
      */
-    public static final int RADIX = 16;
+    private static final int RADIX = 16;
 
     /**
      * Capacity.
      */
-    public static final int CAPACITY = 10;
+    private static final int CAPACITY = 10;
 
-    /**
-     * Max length A Byte can accommodate.
-     */
-    public static final int BYTE_LENGTH = 2;
 
-    /**
-     * Max length A Short can accommodate.
-     */
-    public static final int SHORT_LENGTH = 4;
-
-    /**
-     * Max length A Integer can accommodate.
-     */
-    public static final int INTEGER_LENGTH = 9;
-
-    /**
-     * Max length A Long can accommodate.
-     */
-    public static final int LONG_LENGTH = 18;
 
     /**
      * Number 0.
      */
-    public static final int NUMBER_ZERO = 0;
-    /**
-     * Number 1.
-     */
-    public static final int NUMBER_ONE = 1;
-    /**
-     * Number 2.
-     */
-    public static final int NUMBER_TWO = 2;
-    /**
-     * Number 3.
-     */
-    public static final int NUMBER_THREE = 3;
-    /**
-     * Number 4.
-     */
-    public static final int NUMBER_FOUR = 4;
-    /**
-     * Number 5.
-     */
-    public static final int NUMBER_FIVE = 5;
-    /**
-     * Number 6.
-     */
-    public static final int NUMBER_SIX = 6;
-    /**
-     * Number 7.
-     */
-    public static final int NUMBER_SEVEN = 7;
-    /**
-     * Number 8.
-     */
-    public static final int NUMBER_EIGHT = 8;
-    /**
-     * Number 9.
-     */
-    public static final int NUMBER_NINE = 9;
-    /**
-     * Number 10.
-     */
-    public static final int NUMBER_TEN = 10;
-    /**
-     * Number 11.
-     */
-    public static final int NUMBER_ELEVEN = 11;
-    /**
-     * Number 12.
-     */
-    public static final int NUMBER_TWELVE = 12;
-    /**
-     * Number 13.
-     */
-    public static final int NUMBER_THIRTEEN = 13;
-    /**
-     * Number 14.
-     */
-    public static final int NUMBER_FOURTEEN = 14;
-    /**
-     * Number 15.
-     */
-    public static final int NUMBER_FIFTEEN = 15;
-    /**
-     * Number 16.
-     */
-    public static final int NUMBER_SIXTEEN = 16;
-    /**
-     * Number 17.
-     */
-    public static final int NUMBER_SEVENTEEN = 17;
-    /**
-     * Number 18.
-     */
-    public static final int NUMBER_EIGHTEEN = 18;
-
-    /**
-     * 10 power of 1.
-     */
-    public static final long TEN_POW_1 = 10L;
-    /**
-     * 10 power of 2.
-     */
-    public static final long TEN_POW_2 = 100L;
-    /**
-     * 10 power of 3.
-     */
-    public static final long TEN_POW_3 = 1000L;
-    /**
-     * 10 power of 4.
-     */
-    public static final long TEN_POW_4 = 10000L;
-    /**
-     * 10 power of 5.
-     */
-    public static final long TEN_POW_5 = 100000L;
-    /**
-     * 10 power of 6.
-     */
-    public static final long TEN_POW_6 = 1000000L;
-    /**
-     * 10 power of 7.
-     */
-    public static final long TEN_POW_7 = 10000000L;
-    /**
-     * 10 power of 8.
-     */
-    public static final long TEN_POW_8 = 100000000L;
-    /**
-     * 10 power of 9.
-     */
-    public static final long TEN_POW_9 = 1000000000L;
-    /**
-     * 10 power of 10.
-     */
-    public static final long TEN_POW_10 = 10000000000L;
-    /**
-     * 10 power of 11.
-     */
-    public static final long TEN_POW_11 = 100000000000L;
-    /**
-     * 10 power of 12.
-     */
-    public static final long TEN_POW_12 = 1000000000000L;
-    /**
-     * 10 power of 13.
-     */
-    public static final long TEN_POW_13 = 10000000000000L;
-    /**
-     * 10 power of 14.
-     */
-    public static final long TEN_POW_14 = 100000000000000L;
-    /**
-     * 10 power of 15.
-     */
-    public static final long TEN_POW_15 = 1000000000000000L;
-    /**
-     * 10 power of 16.
-     */
-    public static final long TEN_POW_16 = 10000000000000000L;
-    /**
-     * 10 power of 17.
-     */
-    public static final long TEN_POW_17 = 100000000000000000L;
-    /**
-     * 10 power of 18.
-     */
-    public static final long TEN_POW_18 = 1000000000000000000L;
+    private static final int NUMBER_ZERO = 0;
 
     /**
      * For invalid JSON.
      */
-    public static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
+    private static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
 
 
     /**
@@ -382,7 +220,8 @@ public final class Json {
                             || (ch >= '\u2000' && ch <= '\u20FF')) {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
-                        for (int k = 0; k < NUMBER_FOUR - ss.length(); k++) {
+                        for (int k = 0; k < NumberParser.NUMBER_FOUR
+                                - ss.length(); k++) {
                             sb.append('0');
                         }
                         sb.append(ss.toUpperCase());
@@ -607,212 +446,15 @@ public final class Json {
          */
         private Number getNumber(final char startingChar,
                                  final StringBuilder builder) {
-            if (builder.length() < BYTE_LENGTH) {
-                return getByte(startingChar, builder);
-            }
-            if (builder.length() < SHORT_LENGTH) {
-                return getShort(startingChar, builder);
-            }
-            if (builder.length() < INTEGER_LENGTH) {
-                return getInteger(startingChar, builder);
-            }
-            if (builder.length() <= LONG_LENGTH) {
-                return getLong(startingChar, builder);
-            }
-            return new BigInteger(startingChar + builder.toString());
-        }
-
-        /**
-         * Get Byte from String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private byte getByte(final char startingChar,
-                             final StringBuilder builder) {
-            boolean isNegative = (startingChar == '-');
-            int length = builder.length();
-            if (length != 0) {
-                byte number = (byte) getValue(builder.charAt(length - 1));
-                for (int i = 1; i < length; i++) {
-                    number += getValue(builder.charAt(i - 1), length - i);
-                }
-                return isNegative ? (byte) (number * -1)
-                        : (byte) (number
-                        + ((byte) getValue(startingChar, length)));
-            } else {
-                return (byte) getValue(startingChar);
-            }
-        }
-
-        /**
-         * Get Short from String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getShort(final char startingChar,
-                                final StringBuilder builder) {
-            boolean isNegative = (startingChar == '-');
-            int length = builder.length();
-            short number = (short) getValue(builder.charAt(length - 1));
-            for (int i = 1; i < length; i++) {
-                number += getValue(builder.charAt(i - 1), length - i);
-            }
-            if (isNegative) {
-                number = (short) (number * -1);
-                if (number >= Byte.MIN_VALUE) {
-                    return Short.valueOf(number).byteValue();
-                }
-                return number;
-
-            } else {
-                number = (short) (number
-                        + ((short) getValue(startingChar, length)));
-                if (number <= Byte.MAX_VALUE) {
-                    return Short.valueOf(number).byteValue();
-                } else {
-                    return number;
-                }
-            }
-
-        }
-
-        /**
-         * Get Integer from String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getInteger(final char startingChar,
-                                  final StringBuilder builder) {
-            boolean isNegative = (startingChar == '-');
-            int length = builder.length();
-            int number = getValue(builder.charAt(length - 1));
-            for (int i = 1; i < length; i++) {
-                number += getValue(builder.charAt(i - 1), length - i);
-            }
-            if (isNegative) {
-                number = (number * -1);
-                if (number >= Short.MIN_VALUE) {
-                    return Integer.valueOf(number).shortValue();
-                }
-                return number;
-
-            } else {
-                number = (number + ((int) getValue(startingChar, length)));
-                if (number <= Short.MAX_VALUE) {
-                    return Integer.valueOf(number).shortValue();
-                } else {
-                    return number;
-                }
-            }
-
-        }
-
-        /**
-         * Get Long from String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getLong(final char startingChar,
-                               final StringBuilder builder) {
-            boolean isNegative = (startingChar == '-');
-            int length = builder.length();
-            long number = getValue(builder.charAt(length - 1));
-            for (int i = 1; i < length; i++) {
-                number += getValue(builder.charAt(i - 1), length - i);
-            }
-            if (isNegative) {
-                number = (number * -1);
-                if (number >= Integer.MIN_VALUE) {
-                    return Long.valueOf(number).intValue();
-                }
-                return number;
-
-            } else {
-                number = (number + (getValue(startingChar, length)));
-                if (number <= Integer.MAX_VALUE) {
-                    return Long.valueOf(number).intValue();
-                } else {
-                    return number;
-                }
-            }
-
-        }
-
-        private int getValue(final char character) {
-            switch (character) {
-                case '0':
-                    return NUMBER_ZERO;
-                case '1':
-                    return NUMBER_ONE;
-                case '2':
-                    return NUMBER_TWO;
-                case '3':
-                    return NUMBER_THREE;
-                case '4':
-                    return NUMBER_FOUR;
-                case '5':
-                    return NUMBER_FIVE;
-                case '6':
-                    return NUMBER_SIX;
-                case '7':
-                    return NUMBER_SEVEN;
-                case '8':
-                    return NUMBER_EIGHT;
-                case '9':
-                    return NUMBER_NINE;
+            switch (startingChar) {
+                case '-':
+                    return NumberParser.parseNumber(builder.toString(), true);
+                case '+':
+                    return NumberParser.parseNumber(builder.toString(), false);
                 default:
-                    throw new IllegalArgumentException("Invalid JSON at");
-            }
-        }
-
-        private long getValue(final char character, final int placement) {
-            switch (placement) {
-                case NUMBER_ONE:
-                    return getValue(character) * TEN_POW_1;
-                case NUMBER_TWO:
-                    return getValue(character) * TEN_POW_2;
-                case NUMBER_THREE:
-                    return getValue(character) * TEN_POW_3;
-                case NUMBER_FOUR:
-                    return getValue(character) * TEN_POW_4;
-                case NUMBER_FIVE:
-                    return getValue(character) * TEN_POW_5;
-                case NUMBER_SIX:
-                    return getValue(character) * TEN_POW_6;
-                case NUMBER_SEVEN:
-                    return getValue(character) * TEN_POW_7;
-                case NUMBER_EIGHT:
-                    return getValue(character) * TEN_POW_8;
-                case NUMBER_NINE:
-                    return getValue(character) * TEN_POW_9;
-                case NUMBER_TEN:
-                    return getValue(character) * TEN_POW_10;
-                case NUMBER_ELEVEN:
-                    return getValue(character) * TEN_POW_11;
-                case NUMBER_TWELVE:
-                    return getValue(character) * TEN_POW_12;
-                case NUMBER_THIRTEEN:
-                    return getValue(character) * TEN_POW_13;
-                case NUMBER_FOURTEEN:
-                    return getValue(character) * TEN_POW_14;
-                case NUMBER_FIFTEEN:
-                    return getValue(character) * TEN_POW_15;
-                case NUMBER_SIXTEEN:
-                    return getValue(character) * TEN_POW_16;
-                case NUMBER_SEVENTEEN:
-                    return getValue(character) * TEN_POW_17;
-                case NUMBER_EIGHTEEN:
-                    return getValue(character) * TEN_POW_18;
-                default:
-                    throw new IllegalArgumentException("Invalid JSON");
+                    return NumberParser.parseNumber(builder
+                            .insert(0, startingChar)
+                            .toString(), false);
             }
         }
 
@@ -839,18 +481,8 @@ public final class Json {
         private Number getDecimalNumber(final char startingChar,
                                         final StringBuilder builder,
                                         final StringBuilder decimal) {
-            BigDecimal bigDecimal = new BigDecimal(startingChar
+            return NumberParser.parseDecimalNumber(startingChar
                     + builder.toString() + "." + decimal.toString());
-            // TODO Better Way to check if this is float / double
-            if (bigDecimal
-                    .equals(BigDecimal.valueOf(bigDecimal.floatValue()))) {
-                return bigDecimal.floatValue();
-            }
-            if (bigDecimal
-                    .equals(BigDecimal.valueOf(bigDecimal.doubleValue()))) {
-                return bigDecimal.doubleValue();
-            }
-            return bigDecimal;
         }
 
         /**
@@ -860,7 +492,7 @@ public final class Json {
          * @throws IOException
          */
         private boolean getTrue() throws IOException {
-            char[] charBuffer = next(NUMBER_THREE);
+            char[] charBuffer = next(NumberParser.NUMBER_THREE);
             if (charBuffer[0] == 'r'
                     && charBuffer[1] == 'u'
                     && charBuffer[2] == 'e') {
@@ -878,11 +510,11 @@ public final class Json {
          * @throws IOException
          */
         private boolean getFalse() throws IOException {
-            char[] charBuffer = next(NUMBER_FOUR);
+            char[] charBuffer = next(NumberParser.NUMBER_FOUR);
             if (charBuffer[NUMBER_ZERO] == 'a'
-                    && charBuffer[NUMBER_ONE] == 'l'
-                    && charBuffer[NUMBER_TWO] == 's'
-                    && charBuffer[NUMBER_THREE] == 'e') {
+                    && charBuffer[NumberParser.NUMBER_ONE] == 'l'
+                    && charBuffer[NumberParser.NUMBER_TWO] == 's'
+                    && charBuffer[NumberParser.NUMBER_THREE] == 'e') {
                 // cursor = 'e';
                 return false;
             } else {
@@ -897,10 +529,10 @@ public final class Json {
          * @throws IOException
          */
         private Object getNull() throws IOException {
-            char[] charBuffer = next(NUMBER_THREE);
+            char[] charBuffer = next(NumberParser.NUMBER_THREE);
             if (charBuffer[NUMBER_ZERO] == 'u'
-                    && charBuffer[NUMBER_ONE] == 'l'
-                    && charBuffer[NUMBER_TWO] == 'l') {
+                    && charBuffer[NumberParser.NUMBER_ONE] == 'l'
+                    && charBuffer[NumberParser.NUMBER_TWO] == 'l') {
                 // cursor = 'l';
                 return null;
             } else {
