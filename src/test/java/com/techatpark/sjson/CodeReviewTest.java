@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
 
 /**
  * This will make sure we have all the review comments met.
@@ -26,10 +25,12 @@ public class CodeReviewTest {
 
 
         ArchRule rule = classes().that().resideInAPackage("com.techatpark.sjson")
-                .should().onlyDependOnClassesThat().resideInAnyPackage("java.io","java.math"
+                .should().onlyDependOnClassesThat()
+                .resideInAnyPackage("java.io","java.math"
                         ,"java.util"
                         ,"java.lang",""
-                ,"com.techatpark.sjson");
+                ,"com.techatpark.sjson",
+                        "com.techatpark.sjson.*");
 
         rule.check(classes);
 
