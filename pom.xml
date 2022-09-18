@@ -7,7 +7,7 @@
     <groupId>com.techatpark.sjson</groupId>
     <artifactId>json-parser</artifactId>
     <url>https://github.com/techatpark/sjson</url>
-    <version>1.0.8</version>
+    <version>1.0.8-SNAPSHOT</version>
 
     <licenses>
         <license>
