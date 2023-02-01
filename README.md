@@ -2,7 +2,7 @@
 
 # SJson
 
-SJson is a json parser for server side workloads. It tries to get optimized memory and performance with below goals.
+SJson is a **lightweight json parser for server side workloads**. It tries to get optimized memory and performance with below goals.
 
 1. Represent Json in native format.
 2. No external dependencies
