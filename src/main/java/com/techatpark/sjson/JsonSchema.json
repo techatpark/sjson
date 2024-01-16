@@ -1,0 +1,63 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Json Parser Schema",
+    "type": "object",
+    "properties": {
+      "read": {
+        "type": "object",
+        "properties": {
+          "reader": { "type": "string" }
+        },
+        "required": ["reader"]
+      },
+      "jsonText": {
+        "type": "object",
+        "properties": {
+          "jsonMap": { "type": "object" },
+          "jsonArray": { "type": "array" }
+        },
+        "required": ["jsonMap", "jsonArray"]
+      },
+      "valueText": {
+        "type": "object",
+        "properties": {
+          "builder": { "type": "string" },
+          "value": { "type": "string" }
+        },
+        "required": ["builder", "value"]
+      },
+      "processString": {
+        "type": "object",
+        "properties": {
+          "builder": { "type": "string" },
+          "value": { "type": "string" }
+        },
+        "required": ["builder", "value"]
+      },
+      "escapeJsonTxt": {
+        "type": "object",
+        "properties": {
+          "s": { "type": "string" }
+        },
+        "required": ["s"]
+      },
+      "escape": {
+        "type": "object",
+        "properties": {
+          "s": { "type": "string" },
+          "sb": { "type": "string" }
+        },
+        "required": ["s", "sb"]
+      },
+      "ContentExtractor": {
+        "type": "object",
+        "properties": {
+          "reader": { "type": "string" },
+          "cursor": { "type": "string" }
+        },
+        "required": ["reader", "cursor"]
+      }
+    },
+    "required": ["read", "jsonText", "valueText", "processString", "escapeJsonTxt", "escape", "ContentExtractor"]
+  }
+  
