@@ -15,13 +15,14 @@ public class TestUtil {
      * @return Set of Paths
      * @throws IOException
      */
-    public static Set<Path> getJSONFiles() throws IOException {
+    static Stream<Path> jsonFilePaths() throws IOException {
         String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
                 System.getenv("SJSON_LOCAL_DIR");
         try (Stream<Path> stream = Files.list(Paths.get(baseFolder))) {
             return stream
-                    .filter(file -> !Files.isDirectory(file))
-                    .collect(Collectors.toSet());
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList())
+                    .stream();
         }
     }
 }
