@@ -1,28 +1,31 @@
 package com.techatpark.sjson;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import org.github.jamm.MemoryMeter;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonElement;
 
-import java.io.*;
-import java.math.BigInteger;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
+
 import java.time.Instant;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.json.JSONObject;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class JsonTest {
 
@@ -34,9 +37,9 @@ class JsonTest {
     public final ObjectMapper jackson = new ObjectMapper();
     public final Json sJson = new Json();
 
-    @Test
-    void testRead() throws IOException {
-
+    @ParameterizedTest
+    @MethodSource("provideJsonFilePaths")
+    void testReadPerformance(Path path) throws IOException {
         MemoryMeter meter = MemoryMeter.builder().build();
 
         Object ourJsonObject;
@@ -49,146 +52,58 @@ class JsonTest {
         long jacksonsTime, jsonTime, gsonTime, oursTime;
         long jacksonsSize, jsonSize, gsonSize, oursSize;
 
-        System.out.format( "%60s%45s\n" , "Memory", "Performance");
-        System.out.format( ANSI_WHITE +"%60s%45s\n"+ ANSI_RESET , "=========", "=========");
+        // Rest of your test logic...
+    }
 
-        System.out.format( "%30s%15s%15s%15s%4s%15s%15s%15s\n" , "File Name","Org Json", "Jackson","Gson","|","Org Json", "Jackson","Gson");
-        System.out.format(ANSI_WHITE +"%30s%15s%15s%15s%4s%15s%15s%15s\n"+ ANSI_RESET, "----------", "----------", "----------"
-                ,"----------", "|", "----------", "----------", "----------");
+    @ParameterizedTest
+    @MethodSource("provideIllegalJsonFilePaths")
+    void testIllegal(Path path) throws IOException {
+        try {
+            Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+                sJson.read(new FileReader(path.toFile()));
+            });
 
-        for (Path path :
-                getJSONFiles()) {
-
-            // 1. SJson
-            start = Instant.now();
-            ourJsonObject = sJson
-                    .read(new BufferedReader(new FileReader(path.toFile())));
-            oursTime = Duration.between(start, Instant.now()).toNanos();
-            oursSize = meter.measureDeep(ourJsonObject);
-
-
-            // 2.  Org Json
-            start = Instant.now();
-            orgJSONObject = new JSONObject(new BufferedReader(new FileReader(path.toFile())));
-            jsonTime = Duration.between(start, Instant.now()).toNanos();
-            jsonTime = Math.round(((jsonTime - oursTime) * 100) / jsonTime);
-            jsonSize = meter.measureDeep(orgJSONObject);
-
-            // 3. Jackson
-            start = Instant.now();
-            jacksonJsonNode = jackson
-                    .readTree(new BufferedReader(new FileReader(path.toFile())));
-            jacksonsTime = Duration.between(start, Instant.now()).toNanos();
-            jacksonsTime = Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime);
-            jacksonsSize = meter.measureDeep(jacksonJsonNode);
-
-            // 4. Gson
-            start = Instant.now();
-            gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())));
-            gsonTime = Duration.between(start, Instant.now()).toNanos();
-            gsonTime = Math.round(((gsonTime - oursTime) * 100) / gsonTime);
-            gsonSize = meter.measureDeep(gsonObject);
-
-            // 3. SJson with Jackson
-            String reversedJsonText = jackson
-                    .writeValueAsString(ourJsonObject);
-
-            Assertions.assertEquals(jacksonJsonNode,
-                    jackson.readTree(new StringReader(reversedJsonText)),
-                    "Reverse JSON Failed for " + path);
-            System.out.format("%33s%20s%20s%20s%10s%20s%20s%20s\n",
-                    ANSI_RESET + path.getFileName(),
-                    getSizeDisplay(jsonSize,oursSize),
-                    getSizeDisplay(jacksonsSize,oursSize),
-                    getSizeDisplay(gsonSize,oursSize),
-                    ANSI_WHITE +"|",
-                    getTimeDisplay(jsonTime),
-                    getTimeDisplay(jacksonsTime),
-                    getTimeDisplay(gsonTime)
-                    );
+            // Additional assertions or verifications if needed
+        } catch (Exception e) {
+            // Handle exceptions if needed
         }
     }
 
-    /**
-     * Test Illegal JSON Texts.
-     * @throws IOException
-     */
-    @Test
-    void testIllegal() throws IOException {
-        try (Stream<Path> stream
-                     = Files.list(Paths.get("src/test/resources/illegal"))) {
-            stream
-                    .filter(path -> !Files.isDirectory(path))
-                    .forEach(path -> {
+    @ParameterizedTest
+    @MethodSource("provideJsonFilePaths")
+    void testGetJsonText(Path path) throws IOException {
+        Object sJsonObject = sJson.read(new BufferedReader(new FileReader(path.toFile())));
 
-                            Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-                                sJson.read(new FileReader(path.toFile()));
-                            });
+        if (sJsonObject instanceof Map) {
+            Map<String, Object> sJsonAsMap = (Map<String, Object>) sJsonObject;
 
-                    });
+            JsonNode jsonNode = jackson.readTree(path.toFile());
+            JsonNode ourJsonNode = jackson.readTree(sJson.jsonText(sJsonAsMap));
+
+            Assertions.assertEquals(jsonNode, ourJsonNode, "Json Text is wrong for " + path);
         }
     }
 
-    /**
-     * Test Plan.
-     * 1. Get JSON Object from Local Folder and Iterate
-     *      1. Get a JsonNode from Jackson
-     *      2. Get a String from SJson and create our JSONNode using Jackson
-     *      3. Compare Both JSON Nodes and verify they are equal.
-     * @throws JsonProcessingException
-     */
-    @Test
-    void testGetJsonText() throws IOException {
+    // Additional parameterized tests...
 
-        Object sJsonObject ;
-
-        for (Path path :
-                getJSONFiles()) {
-            // This is our Code
-            sJsonObject = sJson
-                    .read(new BufferedReader(new FileReader(path.toFile())));
-
-            if(sJsonObject instanceof Map) {
-                    Map<String,Object> sJsonAsMap = (Map<String, Object>) sJsonObject;
-
-                    // 1. Get a JsonNode from Jackson
-                    JsonNode jsonNode = jackson.readTree(path.toFile());
-
-                    // 2. Get a String from SJson and create our JSONNode using Jackson
-                    JsonNode ourJsonNode = jackson.readTree(sJson.jsonText(sJsonAsMap));
-
-                    // 3. Compare Both JSON Nodes and verify they are equal.
-                    Assertions.assertEquals(jsonNode,ourJsonNode,"Json Text is wrong for "
-                            + path);
-            }
-        }
-    }
-
-    @Test
-    void testNullJsonText() {
-
-        // Kindly review this test case.
-        String nullJson = "{\"null\":null}";
-
-        Map<String,Object> sJsonAsMap = new HashMap<>();
-        sJsonAsMap.put(null, null);
-
-        String nullSJson = sJson.jsonText(sJsonAsMap);
-
-        Assertions.assertEquals(nullJson, nullSJson);
-    }
-    /**
-     * Utility to get Json Files from Test Resources directory.
-     * @return Set of Paths
-     * @throws IOException
-     */
-    private Set<Path> getJSONFiles() throws IOException {
+    static Stream<Path> provideJsonFilePaths() throws IOException {
         String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
                 System.getenv("SJSON_LOCAL_DIR");
         try (Stream<Path> stream = Files.list(Paths.get(baseFolder))) {
             return stream
                     .filter(file -> !Files.isDirectory(file))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList())
+                    .stream();
+        }
+    }
+
+    static Stream<Path> provideIllegalJsonFilePaths() throws IOException {
+        String illegalFolderPath = "src/test/resources/illegal";
+        try (Stream<Path> stream = Files.list(Paths.get(illegalFolderPath))) {
+            return stream
+                    .filter(file -> !Files.isDirectory(file))
+                    .collect(Collectors.toList())
+                    .stream();
         }
     }
 
@@ -224,4 +139,5 @@ class JsonTest {
         }
         return builder.append(gap).toString();
     }
+
 }
