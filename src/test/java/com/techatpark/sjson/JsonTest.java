@@ -3,33 +3,21 @@ package com.techatpark.sjson;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import org.github.jamm.MemoryMeter;
+import com.techatpark.sjson.util.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.*;
-import java.math.BigInteger;
-import java.nio.file.Files;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.json.JSONObject;
 
 class JsonTest {
-
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_WHITE = "\u001B[37m";
 
     public final ObjectMapper jackson = new ObjectMapper();
     public final Json sJson = new Json();
@@ -44,13 +32,13 @@ class JsonTest {
      *      3. Compare Both JSON Nodes and verify they are equal.
      * @throws JsonProcessingException
      */
-    @Test
-    void testGetJsonText() throws IOException {
+    @ParameterizedTest
+    @MethodSource("jsonFilesProvider")
+    void testGetJsonText(Path path) throws IOException {
 
         Object sJsonObject ;
 
-        for (Path path :
-                getJSONFiles()) {
+
             // This is our Code
             sJsonObject = sJson
                     .read(new BufferedReader(new FileReader(path.toFile())));
@@ -69,7 +57,7 @@ class JsonTest {
                             + path);
             }
         }
-    }
+
 
     @Test
     void testNullJsonText() {
@@ -84,19 +72,15 @@ class JsonTest {
 
         Assertions.assertEquals(nullJson, nullSJson);
     }
+
     /**
-     * Utility to get Json Files from Test Resources directory.
-     * @return Set of Paths
-     * @throws IOException
+     * Provides paths to JSON files for parameterized tests.
+     *
+     * @return Stream of paths to JSON files
+     * @throws IOException if there is an issue listing files
      */
-    private Set<Path> getJSONFiles() throws IOException {
-        String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
-                System.getenv("SJSON_LOCAL_DIR");
-        try (Stream<Path> stream = Files.list(Paths.get(baseFolder))) {
-            return stream
-                    .filter(file -> !Files.isDirectory(file))
-                    .collect(Collectors.toSet());
-        }
+    private static Set<Path> jsonFilesProvider() throws IOException {
+        return TestUtil.getJSONFiles();
     }
 
 }

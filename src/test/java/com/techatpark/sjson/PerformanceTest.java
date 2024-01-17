@@ -7,25 +7,18 @@ import com.google.gson.JsonParser;
 import com.techatpark.sjson.util.TestUtil;
 import org.github.jamm.MemoryMeter;
 import org.json.JSONObject;
-
-import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 class PerformanceTest {
