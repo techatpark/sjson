@@ -14,7 +14,7 @@ class JsonSchemaTest {
         JsonSchema jsonSchema =
                 new JsonSchema(new FileReader("src/test/resources/schemas/product.json"));
 
-        jsonSchema.read(new FileReader("src/test/resources/schemas/person.json"));
+        jsonSchema.read(new FileReader("src/test/resources/schemas/sample-product.json"));
 
         jsonSchema.jsonText(new HashMap<>());
 
