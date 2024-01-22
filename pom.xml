@@ -123,6 +123,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.reinert</groupId>
+            <artifactId>jjschema</artifactId>
+            <version>1.16</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit</artifactId>
             <version>${archunit.version}</version>
