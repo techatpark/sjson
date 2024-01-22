@@ -24,7 +24,9 @@ public class JsonSchemaGenerator {
      * @return A JSON schema representing the structure of the given Class.
      */
 
-//    This Json schema generator is made for the Java types
+    /**
+     * This Json schema generator is made for the Java types
+     */
 
     public String create(final Class<?> aClass) {
         StringBuilder schemaBuilder =
@@ -75,7 +77,9 @@ public class JsonSchemaGenerator {
             ParameterizedType parameterizedType = (ParameterizedType) fieldType;
             Type[] typeArguments = parameterizedType.getActualTypeArguments();
 
-//            That is using for the type arguments
+            /**
+             * That is using for the type arguments
+             */
 
             if (typeArguments.length == 1 && typeArguments[0] == String.class) {
                 return "{\"type\":\"array\",\"items\":{\"type\":\"string\"}}";
@@ -94,8 +98,13 @@ public class JsonSchemaGenerator {
      * @param fieldType The Type of the field.
      * @return The JSON type corresponding to the field type.
      */
-//    This is for determining the java class
-    String getJsonType(final Type fieldType) {
+
+    /**
+     * This is for determining the java class
+     */
+
+
+     String getJsonType(final Type fieldType) {
         if (fieldType == int.class || fieldType == long.class
                 || fieldType == Integer.class || fieldType == Long.class) {
             return "integer";
