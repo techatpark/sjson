@@ -1,9 +1,6 @@
 package com.techatpark.sjson.generator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.reinert.jjschema.v1.JsonSchemaFactory;
-import com.github.reinert.jjschema.v1.JsonSchemaV4Factory;
-import com.techatpark.sjson.generator.model.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,18 +20,19 @@ public class JsonSchemaGeneratorTest {
 
     private final ObjectMapper objectMapper;
 
-    private final JsonSchemaFactory schemaFactory;
+    private final com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator schemaFactory;
 
     public JsonSchemaGeneratorTest() {
         jsonSchemaGenerator = new JsonSchemaGenerator();
         objectMapper = new ObjectMapper();
-        schemaFactory = new JsonSchemaV4Factory();
-        schemaFactory.setAutoPutDollarSchema(true);
+        schemaFactory = new com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator(objectMapper);
     }
 
     @Test
     void testGenerator() throws Exception {
-        assertEquals(schemaFactory.createSchema(Product.class),
+        String rawJsonSchema = objectMapper.writeValueAsString(schemaFactory.generateSchema(Product.class));
+
+        assertEquals(objectMapper.readTree(rawJsonSchema),
                 objectMapper.readTree(jsonSchemaGenerator.create(Product.class)),
                 "JSON Schema was not generated properly");
     }

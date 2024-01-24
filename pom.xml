@@ -122,10 +122,11 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jsonSchema -->
         <dependency>
-            <groupId>com.github.reinert</groupId>
-            <artifactId>jjschema</artifactId>
-            <version>1.16</version>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jsonSchema</artifactId>
+            <version>2.16.1</version>
             <scope>test</scope>
         </dependency>
 
