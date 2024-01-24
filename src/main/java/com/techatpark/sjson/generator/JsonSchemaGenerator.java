@@ -6,6 +6,7 @@ package com.techatpark.sjson.generator;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -100,7 +101,7 @@ public class JsonSchemaGenerator {
             return "number";
         } else if (fieldType == List.class) {
             return "{\"type\":\"array\",\"items\":{\"type\":\"unknown\"}}";
-        } else if (fieldType.getTypeName().equals("java.math.BigDecimal")) {
+        } else if (fieldType == BigDecimal.class) {
             return "number";
         } else {
             return "unknown";

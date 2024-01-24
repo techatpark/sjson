@@ -1,6 +1,5 @@
 package com.techatpark.sjson.generator;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.reinert.jjschema.v1.JsonSchemaFactory;
 import com.github.reinert.jjschema.v1.JsonSchemaV4Factory;
@@ -20,22 +19,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonSchemaGeneratorTest {
 
-    private final JsonSchemaGenerator jsonSchemaGenerator = new JsonSchemaGenerator();
+    private final JsonSchemaGenerator jsonSchemaGenerator;
+
+    private final ObjectMapper objectMapper;
+
+    private final JsonSchemaFactory schemaFactory;
+
+    public JsonSchemaGeneratorTest() {
+        jsonSchemaGenerator = new JsonSchemaGenerator();
+        objectMapper = new ObjectMapper();
+        schemaFactory = new JsonSchemaV4Factory();
+        schemaFactory.setAutoPutDollarSchema(true);
+    }
 
     @Test
     void testGenerator() throws Exception {
-        JsonSchemaFactory schemaFactory = new JsonSchemaV4Factory();
-        schemaFactory.setAutoPutDollarSchema(true);
-        JsonNode productSchema = schemaFactory.createSchema(Product.class);
-        //System.out.println(productSchema);
-        JsonSchemaGenerator jsonSchemaGenerator = new JsonSchemaGenerator();
-        //System.out.println("\n\n\nYour Output\n================\n");
-        String generatedSchema = jsonSchemaGenerator.create(Product.class);
-        //System.out.println(generatedSchema);
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = mapper.readTree(generatedSchema);
-        assertEquals(productSchema, actualObj);
+        assertEquals(schemaFactory.createSchema(Product.class),
+                objectMapper.readTree(jsonSchemaGenerator.create(Product.class)),
+                "JSON Schema was not generated properly");
     }
 
     @ParameterizedTest(name = "{index} => fieldType={0}, expectedSchema={1}")
@@ -55,7 +56,6 @@ public class JsonSchemaGeneratorTest {
                 new Object[]{getParameterizedType(List.class, String.class), "{\"type\":\"array\",\"items\":{\"type\":\"string\"}}"},
                 // Test case 4: Parameterized type with List<BigDecimal> as the actual type argument
                 new Object[]{getParameterizedType(List.class, BigDecimal.class), "{\"type\":\"array\",\"items\":{\"type\":\"unknown\"}}"}
-
         );
     }
 
@@ -112,10 +112,8 @@ public class JsonSchemaGeneratorTest {
             "java.util.Map, unknown"
     })
     void testGetJsonType(Class<?> fieldType, String expectedJsonType) {
-        Type type = fieldType;
-        String actualJsonType = jsonSchemaGenerator.getJsonType(type);
+        String actualJsonType = jsonSchemaGenerator.getJsonType(fieldType);
         assertEquals(expectedJsonType, actualJsonType);
     }
-
 
 }
