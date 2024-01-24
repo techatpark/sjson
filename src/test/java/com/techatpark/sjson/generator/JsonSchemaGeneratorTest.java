@@ -20,12 +20,12 @@ public class JsonSchemaGeneratorTest {
 
     private final ObjectMapper objectMapper;
 
-    private final com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator schemaFactory;
+    private final com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchemaGenerator schemaFactory;
 
     public JsonSchemaGeneratorTest() {
         jsonSchemaGenerator = new JsonSchemaGenerator();
         objectMapper = new ObjectMapper();
-        schemaFactory = new com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator(objectMapper);
+        schemaFactory = new com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchemaGenerator(objectMapper);
     }
 
     @Test
