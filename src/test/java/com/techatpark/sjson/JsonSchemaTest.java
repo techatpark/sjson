@@ -1,5 +1,6 @@
 package com.techatpark.sjson;
 
+import com.techatpark.sjson.schema.JsonSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
