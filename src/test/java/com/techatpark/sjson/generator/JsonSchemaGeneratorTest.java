@@ -1,6 +1,11 @@
 package com.techatpark.sjson.generator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.victools.jsonschema.generator.OptionPreset;
+import com.github.victools.jsonschema.generator.SchemaGenerator;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
+import com.github.victools.jsonschema.generator.SchemaVersion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -20,17 +25,20 @@ public class JsonSchemaGeneratorTest {
 
     private final ObjectMapper objectMapper;
 
-    private final com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchemaGenerator schemaFactory;
+    private final SchemaGenerator generator;
 
     public JsonSchemaGeneratorTest() {
         jsonSchemaGenerator = new JsonSchemaGenerator();
         objectMapper = new ObjectMapper();
-        schemaFactory = new com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchemaGenerator(objectMapper);
+        SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12,
+                OptionPreset.PLAIN_JSON);
+        SchemaGeneratorConfig config = configBuilder.build();
+        generator = new SchemaGenerator(config);
     }
 
     @Test
     void testGenerator() throws Exception {
-        String rawJsonSchema = objectMapper.writeValueAsString(schemaFactory.generateSchema(Product.class));
+        String rawJsonSchema = objectMapper.writeValueAsString(generator.generateSchema(Product.class));
 
         assertEquals(objectMapper.readTree(rawJsonSchema),
                 objectMapper.readTree(jsonSchemaGenerator.create(Product.class)),
