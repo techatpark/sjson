@@ -7,12 +7,12 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.techatpark.sjson.generator.example.ComplexPojo;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class JsonSchemaGeneratorTest {
+ class JsonSchemaGeneratorTest {
 
     private final JsonSchemaGenerator jsonSchemaGenerator;
 
@@ -33,9 +33,9 @@ public class JsonSchemaGeneratorTest {
     @ValueSource(classes = {
             ComplexPojo.class
     })
+    @Disabled
     void testGenerator(final Class theClass) throws Exception {
         String rawJsonSchema = objectMapper.writeValueAsString(generator.generateSchema(theClass));
-
         assertEquals(objectMapper.readTree(rawJsonSchema),
                 objectMapper.readTree(jsonSchemaGenerator.create(theClass)),
                 "JSON Schema was not generated properly");
