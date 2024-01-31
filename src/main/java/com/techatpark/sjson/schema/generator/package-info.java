@@ -3,4 +3,4 @@
  *
  * @since 1.0
  */
-package com.techatpark.sjson.generator;
+package com.techatpark.sjson.schema.generator;

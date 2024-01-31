@@ -1,4 +1,4 @@
-package com.techatpark.sjson.generator.example;
+package com.techatpark.sjson.schema.generator.example;
 
 import java.util.List;
 import java.util.Map;

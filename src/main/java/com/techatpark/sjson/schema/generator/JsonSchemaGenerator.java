@@ -1,7 +1,7 @@
 /**
  * Provides Json Generator
  */
-package com.techatpark.sjson.generator;
+package com.techatpark.sjson.schema.generator;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

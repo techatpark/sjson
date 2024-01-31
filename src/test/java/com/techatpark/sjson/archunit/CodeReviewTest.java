@@ -1,4 +1,4 @@
-package com.techatpark.sjson;
+package com.techatpark.sjson.archunit;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;

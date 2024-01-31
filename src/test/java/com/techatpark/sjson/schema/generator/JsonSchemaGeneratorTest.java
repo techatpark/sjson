@@ -1,4 +1,4 @@
-package com.techatpark.sjson.generator;
+package com.techatpark.sjson.schema.generator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victools.jsonschema.generator.OptionPreset;
@@ -6,7 +6,7 @@ import com.github.victools.jsonschema.generator.SchemaGenerator;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
-import com.techatpark.sjson.generator.example.ComplexPojo;
+import com.techatpark.sjson.schema.generator.example.ComplexPojo;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
