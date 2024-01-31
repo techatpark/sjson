@@ -1,59 +1,22 @@
 {
-  "$schema": "https://json-schema.org/draft/-/schema",
-  "$id": "https://example.com/product.schema.json",
-  "title": "Product",
-  "description": "A product from Acme's catalog",
-  "type": "object",
-  "properties": {
-    "productId": {
-      "description": "The unique identifier for a product",
-      "type": "integer"
-    },
-    "productName": {
-      "description": "Name of the product",
-      "type": "string"
-    },
-    "price": {
-      "description": "The price of the product",
-      "type": "number",
-      "exclusiveMinimum":
-    },
-    "tags": {
-      "description": "Tags for the product",
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "minItems":,
-      "uniqueItems": true
-    },
-    "dimensions": {
-      "type": "object",
-      "properties": {
-        "length": {
-          "type": "number"
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Product",
+    "description": "A product from the catalog",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "The unique identifier for a product",
+            "type": "integer"
         },
-        "width": {
-          "type": "number"
+        "name": {
+            "description": "Name of the product",
+            "type": "string"
         },
-        "height": {
-          "type": "number"
+        "price": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
         }
-      },
-      "required": [
-        "length",
-        "width",
-        "height"
-      ]
     },
-    "warehouseLocation": {
-      "description": "Coordinates of the warehouse where the product is located.",
-      "$ref": "https://example.com/geographical-location.schema.json"
-    }
-  },
-  "required": [
-    "productId",
-    "productName",
-    "price"
-  ]
+    "required": ["id", "name", "price"]
 }

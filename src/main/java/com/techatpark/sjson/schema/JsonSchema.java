@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
+
+import javax.validation.ConstraintViolation;
 
 /**
  * Represents a JSON schema document. Provides functionality to serialize
@@ -17,6 +20,17 @@ public final class JsonSchema {
      */
     public JsonSchema() {
         // Constructor logic if any
+    }
+
+    /**
+     * Validate the given root Json, starting at the root of the data path.
+     *
+     * @param reader the root node
+     * @return A list of ValidationMessage if there is any validation error,
+     * or an empty list if there is no error.
+     */
+    public Set<ConstraintViolation> validate(final Reader reader) {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /**
