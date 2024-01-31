@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.util.Map;
 import java.util.Set;
 
+import com.techatpark.sjson.Json;
 import jakarta.validation.ConstraintViolation;
 
 /**
@@ -13,11 +14,31 @@ import jakarta.validation.ConstraintViolation;
  */
 public final class JsonSchema {
 
+    private final String schema;
+    private final String title;
+    private final String description;
+    private final String type;
+
     /**
      * Constructor for JsonSchema.
      */
-    public JsonSchema() {
-        // Constructor logic if any
+    public JsonSchema(final Reader reader) throws IOException {
+        Map<String, Object> schemaAsMap = (Map<String, Object>) new Json().read(reader);
+
+        this.schema = schemaAsMap.get("$schema").toString();
+        this.title = schemaAsMap.get("title").toString();
+        this.description = schemaAsMap.get("description").toString();
+        this.type = schemaAsMap.get("type").toString();
+    }
+
+    @Override
+    public String toString() {
+        return "JsonSchema{" +
+                "schema='" + schema + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", type='" + type + '\'' +
+                '}';
     }
 
     /**
