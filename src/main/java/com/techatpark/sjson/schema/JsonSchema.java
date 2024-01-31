@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 
 /**
  * Represents a JSON schema document. Provides functionality to serialize
