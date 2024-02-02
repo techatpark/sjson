@@ -17,18 +17,20 @@ public final class JsonSchema {
     private final String schema;
     private final String title;
     private final String description;
-    private final String type;
+    private final JsonType type;
 
     /**
      * Constructor for JsonSchema.
      */
     public JsonSchema(final Reader reader) throws IOException {
-        Map<String, Object> schemaAsMap = (Map<String, Object>) new Json().read(reader);
+        Map<String, Object> schemaAsMap =
+                (Map<String, Object>) new Json().read(reader);
 
         this.schema = schemaAsMap.get("$schema").toString();
         this.title = schemaAsMap.get("title").toString();
         this.description = schemaAsMap.get("description").toString();
-        this.type = schemaAsMap.get("type").toString();
+        this.type = JsonType
+                .valueOf(JsonType.class,schemaAsMap.get("type").toString().toUpperCase());
     }
 
     @Override
