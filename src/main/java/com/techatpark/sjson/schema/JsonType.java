@@ -12,7 +12,7 @@ public enum JsonType {
     /**
      *  float or double i.e number json type.
      */
-    NUMBER ("number"),
+    NUMBER("number"),
     /**
      *  an integer json type.
      */
@@ -33,16 +33,22 @@ public enum JsonType {
      *  a null json type.
      */
     NULL("null");
-
+    /**
+     *  getter for type.
+     * @return type
+     */
     public String getType() {
+
         return type;
     }
-
+    /**
+     *  String  type.
+     */
     private String type;
 
 
-    JsonType(String s) {
-        type=s;
+     JsonType(final String s) {
+        type = s;
     }
 
 }

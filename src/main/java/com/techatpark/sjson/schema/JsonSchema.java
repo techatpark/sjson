@@ -14,13 +14,26 @@ import jakarta.validation.ConstraintViolation;
  */
 public final class JsonSchema {
 
+    /**
+     * string type schema.
+     */
     private final String schema;
+    /**
+     * string type title.
+     */
     private final String title;
+    /**
+     * string type description.
+     */
     private final String description;
+    /**
+     * string JsonType type.
+     */
     private final JsonType type;
 
     /**
      * Constructor for JsonSchema.
+     * @param reader
      */
     public JsonSchema(final Reader reader) throws IOException {
         Map<String, Object> schemaAsMap =
@@ -30,17 +43,18 @@ public final class JsonSchema {
         this.title = schemaAsMap.get("title").toString();
         this.description = schemaAsMap.get("description").toString();
         this.type = JsonType
-                .valueOf(JsonType.class,schemaAsMap.get("type").toString().toUpperCase());
+                .valueOf(JsonType.class, schemaAsMap.get("type")
+                        .toString().toUpperCase());
     }
 
     @Override
     public String toString() {
-        return "JsonSchema{" +
-                "schema='" + schema + '\'' +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", type='" + type + '\'' +
-                '}';
+        return "JsonSchema{"
+                + "schema='" + schema + '\''
+                + ", title='" + title + '\''
+                + ", description='" + description + '\''
+                + ", type='" + type + '\''
+                + '}';
     }
 
     /**
