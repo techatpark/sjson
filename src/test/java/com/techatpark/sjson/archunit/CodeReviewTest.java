@@ -26,10 +26,13 @@ public class CodeReviewTest {
 
         ArchRule rule = classes().that().resideInAPackage("com.techatpark.sjson")
                 .should().onlyDependOnClassesThat()
-                .resideInAnyPackage("java.io","java.math"
+                .resideInAnyPackage("java.io"
+                        ,"java.math"
                         ,"java.util"
-                        ,"java.lang",""
-                ,"com.techatpark.sjson",
+                        ,"jakarta.validation"
+                        ,"java.lang"
+                        ,"java.lang.reflect"
+                        ,"com.techatpark.sjson",
                         "com.techatpark.sjson.*");
 
         rule.check(classes);
