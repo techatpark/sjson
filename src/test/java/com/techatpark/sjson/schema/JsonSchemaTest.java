@@ -21,7 +21,7 @@ class JsonSchemaTest {
     @Disabled
     void read(final File schemaFile) throws IOException {
 
-        JsonSchema jsonSchema = new JsonSchema(new FileReader(schemaFile));
+        JsonSchema jsonSchema = JsonSchema.createJsonSchema(new FileReader(schemaFile));
 
         System.out.println(jsonSchema.toString());
 
