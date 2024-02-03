@@ -391,6 +391,7 @@ public final class Json {
                     while ((character = (char) reader.read()) != ','
                             && (Character.isDigit(character)
                             || character == '-'
+                            || character == '+'
                             || character == 'e'
                             || character == 'E')
                             && character != '}'
@@ -406,6 +407,7 @@ public final class Json {
                     while ((character = (char) reader.read()) != ','
                             && (Character.isDigit(character)
                             || character == '-'
+                            || character == '+'
                             || character == 'e'
                             || character == 'E')
                             && character != '}'
