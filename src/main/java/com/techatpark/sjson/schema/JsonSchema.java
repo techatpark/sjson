@@ -11,8 +11,9 @@ import jakarta.validation.ConstraintViolation;
 /**
  * Represents a JSON schema document. Provides functionality to serialize
  * Java objects to JSON strings.
+ * @param <T> of type T.
  */
-public abstract class JsonSchema {
+public abstract class JsonSchema<T> {
 
     /**
      * string type schema.
@@ -42,8 +43,7 @@ public abstract class JsonSchema {
                 .valueOf(JsonType.class, schemaAsMap.get("type")
                         .toString().toUpperCase())) {
             case STRING -> new StringSchema(schemaAsMap);
-            case INTEGER -> new IntegerSchema(schemaAsMap);
-            case NUMBER -> new NumberSchema(schemaAsMap);
+            case INTEGER, NUMBER -> new NumberSchema(schemaAsMap);
             case BOOLEAN -> new BooleanSchema(schemaAsMap);
             case OBJECT -> new ObjectSchema(schemaAsMap);
             case NULL -> new NullSchema(schemaAsMap);
@@ -91,9 +91,7 @@ public abstract class JsonSchema {
      * @return Object representation of the read JSON
      * @throws IOException if an I/O error occurs
      */
-    public Object read(final Reader reader) throws IOException {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+    public abstract T read(Reader reader) throws IOException;
 
     /**
      * Converts a Map into its JSON string representation.
