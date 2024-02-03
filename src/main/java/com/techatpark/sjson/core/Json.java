@@ -431,16 +431,13 @@ public final class Json {
          */
         private Number getNumber(final char startingChar,
                                  final StringBuilder builder) {
-            switch (startingChar) {
-                case '-':
-                    return NumberParser.parseNumber(builder.toString(), true);
-                case '+':
-                    return NumberParser.parseNumber(builder.toString(), false);
-                default:
-                    return NumberParser.parseNumber(builder
-                            .insert(0, startingChar)
-                            .toString(), false);
-            }
+            return switch (startingChar) {
+                case '-' -> NumberParser.parseNumber(builder.toString(), true);
+                case '+' -> NumberParser.parseNumber(builder.toString(), false);
+                default -> NumberParser.parseNumber(builder
+                        .insert(0, startingChar)
+                        .toString(), false);
+            };
         }
 
         /**
