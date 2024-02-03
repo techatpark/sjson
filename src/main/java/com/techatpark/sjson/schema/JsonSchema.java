@@ -12,7 +12,7 @@ import jakarta.validation.ConstraintViolation;
  * Represents a JSON schema document. Provides functionality to serialize
  * Java objects to JSON strings.
  */
-public final class JsonSchema {
+public abstract class JsonSchema {
 
     /**
      * string type schema.
@@ -26,34 +26,49 @@ public final class JsonSchema {
      * string type description.
      */
     private final String description;
-    /**
-     * string JsonType type.
-     */
-    private final JsonType type;
+
 
     /**
-     * Constructor for JsonSchema.
-     * @param reader
+     * Constructor for JsonSchema based on type.
+     * @param reader the Reader to read JSON data from
+     * @return JsonSchema representation of the read JSON
+     * @throws IOException if an I/O error occurs
      */
-    public JsonSchema(final Reader reader) throws IOException {
+    public static JsonSchema createJsonSchema(final Reader reader)
+            throws IOException {
         Map<String, Object> schemaAsMap =
                 (Map<String, Object>) new Json().read(reader);
+        return switch (JsonType
+                .valueOf(JsonType.class, schemaAsMap.get("type")
+                        .toString().toUpperCase())) {
+            case STRING -> new StringSchema(schemaAsMap);
+            case INTEGER -> new IntegerSchema(schemaAsMap);
+            case NUMBER -> new NumberSchema(schemaAsMap);
+            case BOOLEAN -> new BooleanSchema(schemaAsMap);
+            case OBJECT -> new ObjectSchema(schemaAsMap);
+            case NULL -> new NullSchema(schemaAsMap);
+            case ARRAY -> new ArraySchema(schemaAsMap);
+        };
+
+    }
+    /**
+     * Constructor for JsonSchema based on type.
+     * @param schemaAsMap
+     */
+     JsonSchema(final Map<String, Object> schemaAsMap) {
 
         this.schema = schemaAsMap.get("$schema").toString();
         this.title = schemaAsMap.get("title").toString();
         this.description = schemaAsMap.get("description").toString();
-        this.type = JsonType
-                .valueOf(JsonType.class, schemaAsMap.get("type")
-                        .toString().toUpperCase());
     }
 
+    /** Description of something. */
     @Override
     public String toString() {
         return "JsonSchema{"
                 + "schema='" + schema + '\''
                 + ", title='" + title + '\''
                 + ", description='" + description + '\''
-                + ", type='" + type + '\''
                 + '}';
     }
 
