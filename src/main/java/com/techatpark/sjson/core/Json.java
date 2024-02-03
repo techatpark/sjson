@@ -304,7 +304,7 @@ public final class Json {
             // String with escape characters ?!
             for (;;) {
                 switch (character) {
-                    case 0,'\n','\r':
+                    case 0, '\n', '\r':
                         throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                     case '\\':
                         character = getCharacter(reader.read());
@@ -329,10 +329,7 @@ public final class Json {
                                         .parseInt(new String(next(LENGTH)),
                                                 RADIX));
                                 break;
-                            case '"':
-                            case '\'':
-                            case '\\':
-                            case '/':
+                            case '"', '\'', '\\', '/':
                                 sb.append(character);
                                 break;
                             default:
