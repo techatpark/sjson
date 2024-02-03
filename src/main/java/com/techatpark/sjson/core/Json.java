@@ -135,14 +135,12 @@ public final class Json {
     private void valueText(final StringBuilder builder, final Object value) {
         if (value == null) {
             builder.append("null");
-        } else if (value instanceof String) {
-            processString(builder, (String) value);
-        } else if (value instanceof Map) {
-            builder.append(jsonText((Map<String, Object>)
-                    value));
-        } else if (value instanceof List) {
-            builder.append(jsonText((List)
-                    value));
+        } else if (value instanceof String str) {
+            processString(builder, str);
+        } else if (value instanceof Map map) {
+            builder.append(jsonText(map));
+        } else if (value instanceof List list) {
+            builder.append(jsonText(list));
         } else {
             builder.append(value);
         }
@@ -236,7 +234,7 @@ public final class Json {
      * ContentExtractor is responsible to interact with underlying reader to
      * extract the content.
      */
-    private final class ContentExtractor {
+    private static final class ContentExtractor {
 
         /**
          * Reader to the JSON Content.
