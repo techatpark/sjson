@@ -1,7 +1,7 @@
 package com.techatpark.sjson.schema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techatpark.sjson.util.TestUtil;
+import com.techatpark.sjson.core.util.TestUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
