@@ -1,10 +1,11 @@
-package com.techatpark.sjson;
+package com.techatpark.sjson.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.techatpark.sjson.util.TestUtil;
+import com.techatpark.sjson.core.Json;
+import com.techatpark.sjson.core.util.TestUtil;
 import org.github.jamm.MemoryMeter;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;

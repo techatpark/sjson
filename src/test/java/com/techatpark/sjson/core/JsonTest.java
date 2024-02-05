@@ -1,9 +1,9 @@
-package com.techatpark.sjson;
+package com.techatpark.sjson.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techatpark.sjson.util.TestUtil;
+import com.techatpark.sjson.core.util.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,8 +21,6 @@ class JsonTest {
 
     public final ObjectMapper jackson = new ObjectMapper();
     public final Json sJson = new Json();
-
-
 
     /**
      * Test Plan.

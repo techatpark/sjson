@@ -5,7 +5,7 @@ import java.io.Reader;
 import java.util.Map;
 import java.util.Set;
 
-import com.techatpark.sjson.Json;
+import com.techatpark.sjson.core.Json;
 import jakarta.validation.ConstraintViolation;
 
 /**

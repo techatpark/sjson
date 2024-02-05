@@ -1,6 +1,6 @@
-package com.techatpark.sjson;
+package com.techatpark.sjson.core;
 
-import com.techatpark.sjson.util.NumberParser;
+import com.techatpark.sjson.core.util.NumberParser;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -135,14 +135,12 @@ public final class Json {
     private void valueText(final StringBuilder builder, final Object value) {
         if (value == null) {
             builder.append("null");
-        } else if (value instanceof String) {
-            processString(builder, (String) value);
-        } else if (value instanceof Map) {
-            builder.append(jsonText((Map<String, Object>)
-                    value));
-        } else if (value instanceof List) {
-            builder.append(jsonText((List)
-                    value));
+        } else if (value instanceof String str) {
+            processString(builder, str);
+        } else if (value instanceof Map map) {
+            builder.append(jsonText(map));
+        } else if (value instanceof List list) {
+            builder.append(jsonText(list));
         } else {
             builder.append(value);
         }
@@ -236,7 +234,7 @@ public final class Json {
      * ContentExtractor is responsible to interact with underlying reader to
      * extract the content.
      */
-    private final class ContentExtractor {
+    private static final class ContentExtractor {
 
         /**
          * Reader to the JSON Content.
@@ -269,24 +267,16 @@ public final class Json {
             // 1. move to the first clean character to determine the Data type
             final char character = nextClean();
             // 2. Call corresponding get methods based on the type
-            switch (character) {
-                case '"':
-                    return getString();
-                case 'n':
-                    return getNull();
-                case 't':
-                    return getTrue();
-                case 'f':
-                    return getFalse();
-                case '{':
-                    return getObject();
-                case '[':
-                    return getArray();
-                case ']':
-                    return this;
-                default:
-                    return getNumber(character);
-            }
+            return switch (character) {
+                case '"' -> getString();
+                case 'n' -> getNull();
+                case 't' -> getTrue();
+                case 'f' -> getFalse();
+                case '{' -> getObject();
+                case '[' -> getArray();
+                case ']' -> this;
+                default -> getNumber(character);
+            };
         }
 
         /**
@@ -312,9 +302,7 @@ public final class Json {
             // String with escape characters ?!
             for (;;) {
                 switch (character) {
-                    case 0:
-                    case '\n':
-                    case '\r':
+                    case 0, '\n', '\r':
                         throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                     case '\\':
                         character = getCharacter(reader.read());
@@ -339,10 +327,7 @@ public final class Json {
                                         .parseInt(new String(next(LENGTH)),
                                                 RADIX));
                                 break;
-                            case '"':
-                            case '\'':
-                            case '\\':
-                            case '/':
+                            case '"', '\'', '\\', '/':
                                 sb.append(character);
                                 break;
                             default:
@@ -406,6 +391,7 @@ public final class Json {
                     while ((character = (char) reader.read()) != ','
                             && (Character.isDigit(character)
                             || character == '-'
+                            || character == '+'
                             || character == 'e'
                             || character == 'E')
                             && character != '}'
@@ -421,6 +407,7 @@ public final class Json {
                     while ((character = (char) reader.read()) != ','
                             && (Character.isDigit(character)
                             || character == '-'
+                            || character == '+'
                             || character == 'e'
                             || character == 'E')
                             && character != '}'
@@ -446,16 +433,13 @@ public final class Json {
          */
         private Number getNumber(final char startingChar,
                                  final StringBuilder builder) {
-            switch (startingChar) {
-                case '-':
-                    return NumberParser.parseNumber(builder.toString(), true);
-                case '+':
-                    return NumberParser.parseNumber(builder.toString(), false);
-                default:
-                    return NumberParser.parseNumber(builder
-                            .insert(0, startingChar)
-                            .toString(), false);
-            }
+            return switch (startingChar) {
+                case '-' -> NumberParser.parseNumber(builder.toString(), true);
+                case '+' -> NumberParser.parseNumber(builder.toString(), false);
+                default -> NumberParser.parseNumber(builder
+                        .insert(0, startingChar)
+                        .toString(), false);
+            };
         }
 
         /**

@@ -1,11 +1,10 @@
-package com.techatpark.sjson.util;
+package com.techatpark.sjson.core.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.ParseException;
 
 
 class NumberParserTest {
