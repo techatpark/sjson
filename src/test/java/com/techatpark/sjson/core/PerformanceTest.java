@@ -56,21 +56,21 @@ class PerformanceTest {
         start = Instant.now();
         orgJSONObject = new JSONObject(new BufferedReader(new FileReader(path.toFile())));
         jsonTime = Duration.between(start, Instant.now()).toNanos();
-        jsonTime = Math.round(((jsonTime - oursTime) * 100) / jsonTime);
+        jsonTime = Math.round((float) ((jsonTime - oursTime) * 100) / jsonTime);
         jsonSize = meter.measureDeep(orgJSONObject);
 
         // 3. Jackson
         start = Instant.now();
         jacksonJsonNode = jackson.readTree(new BufferedReader(new FileReader(path.toFile())));
         jacksonsTime = Duration.between(start, Instant.now()).toNanos();
-        jacksonsTime = Math.round(((jacksonsTime - oursTime) * 100) / jacksonsTime);
+        jacksonsTime = Math.round((float) ((jacksonsTime - oursTime) * 100) / jacksonsTime);
         jacksonsSize = meter.measureDeep(jacksonJsonNode);
 
         // 4. Gson
         start = Instant.now();
         gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())));
         gsonTime = Duration.between(start, Instant.now()).toNanos();
-        gsonTime = Math.round(((gsonTime - oursTime) * 100) / gsonTime);
+        gsonTime = Math.round((float) ((gsonTime - oursTime) * 100) / gsonTime);
         gsonSize = meter.measureDeep(gsonObject);
 
         // 5. SJson with Jackson
