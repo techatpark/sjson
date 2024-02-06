@@ -8,10 +8,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,6 +82,24 @@ class JsonTest {
      */
     private static Set<Path> jsonFilesProvider() throws IOException {
         return TestUtil.getJSONFiles();
+    }
+
+    @Test
+    void testJSon() throws IOException {
+        String jsonText = """
+                {
+                  
+                  "negZeroKey": -0.0
+                 
+                
+                }
+                """;
+        Map<String,Object> ourJsonObject = (Map<String, Object>) new Json().read(new StringReader(jsonText));
+        JsonNode jacksonJsonNode = new ObjectMapper().readTree(jsonText);
+        String reversedJsonText = jackson.writeValueAsString(ourJsonObject);
+        JSONAssert.assertEquals(
+                jsonText, reversedJsonText, JSONCompareMode.LENIENT);
+
     }
 
 }
