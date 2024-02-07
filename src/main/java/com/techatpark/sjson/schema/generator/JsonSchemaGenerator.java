@@ -76,8 +76,25 @@ public class JsonSchemaGenerator {
             ParameterizedType parameterizedType = (ParameterizedType) fieldType;
             Type[] typeArguments = parameterizedType.getActualTypeArguments();
 
-            if (typeArguments.length == 1 && typeArguments[0] == String.class) {
+            if (typeArguments.length == 1
+                    && (typeArguments[0] == String.class
+                    || typeArguments[0] == Character.class)) {
                 return "{\"type\":\"array\",\"items\":{\"type\":\"string\"}}";
+            } else if (typeArguments.length == 1
+                    && (typeArguments[0] == Integer.class
+                    || typeArguments[0] == Long.class
+                    || typeArguments[0] == BigInteger.class)) {
+                return "{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}";
+            } else if (typeArguments.length == 1
+                    && (typeArguments[0] == Double.class
+                    || typeArguments[0] == Float.class)) {
+                return "{\"type\":\"array\",\"items\":{\"type\":\"number\"}}";
+            } else if (typeArguments.length == 1
+                    && typeArguments[0] == Boolean.class) {
+                return "{\"type\":\"array\",\"items\":{\"type\":\"boolean\"}}";
+            } else if (typeArguments.length == 1
+                    && typeArguments[0] == BigDecimal.class) {
+                return "{\"type\":\"array\",\"items\":{\"type\":\"number\"}}";
             } else if (typeArguments.length == 2) {
                 return "{\"type\":\"object\"}}";
             } else {
