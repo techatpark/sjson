@@ -1,19 +1,53 @@
 package com.techatpark.sjson.schema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.victools.jsonschema.generator.OptionPreset;
+import com.github.victools.jsonschema.generator.SchemaGenerator;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
+import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.techatpark.sjson.core.util.TestUtil;
+import com.techatpark.sjson.schema.generator.example.ComplexPojo;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class JsonSchemaTest {
 
-    public final ObjectMapper mapper = new ObjectMapper();
+    private final SchemaGenerator generator;
+
+    public final ObjectMapper mapper ;
+
+    JsonSchemaTest() {
+        mapper = new ObjectMapper();
+        SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12,
+                OptionPreset.PLAIN_JSON);
+        SchemaGeneratorConfig config = configBuilder.build();
+        generator = new SchemaGenerator(config);
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {
+            Boolean.class
+    })
+    @Disabled
+    void testGenerator(final Class theClass) throws Exception {
+        String rawJsonSchema = mapper.writeValueAsString(generator.generateSchema(theClass));
+
+        System.out.println(JsonSchema.getJsonSchema(theClass).toString());
+        JSONAssert.assertEquals(
+                rawJsonSchema, JsonSchema.getJsonSchema(theClass).toString(), JSONCompareMode.LENIENT);
+    }
 
 
     @ParameterizedTest
@@ -21,7 +55,7 @@ class JsonSchemaTest {
     @Disabled
     void read(final File schemaFile) throws IOException {
 
-        JsonSchema jsonSchema = JsonSchema.createJsonSchema(new FileReader(schemaFile));
+        JsonSchema jsonSchema = JsonSchema.getJsonSchema(new FileReader(schemaFile));
 
         System.out.println(jsonSchema.toString());
 

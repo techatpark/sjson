@@ -2,6 +2,9 @@ package com.techatpark.sjson.schema;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,13 +38,60 @@ public abstract class JsonSchema<T> {
      * @return JsonSchema representation of the read JSON
      * @throws IOException if an I/O error occurs
      */
-    public static JsonSchema createJsonSchema(final Reader reader)
+    public static JsonSchema getJsonSchema(final Reader reader)
             throws IOException {
         Map<String, Object> schemaAsMap =
                 (Map<String, Object>) new Json().read(reader);
-        return switch (JsonType
+        return getJsonSchema(JsonType
                 .valueOf(JsonType.class, schemaAsMap.get("type")
-                        .toString().toUpperCase())) {
+                        .toString().toUpperCase()), schemaAsMap);
+
+    }
+
+    /**
+     * Generate a JsonNode containing the JSON Schema representation
+     * of the given type.
+     *
+     * @param mainTargetType – type for which to generate the JSON Schema
+     * @param typeParameters – optional type parameters
+     *                       (in case of the mainTargetType being
+     *                       a parameterised type)
+     * @return generated JSON Schema
+     */
+    public static JsonSchema getJsonSchema(final Type mainTargetType,
+                                           final Type... typeParameters) {
+        return getJsonSchema(getJsonType(mainTargetType), null);
+
+    }
+
+    /**
+     * Determines the JSON type for the given field type.
+     *
+     * @param fieldType The Type of the field.
+     * @return The JSON type corresponding to the field type.
+     */
+    private static JsonType getJsonType(final Type fieldType) {
+        if (fieldType == int.class || fieldType == long.class
+                || fieldType == Integer.class || fieldType == Long.class) {
+            return JsonType.INTEGER;
+        } else if (fieldType == String.class) {
+            return JsonType.STRING;
+        } else if (fieldType == double.class || fieldType == float.class
+                || fieldType == Double.class || fieldType == Float.class
+                || fieldType == BigDecimal.class) {
+            return JsonType.NUMBER;
+        } else if (fieldType instanceof Collection<?>) {
+            return JsonType.ARRAY;
+        } else if (fieldType == boolean.class || fieldType == Boolean.class) {
+            return JsonType.BOOLEAN;
+        } else {
+            return JsonType.NULL;
+        }
+    }
+
+    private static JsonSchema getJsonSchema(final JsonType jsonType,
+                            final Map<String, Object> schemaAsMap) {
+        return switch (jsonType) {
             case STRING -> new StringSchema(schemaAsMap);
             case INTEGER, NUMBER -> new NumberSchema(schemaAsMap);
             case BOOLEAN -> new BooleanSchema(schemaAsMap);
@@ -49,17 +99,22 @@ public abstract class JsonSchema<T> {
             case NULL -> new NullSchema(schemaAsMap);
             case ARRAY -> new ArraySchema(schemaAsMap);
         };
-
     }
+
     /**
      * Constructor for JsonSchema based on type.
      * @param schemaAsMap
      */
      JsonSchema(final Map<String, Object> schemaAsMap) {
-
-        this.schema = schemaAsMap.get("$schema").toString();
-        this.title = schemaAsMap.get("title").toString();
-        this.description = schemaAsMap.get("description").toString();
+        if (schemaAsMap != null) {
+            this.schema = schemaAsMap.get("$schema").toString();
+            this.title = schemaAsMap.get("title").toString();
+            this.description = schemaAsMap.get("description").toString();
+        } else {
+            this.schema = "https://json-schema.org/draft/2020-12/schema";
+            this.title = null;
+            this.description = null;
+        }
     }
 
     /** Description of something. */
@@ -103,4 +158,28 @@ public abstract class JsonSchema<T> {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+
+    /**
+     * gets Schema.
+     * @return schema
+     */
+    public String getSchema() {
+        return schema;
+    }
+
+    /**
+     * Gets Title.
+     * @return title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * Gets Description.
+     * @return description
+     */
+    public String getDescription() {
+        return description;
+    }
 }

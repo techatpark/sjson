@@ -18,4 +18,13 @@ public class BooleanSchema extends JsonSchema<Boolean> {
     public final Boolean read(final Reader reader) throws IOException {
         return null;
     }
+
+    /** Description of something. */
+    @Override
+    public String toString() {
+
+        return new StringBuilder("{\"type\":\"boolean\",")
+                .append("\"$schema\":\"" + this.getSchema() + "\"}")
+                .toString();
+    }
 }
