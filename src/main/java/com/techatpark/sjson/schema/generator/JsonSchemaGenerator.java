@@ -3,6 +3,8 @@
  */
 package com.techatpark.sjson.schema.generator;
 
+import com.techatpark.sjson.schema.JsonType;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -17,7 +19,7 @@ import java.util.List;
  * and returns a JSON schema
  * representing the structure of the class.
  */
-public class JsonSchemaGenerator {
+public final class JsonSchemaGenerator {
 
     /**
      * Generates a JSON schema for the given Class.
@@ -51,7 +53,7 @@ public class JsonSchemaGenerator {
                 schemaBuilder.append(getJsonTypeForArrays(fieldType));
             } else {
                 schemaBuilder.append("{\"type\":\"")
-                        .append(getJsonType(fieldType)).append("\"}");
+                        .append(getJsonType(fieldType).getType()).append("\"}");
             }
         }
 
@@ -71,7 +73,7 @@ public class JsonSchemaGenerator {
      * @return A JSON schema representing the structure of
      * the given parameterized type.
      */
-    String generateParameterizedTypeSchema(final Type fieldType) {
+    private String generateParameterizedTypeSchema(final Type fieldType) {
         if (fieldType instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) fieldType;
             Type[] typeArguments = parameterizedType.getActualTypeArguments();
@@ -112,23 +114,23 @@ public class JsonSchemaGenerator {
      * @param fieldType The Type of the field.
      * @return The JSON type corresponding to the field type.
      */
-    String getJsonType(final Type fieldType) {
+    private JsonType getJsonType(final Type fieldType) {
         if (fieldType == int.class || fieldType == long.class
                 || fieldType == Integer.class || fieldType == Long.class) {
-            return "integer";
+            return JsonType.INTEGER;
         } else if (fieldType == String.class) {
-            return "string";
+            return JsonType.STRING;
         } else if (fieldType == double.class || fieldType == float.class
                 || fieldType == Double.class || fieldType == Float.class) {
-            return "number";
+            return JsonType.NUMBER;
         } else if (fieldType == List.class) {
-            return "{\"type\":\"array\",\"items\":{\"type\":\"unknown\"}}";
+            return JsonType.ARRAY;
         } else if (fieldType == BigDecimal.class) {
-            return "number";
+            return JsonType.NUMBER;
         } else if (fieldType == boolean.class || fieldType == Boolean.class) {
-            return "boolean";
+            return JsonType.BOOLEAN;
         } else {
-            return "unknown";
+            return JsonType.NULL;
         }
     }
     /**
@@ -137,7 +139,7 @@ public class JsonSchemaGenerator {
      * @param fieldType The Type of the field.
      * @return The JSON type corresponding to the field type.
      */
-    String getJsonTypeForArrays(final Type fieldType) {
+    private String getJsonTypeForArrays(final Type fieldType) {
         if (fieldType == int[].class || fieldType == Integer[].class
                 || fieldType == long[].class || fieldType == Long[].class
                 || fieldType == BigInteger[].class) {
