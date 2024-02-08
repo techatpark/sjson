@@ -41,43 +41,38 @@ class PerformanceTest {
         JsonNode jacksonJsonNode;
         JsonElement gsonObject;
 
-        Instant start;
+        long start;
 
         long jacksonsTime, jsonTime, gsonTime, oursTime;
         long jacksonsSize, jsonSize, gsonSize, oursSize;
 
-        // 1. SJson
-        start = Instant.now();
+        // Measure SJson
+        start = System.nanoTime();
         ourJsonObject = sJson.read(new BufferedReader(new FileReader(path.toFile())));
-        oursTime = Duration.between(start, Instant.now()).toNanos();
+        oursTime = System.nanoTime() - start;
         oursSize = meter.measureDeep(ourJsonObject);
 
-        // 2. Org Json
-        start = Instant.now();
+        // Measure Org Json
+        start = System.nanoTime();
         orgJSONObject = new JSONObject(new BufferedReader(new FileReader(path.toFile())));
-        jsonTime = Duration.between(start, Instant.now()).toNanos();
-        jsonTime = Math.round((float) ((jsonTime - oursTime) * 100) / jsonTime);
+        jsonTime = System.nanoTime() - start - oursTime;
         jsonSize = meter.measureDeep(orgJSONObject);
 
-        // 3. Jackson
-        start = Instant.now();
+        // Measure Jackson
+        start = System.nanoTime();
         jacksonJsonNode = jackson.readTree(new BufferedReader(new FileReader(path.toFile())));
-        jacksonsTime = Duration.between(start, Instant.now()).toNanos();
-        jacksonsTime = Math.round((float) ((jacksonsTime - oursTime) * 100) / jacksonsTime);
+        jacksonsTime = System.nanoTime() - start - oursTime;
         jacksonsSize = meter.measureDeep(jacksonJsonNode);
 
-        // 4. Gson
-        start = Instant.now();
+        // Measure Gson
+        start = System.nanoTime();
         gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())));
-        gsonTime = Duration.between(start, Instant.now()).toNanos();
-        gsonTime = Math.round((float) ((gsonTime - oursTime) * 100) / gsonTime);
+        gsonTime = System.nanoTime() - start - oursTime;
         gsonSize = meter.measureDeep(gsonObject);
 
-        // 5. SJson with Jackson
-        String reversedJsonText = jackson.writeValueAsString(ourJsonObject);
-
+        // Check Correctness of the parser
         Assertions.assertEquals(gsonObject,
-                JsonParser.parseReader(new StringReader(reversedJsonText)),
+                JsonParser.parseReader(new StringReader(jackson.writeValueAsString(ourJsonObject))),
                 "Reverse JSON Failed for " + path);
 
         System.out.format("%33s%20s%20s%20s%10s%20s%20s%20s\n",

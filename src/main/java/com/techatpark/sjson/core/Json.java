@@ -42,7 +42,6 @@ public final class Json {
     private static final int CAPACITY = 10;
 
 
-
     /**
      * Number 0.
      */
@@ -52,7 +51,6 @@ public final class Json {
      * For invalid JSON.
      */
     private static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
-
 
     /**
      * Reads JSON as a Java Object.
@@ -98,10 +96,7 @@ public final class Json {
             builder.append("\"")
                     .append(escapeJsonTxt(entry.getKey()))
                     .append("\":"); // Create Key value separator
-
-            Object value = entry.getValue();
-
-            valueText(builder, value);
+            valueText(builder, entry.getValue());
         }
         return builder.append("}").toString();
     }
@@ -133,20 +128,14 @@ public final class Json {
      * @param value
      */
     private void valueText(final StringBuilder builder, final Object value) {
-        if (value == null) {
-            builder.append("null");
-        } else if (value instanceof String str) {
-            processString(builder, str);
-        } else if (value instanceof Map map) {
-            builder.append(jsonText(map));
-        } else if (value instanceof List list) {
-            builder.append(jsonText(list));
-        } else {
-            builder.append(value);
+        switch (value) {
+            case null -> builder.append("null");
+            case String str -> processString(builder, str);
+            case Map map -> builder.append(jsonText(map));
+            case List list -> builder.append(jsonText(list));
+            default -> builder.append(value);
         }
     }
-
-
 
     /**
      * Process String.
@@ -156,9 +145,7 @@ public final class Json {
      */
     private void processString(final StringBuilder builder,
                                final String value) {
-        builder.append("\"")
-                .append(escapeJsonTxt(value))
-                .append("\"");
+        builder.append("\"").append(escapeJsonTxt(value)).append("\"");
     }
 
     /**
@@ -307,31 +294,16 @@ public final class Json {
                     case '\\':
                         character = getCharacter(reader.read());
                         switch (character) {
-                            case 'b':
-                                sb.append('\b');
-                                break;
-                            case 't':
-                                sb.append('\t');
-                                break;
-                            case 'n':
-                                sb.append('\n');
-                                break;
-                            case 'f':
-                                sb.append('\f');
-                                break;
-                            case 'r':
-                                sb.append('\r');
-                                break;
-                            case 'u':
-                                sb.append((char) Integer
+                            case 'b' -> sb.append('\b');
+                            case 't' -> sb.append('\t');
+                            case 'n' -> sb.append('\n');
+                            case 'f' -> sb.append('\f');
+                            case 'r' -> sb.append('\r');
+                            case 'u' -> sb.append((char) Integer
                                         .parseInt(new String(next(LENGTH)),
                                                 RADIX));
-                                break;
-                            case '"', '\'', '\\', '/':
-                                sb.append(character);
-                                break;
-                            default:
-                                throw new IllegalArgumentException(
+                            case '"', '\'', '\\', '/' -> sb.append(character);
+                            default -> throw new IllegalArgumentException(
                                         ILLEGAL_JSON_VALUE);
                         }
                         break;
@@ -679,7 +651,6 @@ public final class Json {
         private void setCursor(final Character character) {
             cursor = character;
         }
-
 
     }
 }
