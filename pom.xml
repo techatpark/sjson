@@ -63,12 +63,12 @@
         <sonar.version>3.7.0.1746</sonar.version>
         <surefire.version>3.2.5</surefire.version>
         <jacoco.version>0.8.11</jacoco.version>
-        <maven.checkstyle.version>3.1.2</maven.checkstyle.version>
+        <maven.checkstyle.version>3.3.1</maven.checkstyle.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-javadoc.version>3.3.1</maven-javadoc.version>
         <maven-gpg.version>3.0.1</maven-gpg.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <checkstyle.version>9.0.1</checkstyle.version>
+        <checkstyle.version>10.13.0</checkstyle.version>
         <jvm.options>
             -javaagent:${user.home}/.m2/repository/io/github/stephankoelle/jamm/${jamm.version}/jamm-${jamm.version}.jar
             --add-opens java.base/java.util=ALL-UNNAMED --add-opens jakarta.validation/jakarta.validation=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens

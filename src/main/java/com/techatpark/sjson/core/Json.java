@@ -567,7 +567,7 @@ public final class Json {
                 eoa = endOfArray();
             }
             nextClean();
-            return Collections.unmodifiableList(list);
+            return list;
         }
 
 
