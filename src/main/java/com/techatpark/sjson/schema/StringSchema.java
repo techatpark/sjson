@@ -18,4 +18,12 @@ public class StringSchema extends JsonSchema<String> {
     public final String read(final Reader reader) throws IOException {
         return null;
     }
+
+    /** Description of something. */
+    @Override
+    public String toString() {
+        return new StringBuilder("{\"type\":\"string\",")
+                .append("\"$schema\":\"" + this.getSchema() + "\"}")
+                .toString();
+    }
 }

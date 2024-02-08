@@ -22,9 +22,7 @@ public class BooleanSchema extends JsonSchema<Boolean> {
     /** Description of something. */
     @Override
     public String toString() {
-
-        return new StringBuilder("{\"type\":\"boolean\",")
-                .append("\"$schema\":\"" + this.getSchema() + "\"}")
-                .toString();
+        return "{\"type\":\"boolean\",\"$schema\":\""
+                + this.getSchema() + "\"}";
     }
 }

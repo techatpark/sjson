@@ -38,7 +38,8 @@ class JsonSchemaTest {
 
     @ParameterizedTest
     @ValueSource(classes = {
-            Boolean.class
+            Boolean.class,
+            String.class
     })
     @Disabled
     void testGenerator(final Class theClass) throws Exception {
