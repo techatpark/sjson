@@ -76,8 +76,8 @@ class PerformanceTest {
         // 5. SJson with Jackson
         String reversedJsonText = jackson.writeValueAsString(ourJsonObject);
 
-        Assertions.assertEquals(jacksonJsonNode,
-                jackson.readTree(new StringReader(reversedJsonText)),
+        Assertions.assertEquals(gsonObject,
+                JsonParser.parseReader(new StringReader(reversedJsonText)),
                 "Reverse JSON Failed for " + path);
 
         System.out.format("%33s%20s%20s%20s%10s%20s%20s%20s\n",

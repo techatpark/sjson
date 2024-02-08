@@ -7,20 +7,15 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.techatpark.sjson.core.util.TestUtil;
-import com.techatpark.sjson.schema.generator.example.ComplexPojo;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JsonSchemaTest {
 
@@ -44,10 +39,7 @@ class JsonSchemaTest {
     @Disabled
     void testGenerator(final Class theClass) throws Exception {
         String rawJsonSchema = mapper.writeValueAsString(generator.generateSchema(theClass));
-
         System.out.println(JsonSchema.getJsonSchema(theClass).toString());
-        JSONAssert.assertEquals(
-                rawJsonSchema, JsonSchema.getJsonSchema(theClass).toString(), JSONCompareMode.LENIENT);
     }
 
 

@@ -1,4 +1,4 @@
-package com.techatpark.sjson.schema.generator.example;
+package com.techatpark.sjson.schema;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
