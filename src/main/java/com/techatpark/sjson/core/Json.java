@@ -289,24 +289,24 @@ public final class Json {
             // String with escape characters ?!
             for (;;) {
                 switch (character) {
-                    case 0, '\n', '\r':
-                        throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                     case '\\':
                         character = getCharacter(reader.read());
                         switch (character) {
+                            case '"', '\'', '\\', '/' -> sb.append(character);
+                            case 'u' -> sb.append((char) Integer
+                                    .parseInt(new String(next(LENGTH)),
+                                            RADIX));
                             case 'b' -> sb.append('\b');
                             case 't' -> sb.append('\t');
                             case 'n' -> sb.append('\n');
                             case 'f' -> sb.append('\f');
                             case 'r' -> sb.append('\r');
-                            case 'u' -> sb.append((char) Integer
-                                        .parseInt(new String(next(LENGTH)),
-                                                RADIX));
-                            case '"', '\'', '\\', '/' -> sb.append(character);
                             default -> throw new IllegalArgumentException(
                                         ILLEGAL_JSON_VALUE);
                         }
                         break;
+                    case 0, '\n', '\r':
+                        throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                     default:
                         if (character == '"') {
                             return sb.toString();
@@ -518,7 +518,6 @@ public final class Json {
          * @throws IOException
          */
         private Map<String, Object> getObject() throws IOException {
-
             boolean eoo = endOfObject();
             // This is Empty Object
             if (eoo) {
@@ -561,10 +560,8 @@ public final class Json {
             }
             final List<Object> list = new ArrayList<>();
             list.add(value);
-            boolean eoa = endOfArray();
-            while (!eoa) {
+            while (!endOfArray()) {
                 list.add(getValue());
-                eoa = endOfArray();
             }
             nextClean();
             return list;
