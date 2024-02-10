@@ -39,7 +39,7 @@ public final class Json {
     /**
      * Number 0.
      */
-    private static final int NUMBER_ZERO = 0;
+    private static final int ZERO = 0;
 
     /**
      * For invalid JSON.
@@ -199,7 +199,7 @@ public final class Json {
                             || (ch >= '\u2000' && ch <= '\u20FF')) {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
-                        for (int k = 0; k < NumberParser.NUMBER_FOUR
+                        for (int k = 0; k < NumberParser.FOUR
                                 - ss.length(); k++) {
                             sb.append('0');
                         }
@@ -378,7 +378,7 @@ public final class Json {
          * @throws IOException
          */
         private boolean getTrue() throws IOException {
-            char[] charBuffer = next(reader, NumberParser.NUMBER_THREE);
+            char[] charBuffer = next(reader, NumberParser.THREE);
             if (charBuffer[0] == 'r'
                     && charBuffer[1] == 'u'
                     && charBuffer[2] == 'e') {
@@ -396,11 +396,11 @@ public final class Json {
          * @throws IOException
          */
         private boolean getFalse() throws IOException {
-            char[] charBuffer = next(reader, NumberParser.NUMBER_FOUR);
-            if (charBuffer[NUMBER_ZERO] == 'a'
-                    && charBuffer[NumberParser.NUMBER_ONE] == 'l'
-                    && charBuffer[NumberParser.NUMBER_TWO] == 's'
-                    && charBuffer[NumberParser.NUMBER_THREE] == 'e') {
+            char[] charBuffer = next(reader, NumberParser.FOUR);
+            if (charBuffer[ZERO] == 'a'
+                    && charBuffer[NumberParser.ONE] == 'l'
+                    && charBuffer[NumberParser.TWO] == 's'
+                    && charBuffer[NumberParser.THREE] == 'e') {
                 // cursor = 'e';
                 return false;
             } else {
@@ -415,10 +415,10 @@ public final class Json {
          * @throws IOException
          */
         private Object getNull() throws IOException {
-            char[] charBuffer = next(reader, NumberParser.NUMBER_THREE);
-            if (charBuffer[NUMBER_ZERO] == 'u'
-                    && charBuffer[NumberParser.NUMBER_ONE] == 'l'
-                    && charBuffer[NumberParser.NUMBER_TWO] == 'l') {
+            char[] charBuffer = next(reader, NumberParser.THREE);
+            if (charBuffer[ZERO] == 'u'
+                    && charBuffer[NumberParser.ONE] == 'l'
+                    && charBuffer[NumberParser.TWO] == 'l') {
                 // cursor = 'l';
                 return null;
             } else {

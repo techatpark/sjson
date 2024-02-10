@@ -11,79 +11,79 @@ public final class NumberParser {
     /**
      * Number 1.
      */
-    public static final int NUMBER_ONE = 1;
+    public static final int ONE = 1;
     /**
      * Number 2.
      */
-    public static final int NUMBER_TWO = 2;
+    public static final int TWO = 2;
     /**
      * Number 3.
      */
-    public static final int NUMBER_THREE = 3;
+    public static final int THREE = 3;
     /**
      * Number 4.
      */
-    public static final int NUMBER_FOUR = 4;
+    public static final int FOUR = 4;
     /**
      * Number 5.
      */
-    private static final int NUMBER_FIVE = 5;
+    private static final int FIVE = 5;
     /**
      * Number 6.
      */
-    private static final int NUMBER_SIX = 6;
+    private static final int SIX = 6;
     /**
      * Number 7.
      */
-    private static final int NUMBER_SEVEN = 7;
+    private static final int SEVEN = 7;
     /**
      * Number 8.
      */
-    private static final int NUMBER_EIGHT = 8;
+    private static final int EIGHT = 8;
     /**
      * Number 9.
      */
-    private static final int NUMBER_NINE = 9;
+    private static final int NINE = 9;
     /**
      * Number 10.
      */
-    private static final int NUMBER_TEN = 10;
+    private static final int TEN = 10;
     /**
      * Number 11.
      */
-    private static final int NUMBER_ELEVEN = 11;
+    private static final int ELEVEN = 11;
     /**
      * Number 12.
      */
-    private static final int NUMBER_TWELVE = 12;
+    private static final int TWELVE = 12;
     /**
      * Number 13.
      */
-    private static final int NUMBER_THIRTEEN = 13;
+    private static final int THIRTEEN = 13;
     /**
      * Number 14.
      */
-    private static final int NUMBER_FOURTEEN = 14;
+    private static final int FOURTEEN = 14;
     /**
      * Number 15.
      */
-    private static final int NUMBER_FIFTEEN = 15;
+    private static final int FIFTEEN = 15;
     /**
      * Number 16.
      */
-    private static final int NUMBER_SIXTEEN = 16;
+    private static final int SIXTEEN = 16;
     /**
      * Number 17.
      */
-    private static final int NUMBER_SEVENTEEN = 17;
+    private static final int SEVENTEEN = 17;
     /**
      * Number 18.
      */
-    private static final int NUMBER_EIGHTEEN = 18;
+    private static final int EIGHTEEN = 18;
     /**
      * Number 19.
      */
-    private static final int NUMBER_NINETEEN = 19;
+    private static final int NINETEEN = 19;
 
     /**
      * Utility Class.
@@ -99,42 +99,26 @@ public final class NumberParser {
      */
     public static Number parseNumber(final String source,
                                      final boolean isNegative) {
-        switch (source.length()) {
-            case NUMBER_ONE:
-            case NUMBER_TWO:
-                return isNegative ? (byte) -Byte.parseByte(source)
-                             : Byte.parseByte(source);
-            case NUMBER_THREE:
-                return getByteOrShort(source, isNegative);
-            case NUMBER_FOUR:
-                return isNegative ? (short) -Short.parseShort(source)
-                        : Short.parseShort(source);
-            case NUMBER_FIVE:
-                return getShortOrInteger(source, isNegative);
-            case NUMBER_SIX:
-            case NUMBER_SEVEN:
-            case NUMBER_EIGHT:
-            case NUMBER_NINE:
-                return isNegative ? -Integer.parseUnsignedInt(source)
-                        : Integer.parseUnsignedInt(source);
-            case NUMBER_TEN:
-                return getIntegerOrLong(source, isNegative);
-            case NUMBER_ELEVEN:
-            case NUMBER_TWELVE:
-            case NUMBER_THIRTEEN:
-            case NUMBER_FOURTEEN:
-            case NUMBER_FIFTEEN:
-            case NUMBER_SIXTEEN:
-            case NUMBER_SEVENTEEN:
-            case NUMBER_EIGHTEEN:
-                return isNegative ? -Long.parseUnsignedLong(source)
-                        : Long.parseUnsignedLong(source);
-            case NUMBER_NINETEEN:
-                return getLongOrBigNumber(source, isNegative);
-            default:
-                return isNegative ? new BigInteger("-" + source)
-                        : new BigInteger(source);
-        }
+        return switch (source.length()) {
+            case ONE, TWO
+                    -> isNegative ? (byte) -Byte.parseByte(source)
+                    : Byte.parseByte(source);
+            case THREE -> getByteOrShort(source, isNegative);
+            case FOUR -> isNegative ? (short) -Short.parseShort(source)
+                    : Short.parseShort(source);
+            case FIVE -> getShortOrInteger(source, isNegative);
+            case SIX, SEVEN, EIGHT, NINE
+                    -> isNegative ? -Integer.parseUnsignedInt(source)
+                    : Integer.parseUnsignedInt(source);
+            case TEN -> getIntegerOrLong(source, isNegative);
+            case ELEVEN, TWELVE, THIRTEEN, FOURTEEN, FIFTEEN, SEVENTEEN,
+                    SIXTEEN, EIGHTEEN -> isNegative
+                    ? -Long.parseUnsignedLong(source)
+                            : Long.parseUnsignedLong(source);
+            case NINETEEN -> getLongOrBigNumber(source, isNegative);
+            default -> isNegative ? new BigInteger("-" + source)
+                    : new BigInteger(source);
+        };
     }
 
 
@@ -148,15 +132,12 @@ public final class NumberParser {
                 return (byte) aShort;
             }
             return aShort;
-
         } else {
             if (aShort <= Byte.MAX_VALUE) {
                 return (byte) aShort;
             }
             return aShort;
         }
-
-
     }
 
     private static Number getShortOrInteger(final String source,
@@ -174,7 +155,6 @@ public final class NumberParser {
             }
             return integer;
         }
-
     }
 
     private static Number getIntegerOrLong(final String source,
@@ -192,7 +172,6 @@ public final class NumberParser {
             }
             return aLong;
         }
-
     }
 
     private static Number getLongOrBigNumber(final String source,
@@ -204,7 +183,6 @@ public final class NumberParser {
                 return bigInteger.longValue();
             }
             return bigInteger;
-
         } else {
             if (bigInteger.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > -1) {
                 return bigInteger.longValue();
@@ -234,9 +212,7 @@ public final class NumberParser {
         } catch (java.lang.NumberFormatException ne) {
             return bigDecimal;
         }
-
         return bigDecimal;
-
     }
 
 }
