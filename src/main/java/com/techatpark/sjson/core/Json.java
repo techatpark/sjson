@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.techatpark.sjson.core.util.StringParser.next;
+import static com.techatpark.sjson.core.util.StringParser.getString;
+import static com.techatpark.sjson.core.util.StringParser.getCharacter;
+
+
 /**
  * Json parser for server side workloads.
  * It tries to get optimized memory and performance with below goals.
@@ -27,20 +32,9 @@ import java.util.Map;
 public final class Json {
 
     /**
-     * Length for hex char.
-     */
-    private static final int LENGTH = 4;
-
-    /**
-     * Radix for hex char.
-     */
-    private static final int RADIX = 16;
-
-    /**
      * Capacity.
      */
     private static final int CAPACITY = 10;
-
 
     /**
      * Number 0.
@@ -255,7 +249,7 @@ public final class Json {
             final char character = nextClean();
             // 2. Call corresponding get methods based on the type
             return switch (character) {
-                case '"' -> getString();
+                case '"' -> getString(reader);
                 case 'n' -> getNull();
                 case 't' -> getTrue();
                 case 'f' -> getFalse();
@@ -264,70 +258,6 @@ public final class Json {
                 case ']' -> this;
                 default -> getNumber(character);
             };
-        }
-
-        /**
-         * Reads String from Reader. Reader will stop at the " symbol
-         *
-         * @return string
-         * @throws IOException
-         */
-        private String getString() throws IOException {
-            final StringBuilder sb = new StringBuilder();
-            char character;
-
-            while ((character = getCharacter(reader.read())) != '\\'
-                    && character != '"') {
-                sb.append(character);
-            }
-
-            // Normal String
-            if (character == '"') {
-                return sb.toString();
-            }
-
-            // String with escape characters ?!
-            for (;;) {
-                switch (character) {
-                    case '\\':
-                        character = getCharacter(reader.read());
-                        switch (character) {
-                            case '"', '\'', '\\', '/' -> sb.append(character);
-                            case 'u' -> sb.append((char) Integer
-                                    .parseInt(new String(next(LENGTH)),
-                                            RADIX));
-                            case 'b' -> sb.append('\b');
-                            case 't' -> sb.append('\t');
-                            case 'n' -> sb.append('\n');
-                            case 'f' -> sb.append('\f');
-                            case 'r' -> sb.append('\r');
-                            default -> throw new IllegalArgumentException(
-                                        ILLEGAL_JSON_VALUE);
-                        }
-                        break;
-                    case 0, '\n', '\r':
-                        throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-                    default:
-                        if (character == '"') {
-                            return sb.toString();
-                        }
-                        sb.append(character);
-                }
-                character = getCharacter(reader.read());
-            }
-        }
-
-        /**
-         * get Character.
-         * @throws IllegalArgumentException if EOF
-         * @param value
-         * @return char value
-         */
-        private char getCharacter(final int value) {
-            if (value == -1) {
-                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-            }
-            return (char) value;
         }
 
         /**
@@ -448,7 +378,7 @@ public final class Json {
          * @throws IOException
          */
         private boolean getTrue() throws IOException {
-            char[] charBuffer = next(NumberParser.NUMBER_THREE);
+            char[] charBuffer = next(reader, NumberParser.NUMBER_THREE);
             if (charBuffer[0] == 'r'
                     && charBuffer[1] == 'u'
                     && charBuffer[2] == 'e') {
@@ -466,7 +396,7 @@ public final class Json {
          * @throws IOException
          */
         private boolean getFalse() throws IOException {
-            char[] charBuffer = next(NumberParser.NUMBER_FOUR);
+            char[] charBuffer = next(reader, NumberParser.NUMBER_FOUR);
             if (charBuffer[NUMBER_ZERO] == 'a'
                     && charBuffer[NumberParser.NUMBER_ONE] == 'l'
                     && charBuffer[NumberParser.NUMBER_TWO] == 's'
@@ -485,7 +415,7 @@ public final class Json {
          * @throws IOException
          */
         private Object getNull() throws IOException {
-            char[] charBuffer = next(NumberParser.NUMBER_THREE);
+            char[] charBuffer = next(reader, NumberParser.NUMBER_THREE);
             if (charBuffer[NUMBER_ZERO] == 'u'
                     && charBuffer[NumberParser.NUMBER_ONE] == 'l'
                     && charBuffer[NumberParser.NUMBER_TWO] == 'l') {
@@ -494,20 +424,6 @@ public final class Json {
             } else {
                 throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
             }
-        }
-
-        /**
-         * Reads next chars for given length
-         * from the reader and fill an char array.
-         *
-         * @param length
-         * @return char array
-         * @throws IOException
-         */
-        private char[] next(final int length) throws IOException {
-            char[] cbuf = new char[length];
-            reader.read(cbuf, NUMBER_ZERO, length);
-            return cbuf;
         }
 
         /**
@@ -540,7 +456,7 @@ public final class Json {
          * @throws IOException
          */
         private String getKey() throws IOException {
-            final String key = getString().intern();
+            final String key = getString(reader).intern();
             nextClean();
             return key;
         }
