@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.techatpark.sjson.core.util.NullParser.getNull;
 import static com.techatpark.sjson.core.util.StringParser.next;
 import static com.techatpark.sjson.core.util.StringParser.getString;
 import static com.techatpark.sjson.core.util.StringParser.getCharacter;
@@ -250,7 +251,7 @@ public final class Json {
             // 2. Call corresponding get methods based on the type
             return switch (character) {
                 case '"' -> getString(reader);
-                case 'n' -> getNull();
+                case 'n' -> getNull(reader);
                 case 't' -> getTrue();
                 case 'f' -> getFalse();
                 case '{' -> getObject();
@@ -408,23 +409,7 @@ public final class Json {
             }
         }
 
-        /**
-         * Reads Null from Reader. Reader will stip at the "l" symbol.
-         *
-         * @return string
-         * @throws IOException
-         */
-        private Object getNull() throws IOException {
-            char[] charBuffer = next(reader, NumberParser.THREE);
-            if (charBuffer[ZERO] == 'u'
-                    && charBuffer[NumberParser.ONE] == 'l'
-                    && charBuffer[NumberParser.TWO] == 'l') {
-                // cursor = 'l';
-                return null;
-            } else {
-                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-            }
-        }
+
 
         /**
          * Reads Object from a reader. Reader will
