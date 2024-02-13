@@ -446,7 +446,7 @@ public final class Json {
                 eoo = endOfObject();
             }
             nextClean();
-            return Collections.unmodifiableMap(jsonMap);
+            return jsonMap;
         }
 
         /**
