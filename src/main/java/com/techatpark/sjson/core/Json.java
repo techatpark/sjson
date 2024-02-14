@@ -14,6 +14,8 @@ import java.util.Map;
 import static com.techatpark.sjson.core.util.BooleanParser.getFalse;
 import static com.techatpark.sjson.core.util.BooleanParser.getTrue;
 import static com.techatpark.sjson.core.util.NullParser.getNull;
+import static com.techatpark.sjson.core.util.ReaderUtil.isSpace;
+import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static com.techatpark.sjson.core.util.StringParser.getString;
 import static com.techatpark.sjson.core.util.StringParser.getCharacter;
 
@@ -248,7 +250,7 @@ public final class Json {
          */
         private Object getValue() throws IOException {
             // 1. move to the first clean character to determine the Data type
-            final char character = nextClean();
+            final char character = moveCursorToNextClean();
             // 2. Call corresponding get methods based on the type
             return switch (character) {
                 case '"' -> getString(reader);
@@ -390,7 +392,7 @@ public final class Json {
             boolean eoo = endOfObject();
             // This is Empty Object
             if (eoo) {
-                nextClean();
+                moveCursorToNextClean();
                 return Collections.emptyMap();
             }
             final Map<String, Object> jsonMap = new HashMap<>();
@@ -398,7 +400,7 @@ public final class Json {
                 jsonMap.put(getKey(), getValue());
                 eoo = endOfObject();
             }
-            nextClean();
+            moveCursorToNextClean();
             return jsonMap;
         }
 
@@ -410,7 +412,7 @@ public final class Json {
          */
         private String getKey() throws IOException {
             final String key = getString(reader).intern();
-            nextClean();
+            moveCursorToNextClean();
             return key;
         }
 
@@ -424,7 +426,7 @@ public final class Json {
             final Object value = getValue();
             // If not Empty Array
             if (value == this) {
-                nextClean();
+                moveCursorToNextClean();
                 return Collections.emptyList();
             }
             final List<Object> list = new ArrayList<>();
@@ -432,10 +434,9 @@ public final class Json {
             while (!endOfArray()) {
                 list.add(getValue());
             }
-            nextClean();
+            moveCursorToNextClean();
             return list;
         }
-
 
         /**
          * Skip Spaces and land reader at the valid character.
@@ -443,27 +444,13 @@ public final class Json {
          * @return valid character
          * @throws IOException
          */
-        private char nextClean() throws IOException {
-            char character;
-            do {
-                character = (char) this.reader.read();
-            } while (isSpace(character));
+        private char moveCursorToNextClean() throws IOException {
+            char character = nextClean(this.reader);
             setCursor(character);
-            return cursor;
+            return character;
         }
 
-        /**
-         * Determines if this is a space charecter.
-         *
-         * @param character
-         * @return flag
-         */
-        private boolean isSpace(final char character) {
-            return (character == ' '
-                    || character == '\n'
-                    || character == '\r'
-                    || character == '\t');
-        }
+
 
         /**
          * Determines the Object End. By moving till " or }.
@@ -509,14 +496,14 @@ public final class Json {
             }
             return character == ']';
         }
-
         /**
          * Sets Cursor at given Character.
          * @param character
          */
-        private void setCursor(final Character character) {
+        public void setCursor(final Character character) {
             cursor = character;
         }
+
 
     }
 }
