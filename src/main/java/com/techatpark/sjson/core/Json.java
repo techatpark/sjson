@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.techatpark.sjson.core.util.BooleanParser.getFalse;
+import static com.techatpark.sjson.core.util.BooleanParser.getTrue;
 import static com.techatpark.sjson.core.util.NullParser.getNull;
-import static com.techatpark.sjson.core.util.StringParser.next;
 import static com.techatpark.sjson.core.util.StringParser.getString;
 import static com.techatpark.sjson.core.util.StringParser.getCharacter;
 
@@ -252,8 +253,8 @@ public final class Json {
             return switch (character) {
                 case '"' -> getString(reader);
                 case 'n' -> getNull(reader);
-                case 't' -> getTrue();
-                case 'f' -> getFalse();
+                case 't' -> getTrue(reader);
+                case 'f' -> getFalse(reader);
                 case '{' -> getObject();
                 case '[' -> getArray();
                 case ']' -> this;
@@ -372,42 +373,9 @@ public final class Json {
                     + builder.toString() + "." + decimal.toString());
         }
 
-        /**
-         * Reads True from Reader. Reader will stip at the "e" symbol.
-         *
-         * @return string
-         * @throws IOException
-         */
-        private boolean getTrue() throws IOException {
-            char[] charBuffer = next(reader, NumberParser.THREE);
-            if (charBuffer[0] == 'r'
-                    && charBuffer[1] == 'u'
-                    && charBuffer[2] == 'e') {
-                // cursor = 'e';
-                return true;
-            } else {
-                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-            }
-        }
 
-        /**
-         * Reads False from Reader. Reader will strip at the "e" symbol.
-         *
-         * @return string
-         * @throws IOException
-         */
-        private boolean getFalse() throws IOException {
-            char[] charBuffer = next(reader, NumberParser.FOUR);
-            if (charBuffer[ZERO] == 'a'
-                    && charBuffer[NumberParser.ONE] == 'l'
-                    && charBuffer[NumberParser.TWO] == 's'
-                    && charBuffer[NumberParser.THREE] == 'e') {
-                // cursor = 'e';
-                return false;
-            } else {
-                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-            }
-        }
+
+
 
 
 
