@@ -19,14 +19,16 @@ public class StringSchema extends JsonSchema<Object> {
     }
 
     @Override
-    public final Object read(final Reader reader) throws IOException {
-        if (ReaderUtil.nextClean(reader) == '"') {
-            return StringParser.getString(reader);
-        } else if (ReaderUtil.nextClean(reader) == 'n') {
-            return NullParser.getNull(reader);
-        }
 
-        throw new IllegalArgumentException("Invaild String");
+    public final String read(final Reader reader) throws IOException {
+        char nextClean = ReaderUtil.nextClean(reader);
+        if (nextClean == '"') {
+            return StringParser.getString(reader);
+        } else if (nextClean == 'n') {
+            return (String) NullParser.getNull(reader);
+        }
+        throw new IllegalArgumentException("Invalid String");
+
 
     }
 

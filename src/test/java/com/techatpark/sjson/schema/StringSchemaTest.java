@@ -18,6 +18,10 @@ class StringSchemaTest {
         ObjectMapper objectmapper = new ObjectMapper();
         StringSchema stringschema = (StringSchema) JsonSchema.getJsonSchema(String.class);
 
+        Assertions.assertNull(
+                stringschema.read(new StringReader("null")),
+                "String null reading failed");
+
         String input = """
                 ""
                 """;
