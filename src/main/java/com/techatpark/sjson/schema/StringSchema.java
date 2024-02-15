@@ -1,5 +1,6 @@
 package com.techatpark.sjson.schema;
 
+import com.techatpark.sjson.core.util.NullParser;
 import com.techatpark.sjson.core.util.ReaderUtil;
 import com.techatpark.sjson.core.util.StringParser;
 
@@ -19,10 +20,13 @@ public class StringSchema extends JsonSchema<String> {
 
     @Override
     public final String read(final Reader reader) throws IOException {
-        if (ReaderUtil.nextClean(reader) == '"') {
+        char nextClean = ReaderUtil.nextClean(reader);
+        if (nextClean == '"') {
             return StringParser.getString(reader);
+        } else if (nextClean == 'n') {
+            return (String) NullParser.getNull(reader);
         }
-        throw new IllegalArgumentException("Invaild String");
+        throw new IllegalArgumentException("Invalid String");
 
     }
 
