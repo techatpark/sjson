@@ -19,7 +19,7 @@ class StringSchemaTest {
         StringSchema stringschema = (StringSchema) JsonSchema.getJsonSchema(String.class);
 
         String input = """
-                "A"
+                ""
                 """;
 
         Assertions.assertEquals(objectmapper.readValue(input,String.class),
