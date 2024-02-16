@@ -14,13 +14,15 @@ class BooleanSchemaTest {
     @Test
     void read() throws IOException {
 
-        ObjectMapper objectmapper = new ObjectMapper();
-        BooleanSchema booleanSchema = (BooleanSchema) JsonSchema.getJsonSchema(Boolean.class);
+        BooleanSchema booleanSchema =
+                (BooleanSchema) JsonSchema.getJsonSchema(Boolean.class);
 
-        String input = "true";
+        Assertions.assertTrue(
+                booleanSchema.read(new StringReader("true")),
+                "Boolean reading failed");
 
-        Assertions.assertEquals(objectmapper.readValue(input,Boolean.class),
-                booleanSchema.read(new StringReader(input)),
+        Assertions.assertFalse(
+                booleanSchema.read(new StringReader("false")),
                 "Boolean reading failed");
 
     }
