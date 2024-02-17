@@ -1,6 +1,7 @@
 package com.techatpark.sjson.schema;
 
 import com.techatpark.sjson.core.util.BooleanParser;
+import com.techatpark.sjson.core.util.NullParser;
 import com.techatpark.sjson.core.util.ReaderUtil;
 
 import java.io.IOException;
@@ -19,11 +20,15 @@ public class BooleanSchema extends JsonSchema<Boolean> {
 
     @Override
     public final Boolean read(final Reader reader) throws IOException {
+
+
         char nextClean = ReaderUtil.nextClean(reader);
         if (nextClean == 't') {
             return BooleanParser.getTrue(reader);
         } else if (nextClean == 'f') {
             return BooleanParser.getFalse(reader);
+        } else if (nextClean == 'n') {
+            return (Boolean) NullParser.getNull(reader);
         }
         throw new IllegalArgumentException("Not Boolean");
     }

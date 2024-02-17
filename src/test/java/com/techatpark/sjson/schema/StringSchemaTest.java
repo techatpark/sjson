@@ -12,23 +12,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StringSchemaTest {
 
+    ObjectMapper objectmapper = new ObjectMapper();
+    StringSchema stringschema = (StringSchema) JsonSchema.getJsonSchema(String.class);
     @Test
     void read() throws IOException {
 
-        ObjectMapper objectmapper = new ObjectMapper();
-        StringSchema stringschema = (StringSchema) JsonSchema.getJsonSchema(String.class);
+        System.out.println(stringschema);
 
         Assertions.assertNull(
                 stringschema.read(new StringReader("null")),
                 "String null reading failed");
+        assertStringParsing("\"\"");
 
-        String input = """
-                ""
-                """;
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            stringschema.read(new StringReader("Illegal"));
+        });
 
-        Assertions.assertEquals(objectmapper.readValue(input,String.class),
-            stringschema.read(new StringReader(input)),
-                "String reading failed");
+
+    }
+            private void assertStringParsing(String input) throws IOException{
+            Assertions.assertEquals(objectmapper.readValue(input,String.class),
+                    stringschema.read(new StringReader(input)),
+                    "String reading failed");
+
+
+
     }
 
 }

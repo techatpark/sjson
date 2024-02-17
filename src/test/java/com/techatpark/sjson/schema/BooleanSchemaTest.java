@@ -10,12 +10,12 @@ import java.io.StringReader;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BooleanSchemaTest {
-
+    BooleanSchema booleanSchema =
+            (BooleanSchema) JsonSchema.getJsonSchema(Boolean.class);
     @Test
     void read() throws IOException {
+        System.out.println(booleanSchema);
 
-        BooleanSchema booleanSchema =
-                (BooleanSchema) JsonSchema.getJsonSchema(Boolean.class);
 
         Assertions.assertTrue(
                 booleanSchema.read(new StringReader("true")),
@@ -24,6 +24,14 @@ class BooleanSchemaTest {
         Assertions.assertFalse(
                 booleanSchema.read(new StringReader("false")),
                 "Boolean reading failed");
+
+        Assertions.assertNull(
+                booleanSchema.read(new StringReader("null")),
+                "Boolean Reading null");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            booleanSchema.read(new StringReader("illegal"));
+        });
 
     }
 }
