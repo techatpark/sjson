@@ -1,4 +1,4 @@
-package com.techatpark.sjson.core.util;
+package com.techatpark.sjson.core.Parser;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

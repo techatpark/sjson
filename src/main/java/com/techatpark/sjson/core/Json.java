@@ -1,6 +1,6 @@
 package com.techatpark.sjson.core;
 
-import com.techatpark.sjson.core.util.NumberParser;
+import com.techatpark.sjson.core.Parser.NumberParser;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -11,13 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.techatpark.sjson.core.util.BooleanParser.getFalse;
-import static com.techatpark.sjson.core.util.BooleanParser.getTrue;
-import static com.techatpark.sjson.core.util.NullParser.getNull;
+import static com.techatpark.sjson.core.Parser.BooleanParser.getFalse;
+import static com.techatpark.sjson.core.Parser.BooleanParser.getTrue;
+import static com.techatpark.sjson.core.Parser.NullParser.getNull;
 import static com.techatpark.sjson.core.util.ReaderUtil.isSpace;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
-import static com.techatpark.sjson.core.util.StringParser.getString;
-import static com.techatpark.sjson.core.util.StringParser.getCharacter;
+import static com.techatpark.sjson.core.Parser.StringParser.getString;
+import static com.techatpark.sjson.core.Parser.StringParser.getCharacter;
 
 
 /**
