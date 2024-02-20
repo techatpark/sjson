@@ -4,7 +4,6 @@ import com.techatpark.sjson.core.Parser.NumberParser;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,11 +13,13 @@ import java.util.Map;
 import static com.techatpark.sjson.core.Parser.BooleanParser.getFalse;
 import static com.techatpark.sjson.core.Parser.BooleanParser.getTrue;
 import static com.techatpark.sjson.core.Parser.NullParser.getNull;
+import static com.techatpark.sjson.core.Parser.NumberParser.buildNumber;
+import static com.techatpark.sjson.core.Parser.NumberParser.getDecimalNumber;
+import static com.techatpark.sjson.core.Parser.NumberParser.getExponentialNumber;
 import static com.techatpark.sjson.core.util.ReaderUtil.isSpace;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static com.techatpark.sjson.core.Parser.StringParser.getString;
 import static com.techatpark.sjson.core.Parser.StringParser.getCharacter;
-
 
 /**
  * Json parser for server side workloads.
@@ -39,16 +40,6 @@ public final class Json {
      * Capacity.
      */
     private static final int CAPACITY = 10;
-
-    /**
-     * Number 0.
-     */
-    private static final int ZERO = 0;
-
-    /**
-     * For invalid JSON.
-     */
-    private static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
 
     /**
      * Reads JSON as a Java Object.
@@ -326,60 +317,9 @@ public final class Json {
                 }
             } else {
                 setCursor(character);
-                return getNumber(startingChar, builder);
+                return buildNumber(startingChar, builder);
             }
         }
-
-        /**
-         * Gets Number from the String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getNumber(final char startingChar,
-                                 final StringBuilder builder) {
-            return switch (startingChar) {
-                case '-' -> NumberParser.parseNumber(builder.toString(), true);
-                case '+' -> NumberParser.parseNumber(builder.toString(), false);
-                default -> NumberParser.parseNumber(builder
-                        .insert(0, startingChar)
-                        .toString(), false);
-            };
-        }
-
-        /**
-         * Gets Decimal Exponential from the String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getExponentialNumber(final char startingChar,
-                                            final StringBuilder builder) {
-            return new BigDecimal(startingChar + builder.toString());
-        }
-
-        /**
-         * Gets Decimal Number from the String.
-         *
-         * @param decimal
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getDecimalNumber(final char startingChar,
-                                        final StringBuilder builder,
-                                        final StringBuilder decimal) {
-            return NumberParser.parseDecimalNumber(startingChar
-                    + builder.toString() + "." + decimal.toString());
-        }
-
-
-
-
-
-
 
         /**
          * Reads Object from a reader. Reader will

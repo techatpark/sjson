@@ -215,4 +215,49 @@ public final class NumberParser {
         return bigDecimal;
     }
 
+    /**
+     * Gets Decimal Number from the String.
+     *
+     * @param decimal
+     * @param startingChar
+     * @param builder
+     * @return number
+     */
+    public static Number getDecimalNumber(final char startingChar,
+                                    final StringBuilder builder,
+                                    final StringBuilder decimal) {
+        return NumberParser.parseDecimalNumber(startingChar
+                + builder.toString() + "." + decimal.toString());
+    }
+
+    /**
+     * Builds Number from the String.
+     *
+     * @param startingChar
+     * @param builder
+     * @return number
+     */
+    public static Number buildNumber(final char startingChar,
+                             final StringBuilder builder) {
+        return switch (startingChar) {
+            case '-' -> NumberParser.parseNumber(builder.toString(), true);
+            case '+' -> NumberParser.parseNumber(builder.toString(), false);
+            default -> NumberParser.parseNumber(builder
+                    .insert(0, startingChar)
+                    .toString(), false);
+        };
+    }
+
+    /**
+     * Gets Decimal Exponential from the String.
+     *
+     * @param startingChar
+     * @param builder
+     * @return number
+     */
+    public static Number getExponentialNumber(final char startingChar,
+                                        final StringBuilder builder) {
+        return new BigDecimal(startingChar + builder.toString());
+    }
+
 }
