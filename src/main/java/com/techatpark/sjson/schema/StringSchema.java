@@ -1,8 +1,8 @@
 package com.techatpark.sjson.schema;
 
-import com.techatpark.sjson.core.Parser.NullParser;
+import com.techatpark.sjson.core.NullParser;
 import com.techatpark.sjson.core.util.ReaderUtil;
-import com.techatpark.sjson.core.Parser.StringParser;
+import com.techatpark.sjson.core.StringParser;
 
 import java.io.IOException;
 import java.io.Reader;

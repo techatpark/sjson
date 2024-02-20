@@ -1,7 +1,7 @@
 package com.techatpark.sjson.schema;
 
-import com.techatpark.sjson.core.Parser.BooleanParser;
-import com.techatpark.sjson.core.Parser.NullParser;
+import com.techatpark.sjson.core.BooleanParser;
+import com.techatpark.sjson.core.NullParser;
 import com.techatpark.sjson.core.util.ReaderUtil;
 
 import java.io.IOException;

@@ -1,9 +1,9 @@
-package com.techatpark.sjson.core.Parser;
+package com.techatpark.sjson.core;
 
 import java.io.IOException;
 import java.io.Reader;
 
-import static com.techatpark.sjson.core.Parser.StringParser.next;
+import static com.techatpark.sjson.core.StringParser.next;
 /**
  * Null Parser.
  * */

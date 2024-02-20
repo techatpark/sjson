@@ -1,7 +1,11 @@
-package com.techatpark.sjson.core.Parser;
+package com.techatpark.sjson.core;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import static com.techatpark.sjson.core.util.ReaderUtil.isSpace;
 
 /**
  * Parser for Numbers.
@@ -86,10 +90,88 @@ public final class NumberParser {
     private static final int NINETEEN = 19;
 
     /**
+     * Capacity.
+     */
+    private static final int CAPACITY = 10;
+
+    /**
      * Utility Class.
      */
     private NumberParser() {
     }
+
+    /**
+     * Reads the number from reader.
+     * Reader will stop at the next to the end of number.
+     *
+     * @param contentExtractor
+     * @param reader
+     * @param startingChar
+     * @return number
+     * @throws IOException
+     */
+    public static Number getNumber(
+            final Json.ContentExtractor contentExtractor,
+                                   final Reader reader,
+                                   final char startingChar)
+            throws IOException {
+
+        final StringBuilder builder = new StringBuilder(10);
+        char character;
+
+        // Happy Case : Read AllDigits before . character
+        while ((character = (char) reader.read()) != ','
+                && Character.isDigit(character)
+                && character != '.'
+                && character != '}'
+                && character != ']'
+                && character != 'e'
+                && character != 'E'
+                && !isSpace(character)) {
+            builder.append(character);
+        }
+
+        // Maybe a double ?!
+        if (character == '.' || character == 'e' || character == 'E') {
+            // Decimal Number
+            if (character == '.') {
+                StringBuilder decimals = new StringBuilder(CAPACITY);
+                while ((character = (char) reader.read()) != ','
+                        && (Character.isDigit(character)
+                        || character == '-'
+                        || character == '+'
+                        || character == 'e'
+                        || character == 'E')
+                        && character != '}'
+                        && character != ']'
+
+                        && !isSpace(character)) {
+                    decimals.append(character);
+                }
+                contentExtractor.setCursor(character);
+                return getDecimalNumber(startingChar, builder, decimals);
+            } else { // Exponential Non Decimal Number
+                builder.append(character);
+                while ((character = (char) reader.read()) != ','
+                        && (Character.isDigit(character)
+                        || character == '-'
+                        || character == '+'
+                        || character == 'e'
+                        || character == 'E')
+                        && character != '}'
+                        && character != ']'
+                        && !isSpace(character)) {
+                    builder.append(character);
+                }
+                contentExtractor.setCursor(character);
+                return getExponentialNumber(startingChar, builder);
+            }
+        } else {
+            contentExtractor.setCursor(character);
+            return buildNumber(startingChar, builder);
+        }
+    }
+
 
     /**
      * Gets Compact Number of a source String.

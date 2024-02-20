@@ -1,6 +1,6 @@
 package com.techatpark.sjson.core.util;
 
-import com.techatpark.sjson.core.Parser.NumberParser;
+import com.techatpark.sjson.core.NumberParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

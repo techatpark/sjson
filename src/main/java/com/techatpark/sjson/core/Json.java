@@ -1,6 +1,6 @@
 package com.techatpark.sjson.core;
 
-import com.techatpark.sjson.core.Parser.NumberParser;
+
 
 import java.io.IOException;
 import java.io.Reader;
@@ -10,16 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.techatpark.sjson.core.Parser.BooleanParser.getFalse;
-import static com.techatpark.sjson.core.Parser.BooleanParser.getTrue;
-import static com.techatpark.sjson.core.Parser.NullParser.getNull;
-import static com.techatpark.sjson.core.Parser.NumberParser.buildNumber;
-import static com.techatpark.sjson.core.Parser.NumberParser.getDecimalNumber;
-import static com.techatpark.sjson.core.Parser.NumberParser.getExponentialNumber;
-import static com.techatpark.sjson.core.util.ReaderUtil.isSpace;
+import static com.techatpark.sjson.core.BooleanParser.getFalse;
+import static com.techatpark.sjson.core.BooleanParser.getTrue;
+import static com.techatpark.sjson.core.NullParser.getNull;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
-import static com.techatpark.sjson.core.Parser.StringParser.getString;
-import static com.techatpark.sjson.core.Parser.StringParser.getCharacter;
+import static com.techatpark.sjson.core.StringParser.getString;
+import static com.techatpark.sjson.core.StringParser.getCharacter;
+import static com.techatpark.sjson.core.NumberParser.getNumber;
 
 /**
  * Json parser for server side workloads.
@@ -37,9 +34,9 @@ import static com.techatpark.sjson.core.Parser.StringParser.getCharacter;
 public final class Json {
 
     /**
-     * Capacity.
+     * Length of Unicode.
      */
-    private static final int CAPACITY = 10;
+    private static final int UNICODE_LENGTH = 4;
 
     /**
      * Reads JSON as a Java Object.
@@ -194,7 +191,7 @@ public final class Json {
                             || (ch >= '\u2000' && ch <= '\u20FF')) {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
-                        for (int k = 0; k < NumberParser.FOUR
+                        for (int k = 0; k < UNICODE_LENGTH
                                 - ss.length(); k++) {
                             sb.append('0');
                         }
@@ -210,7 +207,7 @@ public final class Json {
      * ContentExtractor is responsible to interact with underlying reader to
      * extract the content.
      */
-    private static final class ContentExtractor {
+    public static final class ContentExtractor {
 
         /**
          * Reader to the JSON Content.
@@ -251,75 +248,10 @@ public final class Json {
                 case '{' -> getObject();
                 case '[' -> getArray();
                 case ']' -> this;
-                default -> getNumber(character);
+                default -> getNumber(this, reader, character);
             };
         }
 
-        /**
-         * Reads the number from reader.
-         * Reader will stop at the next to the end of number.
-         *
-         * @param startingChar
-         * @return number
-         * @throws IOException
-         */
-        private Number getNumber(final char startingChar) throws IOException {
-
-            final StringBuilder builder = new StringBuilder(10);
-            char character;
-
-            // Happy Case : Read AllDigits before . character
-            while ((character = (char) reader.read()) != ','
-                    && Character.isDigit(character)
-                    && character != '.'
-                    && character != '}'
-                    && character != ']'
-                    && character != 'e'
-                    && character != 'E'
-                    && !isSpace(character)) {
-                builder.append(character);
-            }
-
-            // Maybe a double ?!
-            if (character == '.' || character == 'e' || character == 'E') {
-                // Decimal Number
-                if (character == '.') {
-                    StringBuilder decimals = new StringBuilder(CAPACITY);
-                    while ((character = (char) reader.read()) != ','
-                            && (Character.isDigit(character)
-                            || character == '-'
-                            || character == '+'
-                            || character == 'e'
-                            || character == 'E')
-                            && character != '}'
-                            && character != ']'
-
-                            && !isSpace(character)) {
-                        decimals.append(character);
-                    }
-                    setCursor(character);
-                    return getDecimalNumber(startingChar, builder, decimals);
-                } else { // Exponential Non Decimal Number
-                    builder.append(character);
-                    while ((character = (char) reader.read()) != ','
-                            && (Character.isDigit(character)
-                            || character == '-'
-                            || character == '+'
-                            || character == 'e'
-                            || character == 'E')
-                            && character != '}'
-                            && character != ']'
-                            && !isSpace(character)) {
-                        builder.append(character);
-                    }
-                    setCursor(character);
-                    return getExponentialNumber(startingChar, builder);
-                }
-            } else {
-                setCursor(character);
-                return buildNumber(startingChar, builder);
-            }
-        }
 
         /**
          * Reads Object from a reader. Reader will
