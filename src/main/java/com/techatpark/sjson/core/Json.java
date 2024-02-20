@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.techatpark.sjson.core.BooleanParser.getFalse;
 import static com.techatpark.sjson.core.BooleanParser.getTrue;
 import static com.techatpark.sjson.core.NullParser.getNull;
+import static com.techatpark.sjson.core.ObjectParser.getObject;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static com.techatpark.sjson.core.StringParser.getString;
 import static com.techatpark.sjson.core.StringParser.getCharacter;
@@ -236,7 +236,7 @@ public final class Json {
          * @return object
          * @throws IOException
          */
-        private Object getValue() throws IOException {
+        Object getValue() throws IOException {
             // 1. move to the first clean character to determine the Data type
             final char character = moveCursorToNextClean();
             // 2. Call corresponding get methods based on the type
@@ -245,7 +245,7 @@ public final class Json {
                 case 'n' -> getNull(reader);
                 case 't' -> getTrue(reader);
                 case 'f' -> getFalse(reader);
-                case '{' -> getObject();
+                case '{' -> getObject(reader, this);
                 case '[' -> getArray();
                 case ']' -> this;
                 default -> getNumber(this, reader, character);
@@ -253,40 +253,8 @@ public final class Json {
         }
 
 
-        /**
-         * Reads Object from a reader. Reader will
-         * stop at the next clean char after object.
-         *
-         * @return json object
-         * @throws IOException
-         */
-        private Map<String, Object> getObject() throws IOException {
-            boolean eoo = endOfObject();
-            // This is Empty Object
-            if (eoo) {
-                moveCursorToNextClean();
-                return Collections.emptyMap();
-            }
-            final Map<String, Object> jsonMap = new HashMap<>();
-            while (!eoo) {
-                jsonMap.put(getKey(), getValue());
-                eoo = endOfObject();
-            }
-            moveCursorToNextClean();
-            return jsonMap;
-        }
 
-        /**
-         * Read Key as a String. It gets key from String Pool.
-         *
-         * @return key
-         * @throws IOException
-         */
-        private String getKey() throws IOException {
-            final String key = getString(reader).intern();
-            moveCursorToNextClean();
-            return key;
-        }
+
 
         /**
          * Reades an Array. Reader stops at next clean character.
@@ -311,42 +279,19 @@ public final class Json {
         }
 
         /**
+        /**
          * Skip Spaces and land reader at the valid character.
          *
          * @return valid character
          * @throws IOException
          */
-        private char moveCursorToNextClean() throws IOException {
+        public char moveCursorToNextClean() throws IOException {
             char character = nextClean(this.reader);
             setCursor(character);
             return character;
         }
 
 
-
-        /**
-         * Determines the Object End. By moving till " or }.
-         *
-         * @return flag
-         * @throws IOException
-         */
-        private boolean endOfObject() throws IOException {
-            char character;
-            if (cursor == '}') {
-                return true;
-            }
-            if (cursor == ',') {
-                while (getCharacter(this.reader.read()) != '"') {
-                    continue;
-                }
-                return false;
-            }
-            while ((character = getCharacter(this.reader.read())) != '"'
-                    && character != '}') {
-                continue;
-            }
-            return character == '}';
-        }
 
         /**
          * Determine array close character.
@@ -376,6 +321,12 @@ public final class Json {
             cursor = character;
         }
 
-
+        /**
+         * Gets Cursor.
+         * @return cursor
+         */
+        public char getCursor() {
+            return cursor;
+        }
     }
 }
