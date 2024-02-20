@@ -15,19 +15,19 @@ public final class NumberParser {
     /**
      * Number 1.
      */
-    public static final int ONE = 1;
+    private static final int ONE = 1;
     /**
      * Number 2.
      */
-    public static final int TWO = 2;
+    private static final int TWO = 2;
     /**
      * Number 3.
      */
-    public static final int THREE = 3;
+    private static final int THREE = 3;
     /**
      * Number 4.
      */
-    public static final int FOUR = 4;
+    private static final int FOUR = 4;
     /**
      * Number 5.
      */
@@ -89,10 +89,7 @@ public final class NumberParser {
      */
     private static final int NINETEEN = 19;
 
-    /**
-     * Capacity.
-     */
-    private static final int CAPACITY = 10;
+
 
     /**
      * Utility Class.
@@ -116,7 +113,7 @@ public final class NumberParser {
                                    final char startingChar)
             throws IOException {
 
-        final StringBuilder builder = new StringBuilder(10);
+        final StringBuilder builder = new StringBuilder(TEN);
         char character;
 
         // Happy Case : Read AllDigits before . character
@@ -135,7 +132,7 @@ public final class NumberParser {
         if (character == '.' || character == 'e' || character == 'E') {
             // Decimal Number
             if (character == '.') {
-                StringBuilder decimals = new StringBuilder(CAPACITY);
+                StringBuilder decimals = new StringBuilder(TEN);
                 while ((character = (char) reader.read()) != ','
                         && (Character.isDigit(character)
                         || character == '-'
@@ -305,7 +302,7 @@ public final class NumberParser {
      * @param builder
      * @return number
      */
-    public static Number getDecimalNumber(final char startingChar,
+    private static Number getDecimalNumber(final char startingChar,
                                     final StringBuilder builder,
                                     final StringBuilder decimal) {
         return NumberParser.parseDecimalNumber(startingChar
@@ -319,7 +316,7 @@ public final class NumberParser {
      * @param builder
      * @return number
      */
-    public static Number buildNumber(final char startingChar,
+    private static Number buildNumber(final char startingChar,
                              final StringBuilder builder) {
         return switch (startingChar) {
             case '-' -> NumberParser.parseNumber(builder.toString(), true);
@@ -337,7 +334,7 @@ public final class NumberParser {
      * @param builder
      * @return number
      */
-    public static Number getExponentialNumber(final char startingChar,
+    private static Number getExponentialNumber(final char startingChar,
                                         final StringBuilder builder) {
         return new BigDecimal(startingChar + builder.toString());
     }
