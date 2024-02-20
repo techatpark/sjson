@@ -4,18 +4,16 @@ package com.techatpark.sjson.core;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.techatpark.sjson.core.ArrayParser.getArray;
 import static com.techatpark.sjson.core.BooleanParser.getFalse;
 import static com.techatpark.sjson.core.BooleanParser.getTrue;
 import static com.techatpark.sjson.core.NullParser.getNull;
 import static com.techatpark.sjson.core.ObjectParser.getObject;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static com.techatpark.sjson.core.StringParser.getString;
-import static com.techatpark.sjson.core.StringParser.getCharacter;
 import static com.techatpark.sjson.core.NumberParser.getNumber;
 
 /**
@@ -246,36 +244,10 @@ public final class Json {
                 case 't' -> getTrue(reader);
                 case 'f' -> getFalse(reader);
                 case '{' -> getObject(reader, this);
-                case '[' -> getArray();
+                case '[' -> getArray(reader, this);
                 case ']' -> this;
                 default -> getNumber(this, reader, character);
             };
-        }
-
-
-
-
-
-        /**
-         * Reades an Array. Reader stops at next clean character.
-         *
-         * @return list
-         * @throws IOException
-         */
-        private List<Object> getArray() throws IOException {
-            final Object value = getValue();
-            // If not Empty Array
-            if (value == this) {
-                moveCursorToNextClean();
-                return Collections.emptyList();
-            }
-            final List<Object> list = new ArrayList<>();
-            list.add(value);
-            while (!endOfArray()) {
-                list.add(getValue());
-            }
-            moveCursorToNextClean();
-            return list;
         }
 
         /**
@@ -285,34 +257,12 @@ public final class Json {
          * @return valid character
          * @throws IOException
          */
-        public char moveCursorToNextClean() throws IOException {
+        char moveCursorToNextClean() throws IOException {
             char character = nextClean(this.reader);
             setCursor(character);
             return character;
         }
 
-
-
-        /**
-         * Determine array close character.
-         *
-         * @return flag
-         * @throws IOException
-         */
-        private boolean endOfArray() throws IOException {
-            char character;
-            if (cursor == ']') {
-                return true;
-            }
-            if (cursor == ',') {
-                return false;
-            }
-            while ((character = getCharacter(this.reader.read())) != ','
-                    && character != ']') {
-                continue;
-            }
-            return character == ']';
-        }
         /**
          * Sets Cursor at given Character.
          * @param character
