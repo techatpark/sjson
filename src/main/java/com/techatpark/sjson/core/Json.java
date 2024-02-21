@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.techatpark.sjson.core.ArrayParser.getArray;
 import static com.techatpark.sjson.core.BooleanParser.getFalse;
@@ -65,21 +66,11 @@ public final class Json {
      * @return jsonText
      */
     public String jsonText(final Map<String, Object> jsonMap) {
-        StringBuilder builder = new StringBuilder("{");
-        boolean isFirst = true;
-        for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                builder.append(",");
-            }
-            // Create Key enclosed with "
-            builder.append("\"")
-                    .append(escapeJsonTxt(entry.getKey()))
-                    .append("\":"); // Create Key value separator
-            builder.append(getValue(entry.getValue()));
-        }
-        return builder.append("}").toString();
+        return "{" + jsonMap.entrySet().stream()
+                .map(entry ->
+                        "\"" + escapeJsonTxt(entry.getKey()) + "\":"
+                        + getValue(entry.getValue()
+                        )).collect(Collectors.joining(",")) + "}";
     }
 
     /**
@@ -89,17 +80,9 @@ public final class Json {
      * @return jsonTxt
      */
     public String jsonText(final List<Object> jsonArray) {
-        final StringBuilder builder = new StringBuilder("[");
-        boolean isFirst = true;
-        for (Object value: jsonArray) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                builder.append(",");
-            }
-            builder.append(getValue(value));
-        }
-        return builder.append("]").toString();
+        return "[" + jsonArray.stream()
+                .map(o -> getValue(o))
+                .collect(Collectors.joining(",")) + "]";
     }
 
     /**
