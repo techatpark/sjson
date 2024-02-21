@@ -67,9 +67,8 @@ public final class Json {
      * @return jsonText
      */
     public String jsonText(final Map<String, Object> jsonMap) {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder("{");
         boolean isFirst = true;
-        builder.append("{");
         for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
             if (isFirst) {
                 isFirst = false;
@@ -114,23 +113,14 @@ public final class Json {
     private void valueText(final StringBuilder builder, final Object value) {
         switch (value) {
             case null -> builder.append("null");
-            case String str -> processString(builder, str);
+            case String str -> builder.append("\"").append(escapeJsonTxt(str))
+                    .append("\"");
             case Map map -> builder.append(jsonText(map));
             case List list -> builder.append(jsonText(list));
             default -> builder.append(value);
         }
     }
 
-    /**
-     * Process String.
-     *
-     * @param builder
-     * @param value
-     */
-    private void processString(final StringBuilder builder,
-                               final String value) {
-        builder.append("\"").append(escapeJsonTxt(value)).append("\"");
-    }
 
     /**
      * Escape JSON Text.
@@ -250,7 +240,6 @@ public final class Json {
             };
         }
 
-        /**
         /**
          * Skip Spaces and land reader at the valid character.
          *
