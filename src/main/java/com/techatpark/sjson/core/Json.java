@@ -1,7 +1,5 @@
 package com.techatpark.sjson.core;
 
-
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
@@ -79,7 +77,7 @@ public final class Json {
             builder.append("\"")
                     .append(escapeJsonTxt(entry.getKey()))
                     .append("\":"); // Create Key value separator
-            valueText(builder, entry.getValue());
+            builder.append(getValue(entry.getValue()));
         }
         return builder.append("}").toString();
     }
@@ -99,7 +97,7 @@ public final class Json {
             } else {
                 builder.append(",");
             }
-            valueText(builder, value);
+            builder.append(getValue(value));
         }
         return builder.append("]").toString();
     }
@@ -107,20 +105,18 @@ public final class Json {
     /**
      * Create Value in according to the Type.
      *
-     * @param builder
      * @param value
+     * @return valueText
      */
-    private void valueText(final StringBuilder builder, final Object value) {
-        switch (value) {
-            case null -> builder.append("null");
-            case String str -> builder.append("\"").append(escapeJsonTxt(str))
-                    .append("\"");
-            case Map map -> builder.append(jsonText(map));
-            case List list -> builder.append(jsonText(list));
-            default -> builder.append(value);
-        }
+    private String getValue(final Object value) {
+        return switch (value) {
+            case null -> "null";
+            case String str -> "\"" + escapeJsonTxt(str) + "\"";
+            case Map map -> jsonText(map);
+            case List list -> jsonText(list);
+            default -> value.toString();
+        };
     }
-
 
     /**
      * Escape JSON Text.
