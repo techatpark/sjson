@@ -59,15 +59,17 @@ public final class ObjectParser {
                                        final Json.ContentExtractor
                                        contentExtractor) throws IOException {
         char character;
-        if (contentExtractor.getCursor() == '}') {
-            return true;
-        }
         if (contentExtractor.getCursor() == ',') {
             while (getCharacter(reader.read()) != '"') {
                 continue;
             }
             return false;
         }
+
+        if (contentExtractor.getCursor() == '}') {
+            return true;
+        }
+
         while ((character = getCharacter(reader.read())) != '"'
                 && character != '}') {
             continue;
