@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.techatpark.sjson.core.StringParser.getCharacter;
 import static com.techatpark.sjson.core.StringParser.getString;
+import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
 
 public final class ObjectParser {
 

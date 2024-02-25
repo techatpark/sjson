@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.techatpark.sjson.core.StringParser.getCharacter;
+import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
 
 public final class ArrayParser {
 

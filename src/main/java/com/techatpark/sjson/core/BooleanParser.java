@@ -3,16 +3,15 @@ package com.techatpark.sjson.core;
 import java.io.IOException;
 import java.io.Reader;
 
-import static com.techatpark.sjson.core.StringParser.next;
+import static com.techatpark.sjson.core.util.ReaderUtil.ILLEGAL_JSON_VALUE;
+import static com.techatpark.sjson.core.util.ReaderUtil.next;
+
 /**
  * Boolean Parser.
  * */
 
 public final class BooleanParser {
-    /**
-     * For invalid JSON.
-     */
-    private static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
+
     /**
      * This is for length.
      */

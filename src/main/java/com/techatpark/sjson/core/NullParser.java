@@ -3,7 +3,9 @@ package com.techatpark.sjson.core;
 import java.io.IOException;
 import java.io.Reader;
 
-import static com.techatpark.sjson.core.StringParser.next;
+import static com.techatpark.sjson.core.util.ReaderUtil.ILLEGAL_JSON_VALUE;
+import static com.techatpark.sjson.core.util.ReaderUtil.next;
+
 /**
  * Null Parser.
  * */
@@ -13,10 +15,7 @@ public final class NullParser {
      * This is for length.
      */
     public static final int LENGTH = 3;
-    /**
-     * For invalid JSON.
-     */
-    private static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
+
 
     /**
      * util classes.
