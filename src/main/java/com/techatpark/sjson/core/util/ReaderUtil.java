@@ -20,6 +20,20 @@ public final class ReaderUtil {
     /**
      * Skip Spaces and land reader at the valid character.
      * @param reader
+     * @param character
+     * @throws IOException
+     */
+    public static void next(final Reader reader,
+                            final char character) throws IOException {
+        int charVal;
+        do {
+            charVal = (char) reader.read();
+        } while (charVal != character);
+    }
+
+    /**
+     * Skip Spaces and land reader at the valid character.
+     * @param reader
      * @return valid character
      * @throws IOException
      */

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.techatpark.sjson.core.StringParser.getString;
+import static com.techatpark.sjson.core.util.ReaderUtil.next;
 import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
 
 public final class ObjectParser {
@@ -35,28 +36,16 @@ public final class ObjectParser {
             return Collections.emptyMap();
         }
         final Map<String, Object> jsonMap = new HashMap<>();
+        String key;
         while (!eoo) {
-            jsonMap.put(getKey(reader, contentExtractor),
+            key = getString(reader);
+            next(reader, ':');
+            jsonMap.put(key,
                     contentExtractor.getValue());
             eoo = endOfObject(reader, contentExtractor);
         }
         contentExtractor.moveCursorToNextClean();
         return jsonMap;
-    }
-
-    /**
-     * Read Key as a String. It gets key from String Pool.
-     * @param reader
-     * @param contentExtractor
-     * @return key
-     * @throws IOException
-     */
-    private static String getKey(final Reader reader,
-                                 final Json.ContentExtractor
-                                         contentExtractor) throws IOException {
-        final String key = getString(reader).intern();
-        contentExtractor.moveCursorToNextClean();
-        return key;
     }
 
     /**
