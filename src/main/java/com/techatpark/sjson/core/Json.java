@@ -1,15 +1,19 @@
 package com.techatpark.sjson.core;
 
-import com.techatpark.sjson.core.util.NumberParser;
-
 import java.io.IOException;
 import java.io.Reader;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.techatpark.sjson.core.ArrayParser.getArray;
+import static com.techatpark.sjson.core.BooleanParser.getFalse;
+import static com.techatpark.sjson.core.BooleanParser.getTrue;
+import static com.techatpark.sjson.core.NullParser.getNull;
+import static com.techatpark.sjson.core.ObjectParser.getObject;
+import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
+import static com.techatpark.sjson.core.StringParser.getString;
+import static com.techatpark.sjson.core.NumberParser.getNumber;
 
 /**
  * Json parser for server side workloads.
@@ -27,30 +31,9 @@ import java.util.Map;
 public final class Json {
 
     /**
-     * Length for hex char.
+     * Length of Unicode.
      */
-    private static final int LENGTH = 4;
-
-    /**
-     * Radix for hex char.
-     */
-    private static final int RADIX = 16;
-
-    /**
-     * Capacity.
-     */
-    private static final int CAPACITY = 10;
-
-
-    /**
-     * Number 0.
-     */
-    private static final int NUMBER_ZERO = 0;
-
-    /**
-     * For invalid JSON.
-     */
-    private static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
+    private static final int UNICODE_LENGTH = 4;
 
     /**
      * Reads JSON as a Java Object.
@@ -83,22 +66,11 @@ public final class Json {
      * @return jsonText
      */
     public String jsonText(final Map<String, Object> jsonMap) {
-        StringBuilder builder = new StringBuilder();
-        boolean isFirst = true;
-        builder.append("{");
-        for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                builder.append(",");
-            }
-            // Create Key enclosed with "
-            builder.append("\"")
-                    .append(escapeJsonTxt(entry.getKey()))
-                    .append("\":"); // Create Key value separator
-            valueText(builder, entry.getValue());
-        }
-        return builder.append("}").toString();
+        return "{" + jsonMap.entrySet().stream()
+                .map(entry ->
+                        "\"" + escapeJsonTxt(entry.getKey()) + "\":"
+                        + getValue(entry.getValue()
+                        )).collect(Collectors.joining(",")) + "}";
     }
 
     /**
@@ -108,44 +80,25 @@ public final class Json {
      * @return jsonTxt
      */
     public String jsonText(final List<Object> jsonArray) {
-        final StringBuilder builder = new StringBuilder("[");
-        boolean isFirst = true;
-        for (Object value: jsonArray) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                builder.append(",");
-            }
-            valueText(builder, value);
-        }
-        return builder.append("]").toString();
+        return "[" + jsonArray.stream()
+                .map(o -> getValue(o))
+                .collect(Collectors.joining(",")) + "]";
     }
 
     /**
      * Create Value in according to the Type.
      *
-     * @param builder
      * @param value
+     * @return valueText
      */
-    private void valueText(final StringBuilder builder, final Object value) {
-        switch (value) {
-            case null -> builder.append("null");
-            case String str -> processString(builder, str);
-            case Map map -> builder.append(jsonText(map));
-            case List list -> builder.append(jsonText(list));
-            default -> builder.append(value);
-        }
-    }
-
-    /**
-     * Process String.
-     *
-     * @param builder
-     * @param value
-     */
-    private void processString(final StringBuilder builder,
-                               final String value) {
-        builder.append("\"").append(escapeJsonTxt(value)).append("\"");
+    private String getValue(final Object value) {
+        return switch (value) {
+            case null -> "null";
+            case String str -> "\"" + escapeJsonTxt(str) + "\"";
+            case Map map -> jsonText(map);
+            case List list -> jsonText(list);
+            default -> value.toString();
+        };
     }
 
     /**
@@ -205,7 +158,7 @@ public final class Json {
                             || (ch >= '\u2000' && ch <= '\u20FF')) {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
-                        for (int k = 0; k < NumberParser.NUMBER_FOUR
+                        for (int k = 0; k < UNICODE_LENGTH
                                 - ss.length(); k++) {
                             sb.append('0');
                         }
@@ -221,7 +174,7 @@ public final class Json {
      * ContentExtractor is responsible to interact with underlying reader to
      * extract the content.
      */
-    private static final class ContentExtractor {
+    public static final class ContentExtractor {
 
         /**
          * Reader to the JSON Content.
@@ -250,323 +203,21 @@ public final class Json {
          * @return object
          * @throws IOException
          */
-        private Object getValue() throws IOException {
+        Object getValue() throws IOException {
             // 1. move to the first clean character to determine the Data type
-            final char character = nextClean();
+            final char character = moveCursorToNextClean();
             // 2. Call corresponding get methods based on the type
             return switch (character) {
-                case '"' -> getString();
-                case 'n' -> getNull();
-                case 't' -> getTrue();
-                case 'f' -> getFalse();
-                case '{' -> getObject();
-                case '[' -> getArray();
+                case '"' -> getString(reader);
+                case 'n' -> getNull(reader);
+                case 't' -> getTrue(reader);
+                case 'f' -> getFalse(reader);
+                case '{' -> getObject(reader, this);
+                case '[' -> getArray(reader, this);
                 case ']' -> this;
-                default -> getNumber(character);
+                default -> getNumber(this, reader, character);
             };
         }
-
-        /**
-         * Reads String from Reader. Reader will stop at the " symbol
-         *
-         * @return string
-         * @throws IOException
-         */
-        private String getString() throws IOException {
-            final StringBuilder sb = new StringBuilder();
-            char character;
-
-            while ((character = getCharacter(reader.read())) != '\\'
-                    && character != '"') {
-                sb.append(character);
-            }
-
-            // Normal String
-            if (character == '"') {
-                return sb.toString();
-            }
-
-            // String with escape characters ?!
-            for (;;) {
-                switch (character) {
-                    case '\\':
-                        character = getCharacter(reader.read());
-                        switch (character) {
-                            case '"', '\'', '\\', '/' -> sb.append(character);
-                            case 'u' -> sb.append((char) Integer
-                                    .parseInt(new String(next(LENGTH)),
-                                            RADIX));
-                            case 'b' -> sb.append('\b');
-                            case 't' -> sb.append('\t');
-                            case 'n' -> sb.append('\n');
-                            case 'f' -> sb.append('\f');
-                            case 'r' -> sb.append('\r');
-                            default -> throw new IllegalArgumentException(
-                                        ILLEGAL_JSON_VALUE);
-                        }
-                        break;
-                    case 0, '\n', '\r':
-                        throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-                    default:
-                        if (character == '"') {
-                            return sb.toString();
-                        }
-                        sb.append(character);
-                }
-                character = getCharacter(reader.read());
-            }
-        }
-
-        /**
-         * get Character.
-         * @throws IllegalArgumentException if EOF
-         * @param value
-         * @return char value
-         */
-        private char getCharacter(final int value) {
-            if (value == -1) {
-                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-            }
-            return (char) value;
-        }
-
-        /**
-         * Reads the number from reader.
-         * Reader will stop at the next to the end of number.
-         *
-         * @param startingChar
-         * @return number
-         * @throws IOException
-         */
-        private Number getNumber(final char startingChar) throws IOException {
-
-            final StringBuilder builder = new StringBuilder(10);
-            char character;
-
-            // Happy Case : Read AllDigits before . character
-            while ((character = (char) reader.read()) != ','
-                    && Character.isDigit(character)
-                    && character != '.'
-                    && character != '}'
-                    && character != ']'
-                    && character != 'e'
-                    && character != 'E'
-                    && !isSpace(character)) {
-                builder.append(character);
-            }
-
-            // Maybe a double ?!
-            if (character == '.' || character == 'e' || character == 'E') {
-                // Decimal Number
-                if (character == '.') {
-                    StringBuilder decimals = new StringBuilder(CAPACITY);
-                    while ((character = (char) reader.read()) != ','
-                            && (Character.isDigit(character)
-                            || character == '-'
-                            || character == '+'
-                            || character == 'e'
-                            || character == 'E')
-                            && character != '}'
-                            && character != ']'
-
-                            && !isSpace(character)) {
-                        decimals.append(character);
-                    }
-                    setCursor(character);
-                    return getDecimalNumber(startingChar, builder, decimals);
-                } else { // Exponential Non Decimal Number
-                    builder.append(character);
-                    while ((character = (char) reader.read()) != ','
-                            && (Character.isDigit(character)
-                            || character == '-'
-                            || character == '+'
-                            || character == 'e'
-                            || character == 'E')
-                            && character != '}'
-                            && character != ']'
-                            && !isSpace(character)) {
-                        builder.append(character);
-                    }
-                    setCursor(character);
-                    return getExponentialNumber(startingChar, builder);
-                }
-            } else {
-                setCursor(character);
-                return getNumber(startingChar, builder);
-            }
-        }
-
-        /**
-         * Gets Number from the String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getNumber(final char startingChar,
-                                 final StringBuilder builder) {
-            return switch (startingChar) {
-                case '-' -> NumberParser.parseNumber(builder.toString(), true);
-                case '+' -> NumberParser.parseNumber(builder.toString(), false);
-                default -> NumberParser.parseNumber(builder
-                        .insert(0, startingChar)
-                        .toString(), false);
-            };
-        }
-
-        /**
-         * Gets Decimal Exponential from the String.
-         *
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getExponentialNumber(final char startingChar,
-                                            final StringBuilder builder) {
-            return new BigDecimal(startingChar + builder.toString());
-        }
-
-        /**
-         * Gets Decimal Number from the String.
-         *
-         * @param decimal
-         * @param startingChar
-         * @param builder
-         * @return number
-         */
-        private Number getDecimalNumber(final char startingChar,
-                                        final StringBuilder builder,
-                                        final StringBuilder decimal) {
-            return NumberParser.parseDecimalNumber(startingChar
-                    + builder.toString() + "." + decimal.toString());
-        }
-
-        /**
-         * Reads True from Reader. Reader will stip at the "e" symbol.
-         *
-         * @return string
-         * @throws IOException
-         */
-        private boolean getTrue() throws IOException {
-            char[] charBuffer = next(NumberParser.NUMBER_THREE);
-            if (charBuffer[0] == 'r'
-                    && charBuffer[1] == 'u'
-                    && charBuffer[2] == 'e') {
-                // cursor = 'e';
-                return true;
-            } else {
-                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-            }
-        }
-
-        /**
-         * Reads False from Reader. Reader will strip at the "e" symbol.
-         *
-         * @return string
-         * @throws IOException
-         */
-        private boolean getFalse() throws IOException {
-            char[] charBuffer = next(NumberParser.NUMBER_FOUR);
-            if (charBuffer[NUMBER_ZERO] == 'a'
-                    && charBuffer[NumberParser.NUMBER_ONE] == 'l'
-                    && charBuffer[NumberParser.NUMBER_TWO] == 's'
-                    && charBuffer[NumberParser.NUMBER_THREE] == 'e') {
-                // cursor = 'e';
-                return false;
-            } else {
-                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-            }
-        }
-
-        /**
-         * Reads Null from Reader. Reader will stip at the "l" symbol.
-         *
-         * @return string
-         * @throws IOException
-         */
-        private Object getNull() throws IOException {
-            char[] charBuffer = next(NumberParser.NUMBER_THREE);
-            if (charBuffer[NUMBER_ZERO] == 'u'
-                    && charBuffer[NumberParser.NUMBER_ONE] == 'l'
-                    && charBuffer[NumberParser.NUMBER_TWO] == 'l') {
-                // cursor = 'l';
-                return null;
-            } else {
-                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
-            }
-        }
-
-        /**
-         * Reads next chars for given length
-         * from the reader and fill an char array.
-         *
-         * @param length
-         * @return char array
-         * @throws IOException
-         */
-        private char[] next(final int length) throws IOException {
-            char[] cbuf = new char[length];
-            reader.read(cbuf, NUMBER_ZERO, length);
-            return cbuf;
-        }
-
-        /**
-         * Reads Object from a reader. Reader will
-         * stop at the next clean char after object.
-         *
-         * @return json object
-         * @throws IOException
-         */
-        private Map<String, Object> getObject() throws IOException {
-            boolean eoo = endOfObject();
-            // This is Empty Object
-            if (eoo) {
-                nextClean();
-                return Collections.emptyMap();
-            }
-            final Map<String, Object> jsonMap = new HashMap<>();
-            while (!eoo) {
-                jsonMap.put(getKey(), getValue());
-                eoo = endOfObject();
-            }
-            nextClean();
-            return Collections.unmodifiableMap(jsonMap);
-        }
-
-        /**
-         * Read Key as a String. It gets key from String Pool.
-         *
-         * @return key
-         * @throws IOException
-         */
-        private String getKey() throws IOException {
-            final String key = getString().intern();
-            nextClean();
-            return key;
-        }
-
-        /**
-         * Reades an Array. Reader stops at next clean character.
-         *
-         * @return list
-         * @throws IOException
-         */
-        private List<Object> getArray() throws IOException {
-            final Object value = getValue();
-            // If not Empty Array
-            if (value == this) {
-                nextClean();
-                return Collections.emptyList();
-            }
-            final List<Object> list = new ArrayList<>();
-            list.add(value);
-            while (!endOfArray()) {
-                list.add(getValue());
-            }
-            nextClean();
-            return list;
-        }
-
 
         /**
          * Skip Spaces and land reader at the valid character.
@@ -574,80 +225,26 @@ public final class Json {
          * @return valid character
          * @throws IOException
          */
-        private char nextClean() throws IOException {
-            char character;
-            do {
-                character = (char) this.reader.read();
-            } while (isSpace(character));
+        char moveCursorToNextClean() throws IOException {
+            char character = nextClean(this.reader);
             setCursor(character);
-            return cursor;
-        }
-
-        /**
-         * Determines if this is a space charecter.
-         *
-         * @param character
-         * @return flag
-         */
-        private boolean isSpace(final char character) {
-            return (character == ' '
-                    || character == '\n'
-                    || character == '\r'
-                    || character == '\t');
-        }
-
-        /**
-         * Determines the Object End. By moving till " or }.
-         *
-         * @return flag
-         * @throws IOException
-         */
-        private boolean endOfObject() throws IOException {
-            char character;
-            if (cursor == '}') {
-                return true;
-            }
-            if (cursor == ',') {
-                while (getCharacter(this.reader.read()) != '"') {
-                    continue;
-                }
-                return false;
-            }
-            while ((character = getCharacter(this.reader.read())) != '"'
-                    && character != '}') {
-                continue;
-            }
-            return character == '}';
-        }
-
-        /**
-         * Determine array close character.
-         *
-         * @return flag
-         * @throws IOException
-         */
-        private boolean endOfArray() throws IOException {
-            char character;
-            if (cursor == ']') {
-                return true;
-            }
-            if (cursor == ',') {
-                return false;
-            }
-            while ((character = getCharacter(this.reader.read())) != ','
-                    && character != ']') {
-                continue;
-            }
-            return character == ']';
+            return character;
         }
 
         /**
          * Sets Cursor at given Character.
          * @param character
          */
-        private void setCursor(final Character character) {
+        public void setCursor(final Character character) {
             cursor = character;
         }
 
+        /**
+         * Gets Cursor.
+         * @return cursor
+         */
+        public char getCursor() {
+            return cursor;
+        }
     }
 }

@@ -2,12 +2,13 @@
 
 # SJson
 
-SJson is a **lightweight json parser for server side workloads**. It tries to get optimized memory and performance with below goals.
+SJson is a **lightweight tailer made json parser for server side workloads**. It tries to get optimized memory and performance with below goals.
 
-1. Tailermade for Serialization,Deserialization and validation.
-2. Represent Json in native format.
-2. No external dependencies
-3. Trust the validity of json documents. It is just enough to say invalid, reasoning is optional
+1. Optimized for Serialization, Deserialization and validation.
+2. Represent Json in native java format.
+3. No external dependencies
+4. Trust the validity of json documents. It is just enough to say invalid, reasoning is optional
+5. Utilize latest java features
 
 **Note:** This is **not** general purpose parser. This is specifically written for REST API use cases. 
 
