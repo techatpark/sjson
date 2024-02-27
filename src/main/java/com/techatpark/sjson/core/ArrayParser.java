@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
+import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 
 public final class ArrayParser {
 
@@ -29,7 +30,7 @@ public final class ArrayParser {
         final Object value = contentExtractor.getValue();
         // If not Empty Array
         if (value == contentExtractor) {
-            contentExtractor.moveCursorToNextClean();
+            contentExtractor.setCursor(nextClean(reader));
             return Collections.emptyList();
         }
         final List<Object> list = new ArrayList<>();
@@ -37,7 +38,7 @@ public final class ArrayParser {
         while (!endOfArray(reader, contentExtractor)) {
             list.add(contentExtractor.getValue());
         }
-        contentExtractor.moveCursorToNextClean();
+        contentExtractor.setCursor(nextClean(reader));
         return list;
     }
     /**
