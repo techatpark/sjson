@@ -8,27 +8,50 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 import java.io.StringReader;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Tests for Boolean Parsers.
+ */
 class BooleanParserTest {
 
     final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Tests Valid Boolean Values.
+     * <p>
+     * Steps:
+     *  1) Pass valid boolean value ( originalValue ).
+     *  2) Get JSON String from Jackson.
+     *  3) Read JSON String as Java Object using SJson.
+     * <p>
+     * Expected Result:
+     * This value should be equal to originalValue.
+     * @param originalValue - Valid Boolean Value
+     * @throws IOException
+     */
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void testValid(final Boolean aBoolean) throws IOException{
-        String jsonString = objectMapper.writeValueAsString(aBoolean);
-        StringReader reader = new StringReader(jsonString);
-        Assertions.assertEquals(aBoolean , new Json().read(reader));
+    void testValid(final Boolean originalValue) throws IOException {
+        String jsonString = objectMapper.writeValueAsString(originalValue);
+        Assertions.assertEquals(originalValue ,
+                new Json().read(new StringReader(jsonString)));
     }
-
+    /**
+     * Tests invalid Boolean Values.
+     * <p>
+     * Steps:
+     *  1) Pass invalid boolean value ( invalidJson ).
+     *  3) Read JSON String as Java Object using SJson.
+     * <p>
+     * Expected Result:
+     * IllegalArgumentException should be thrown .
+     * @param invalidJson - Valid Boolean Value
+     */
     @ParameterizedTest
     @ValueSource(strings = {"tru", "fals"})
-    void testInvalid(final String jsonString) throws IOException{
-        StringReader reader = new StringReader(jsonString);
-        Assertions.assertThrows(IllegalArgumentException.class, () ->{
-            new Json().read(reader);
-        });
-
+    void testInvalid(final String invalidJson) {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Json().read(new StringReader(invalidJson)));
     }
 }
