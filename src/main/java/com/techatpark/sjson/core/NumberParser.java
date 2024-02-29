@@ -176,7 +176,7 @@ public final class NumberParser {
      * @param isNegative
      * @return Byte, Short, Integer, Long or BigInteger
      */
-    public static Number parseNumber(final String source,
+    private static Number parseNumber(final String source,
                                      final boolean isNegative) {
         return switch (source.length()) {
             case ONE, TWO
@@ -275,7 +275,7 @@ public final class NumberParser {
      * @param source
      * @return Float,Double or BigDecimal
      */
-    public static Number parseDecimalNumber(final String source) {
+    private static Number parseDecimalNumber(final String source) {
         BigDecimal bigDecimal = new BigDecimal(source);
         // TODO Better Way to check if this is float / double
         try {
