@@ -23,7 +23,7 @@ class BooleanParserTest {
      * Steps:
      *  1) Pass valid boolean value ( originalValue ).
      *  2) Get JSON String from Jackson.
-     *  3) Read JSON String as Java Object using SJson.
+     *  3) With this JSON String read Java Object using SJson.
      * <p>
      * Expected Result:
      * This value should be equal to originalValue.
