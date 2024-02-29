@@ -205,7 +205,8 @@ public final class Json {
          */
         Object getValue() throws IOException {
             // 1. move to the first clean character to determine the Data type
-            final char character = moveCursorToNextClean();
+            final char character = nextClean(reader);
+            setCursor(character);
             // 2. Call corresponding get methods based on the type
             return switch (character) {
                 case '"' -> getString(reader);
@@ -220,22 +221,10 @@ public final class Json {
         }
 
         /**
-         * Skip Spaces and land reader at the valid character.
-         *
-         * @return valid character
-         * @throws IOException
-         */
-        char moveCursorToNextClean() throws IOException {
-            char character = nextClean(this.reader);
-            setCursor(character);
-            return character;
-        }
-
-        /**
          * Sets Cursor at given Character.
          * @param character
          */
-        public void setCursor(final Character character) {
+        public void setCursor(final char character) {
             cursor = character;
         }
 
