@@ -257,7 +257,7 @@ public final class NumberParser {
         BigInteger bigInteger = new BigInteger(source);
         if (isNegative) {
             bigInteger = bigInteger.multiply(new BigInteger("-1"));
-            if (bigInteger.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < -1) {
+            if (bigInteger.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) > -1) {
                 return bigInteger.longValue();
             }
             return bigInteger;

@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
@@ -34,8 +35,7 @@ class NumberParserTest {
     @ParameterizedTest
     @MethodSource("numbers")
     void testValid(final Number originalValue) throws IOException {
-        String jsonString = objectMapper.writeValueAsString(originalValue);
-        Assertions.assertEquals(originalValue, new Json().read(new StringReader(jsonString)));
+        Assertions.assertEquals(originalValue, new Json().read(new StringReader(originalValue.toString())));
     }
 
     /**
@@ -52,6 +52,10 @@ class NumberParserTest {
                 Short.MAX_VALUE,
                 Integer.MIN_VALUE,
                 Integer.MAX_VALUE,
+                Long.MIN_VALUE,
+                Long.MAX_VALUE,
+                BigInteger.valueOf(Long.MIN_VALUE).multiply(BigInteger.TEN),
+                BigInteger.valueOf(Long.MAX_VALUE).multiply(BigInteger.TEN),
                 Float.MIN_VALUE,
                 Float.MAX_VALUE,
                 Double.MIN_VALUE
