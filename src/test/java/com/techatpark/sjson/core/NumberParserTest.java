@@ -35,7 +35,8 @@ class NumberParserTest {
     @ParameterizedTest
     @MethodSource("numbers")
     void testValid(final Number originalValue) throws IOException {
-        Assertions.assertEquals(originalValue, new Json().read(new StringReader(originalValue.toString())));
+        String jsonString = objectMapper.writeValueAsString(originalValue);
+        Assertions.assertEquals(originalValue.toString(), new Json().read(new StringReader(jsonString)).toString());
     }
 
     /**
@@ -58,7 +59,22 @@ class NumberParserTest {
                 BigInteger.valueOf(Long.MAX_VALUE).multiply(BigInteger.TEN),
                 Float.MIN_VALUE,
                 Float.MAX_VALUE,
-                Double.MIN_VALUE
+                Double.MIN_VALUE,
+                123,
+                -456,
+                12.34,
+                -0.567,
+                1.23e4,
+                5.67E-8,
+                0.456,
+                1.23e001,
+                +789,
+                0.4e006,
+                0.4e-006,
+                0.4e+006,
+                4e006,
+                4e-006,
+                4e+006
         );
     }
 
