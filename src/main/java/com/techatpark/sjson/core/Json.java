@@ -11,6 +11,7 @@ import static com.techatpark.sjson.core.BooleanParser.getFalse;
 import static com.techatpark.sjson.core.BooleanParser.getTrue;
 import static com.techatpark.sjson.core.NullParser.getNull;
 import static com.techatpark.sjson.core.ObjectParser.getObject;
+import static com.techatpark.sjson.core.util.ReaderUtil.ILLEGAL_JSON_VALUE;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static com.techatpark.sjson.core.StringParser.getString;
 import static com.techatpark.sjson.core.NumberParser.getNumber;
@@ -216,7 +217,13 @@ public final class Json {
                 case '{' -> getObject(reader, this);
                 case '[' -> getArray(reader, this);
                 case ']' -> this;
-                default -> getNumber(this, reader, character);
+                default -> {
+                    if (Character.isDigit(character)
+                            || character == '+' || character == '-') {
+                        yield getNumber(this, reader, character);
+                    }
+                    throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
+                }
             };
         }
 

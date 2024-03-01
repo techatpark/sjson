@@ -141,7 +141,6 @@ public final class NumberParser {
                         || character == 'E')
                         && character != '}'
                         && character != ']'
-
                         && !isSpace(character)) {
                     decimals.append(character);
                 }
@@ -305,7 +304,7 @@ public final class NumberParser {
     private static Number getDecimalNumber(final char startingChar,
                                     final StringBuilder builder,
                                     final StringBuilder decimal) {
-        return NumberParser.parseDecimalNumber(startingChar
+        return parseDecimalNumber(startingChar
                 + builder.toString() + "." + decimal.toString());
     }
 
@@ -319,9 +318,9 @@ public final class NumberParser {
     private static Number buildNumber(final char startingChar,
                              final StringBuilder builder) {
         return switch (startingChar) {
-            case '-' -> NumberParser.parseNumber(builder.toString(), true);
-            case '+' -> NumberParser.parseNumber(builder.toString(), false);
-            default -> NumberParser.parseNumber(builder
+            case '-' -> parseNumber(builder.toString(), true);
+            case '+' -> parseNumber(builder.toString(), false);
+            default -> parseNumber(builder
                     .insert(0, startingChar)
                     .toString(), false);
         };
