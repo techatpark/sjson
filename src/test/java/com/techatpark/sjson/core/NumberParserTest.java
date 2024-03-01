@@ -1,11 +1,18 @@
 package com.techatpark.sjson.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.techatpark.sjson.core.util.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NumberParserTest {
 
@@ -25,14 +32,32 @@ class NumberParserTest {
      * @throws IOException
      */
     @ParameterizedTest
-    @ValueSource(ints = {
-            Integer.MIN_VALUE,
-            Integer.MAX_VALUE
-    })
+    @MethodSource("numbers")
     void testValid(final Number originalValue) throws IOException {
         String jsonString = objectMapper.writeValueAsString(originalValue);
         Assertions.assertEquals(originalValue, new Json().read(new StringReader(jsonString)));
     }
+
+    /**
+     * Provides paths to JSON files for parameterized tests.
+     *
+     * @return Stream of paths to JSON files
+     * @throws IOException if there is an issue listing files
+     */
+    private static List<Number> numbers() {
+        return List.of(
+                Byte.MIN_VALUE,
+                Byte.MAX_VALUE,
+                Short.MIN_VALUE,
+                Short.MAX_VALUE,
+                Integer.MIN_VALUE,
+                Integer.MAX_VALUE,
+                Float.MIN_VALUE,
+                Float.MAX_VALUE,
+                Double.MIN_VALUE
+        );
+    }
+
 
 
 }
