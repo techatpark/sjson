@@ -114,18 +114,12 @@ public final class NumberParser {
             throws IOException {
 
         final StringBuilder builder = new StringBuilder(TEN);
-        char character;
+        char character = (char) reader.read();
 
         // Happy Case : Read AllDigits before . character
-        while ((character = (char) reader.read()) != ','
-                && Character.isDigit(character)
-                && character != '.'
-                && character != '}'
-                && character != ']'
-                && character != 'e'
-                && character != 'E'
-                && !isSpace(character)) {
+        while (Character.isDigit(character)) {
             builder.append(character);
+            character = (char) reader.read();
         }
 
         // Maybe a double ?!
