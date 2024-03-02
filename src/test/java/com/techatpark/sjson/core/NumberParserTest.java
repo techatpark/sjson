@@ -95,7 +95,10 @@ class NumberParserTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "2,1",
-            "2.5,1"
+            "2,\n\t1",
+            "2    ,\n\t1",
+            "2.5,1",
+            "2.5\n\t, 1"
     })
     void testCursor(final String validjson) throws IOException {
         StringReader reader = new StringReader(validjson);
