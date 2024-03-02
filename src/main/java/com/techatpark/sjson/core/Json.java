@@ -192,7 +192,7 @@ public final class Json {
          *
          * @param theReader
          */
-        private ContentExtractor(final Reader theReader) {
+        public ContentExtractor(final Reader theReader) {
             this.reader = theReader;
         }
 

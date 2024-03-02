@@ -13,6 +13,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NumberParserTest {
@@ -76,6 +78,31 @@ class NumberParserTest {
                 4e-006,
                 4e+006
         );
+    }
+
+    /**
+     * Tests Where Reader completes cursor.
+     * <p>
+     *     Steps:
+     *     1) Pass valid number value(validjson) (With following 1.
+     *     2) Read java object using JSON.
+     * </p>
+     * Expected Result:
+     * next Clean Should be at 1
+     *
+     * @param validjson
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "2,1",
+            "2.5,1"
+    })
+    void testCursor(final String validjson) throws IOException {
+        StringReader reader = new StringReader(validjson);
+        char firstChar = nextClean(reader); // Move to First Digit
+        NumberParser.getNumber(new Json.ContentExtractor(reader),reader,  firstChar);
+        assertEquals('1',
+                nextClean(reader));
     }
 
 
