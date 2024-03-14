@@ -7,5 +7,4 @@ module json.parser {
 
     opens com.techatpark.sjson.core;
     opens com.techatpark.sjson.schema;
-    opens com.techatpark.sjson.schema.generator;
 }

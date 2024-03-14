@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.techatpark.sjson.core.ArrayParser.getArray;
-import static com.techatpark.sjson.core.BooleanParser.getFalse;
-import static com.techatpark.sjson.core.BooleanParser.getTrue;
-import static com.techatpark.sjson.core.NullParser.getNull;
-import static com.techatpark.sjson.core.ObjectParser.getObject;
+import static com.techatpark.sjson.core.parser.ArrayParser.getArray;
+import static com.techatpark.sjson.core.parser.BooleanParser.getFalse;
+import static com.techatpark.sjson.core.parser.BooleanParser.getTrue;
+import static com.techatpark.sjson.core.parser.NullParser.getNull;
+import static com.techatpark.sjson.core.parser.ObjectParser.getObject;
 import static com.techatpark.sjson.core.util.ReaderUtil.ILLEGAL_JSON_VALUE;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
-import static com.techatpark.sjson.core.StringParser.getString;
-import static com.techatpark.sjson.core.NumberParser.getNumber;
+import static com.techatpark.sjson.core.parser.StringParser.getString;
+import static com.techatpark.sjson.core.parser.NumberParser.getNumber;
 
 /**
  * Json parser for server side workloads.
@@ -204,7 +204,7 @@ public final class Json {
          * @return object
          * @throws IOException
          */
-        Object getValue() throws IOException {
+        public Object getValue() throws IOException {
             // 1. move to the first clean character to determine the Data type
             final char character = nextClean(reader);
             setCursor(character);

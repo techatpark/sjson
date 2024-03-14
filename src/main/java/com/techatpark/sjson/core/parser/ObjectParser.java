@@ -1,4 +1,6 @@
-package com.techatpark.sjson.core;
+package com.techatpark.sjson.core.parser;
+
+import com.techatpark.sjson.core.Json;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -6,7 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.techatpark.sjson.core.StringParser.getString;
+import static com.techatpark.sjson.core.parser.StringParser.getString;
 import static com.techatpark.sjson.core.util.ReaderUtil.next;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
