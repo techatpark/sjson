@@ -3,7 +3,7 @@ package com.techatpark.sjson.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParser;
-import com.techatpark.sjson.core.util.TestUtil;
+import com.techatpark.sjson.core.util.TestDataProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -65,7 +65,7 @@ class JsonTest {
      * @throws IOException if there is an issue listing files
      */
     private static Set<Path> jsonFilesProvider() throws IOException {
-        return TestUtil.getJSONFiles();
+        return TestDataProvider.getJSONFiles();
     }
 
 }

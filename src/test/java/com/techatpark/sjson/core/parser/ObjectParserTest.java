@@ -1,16 +1,13 @@
 package com.techatpark.sjson.core.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.techatpark.sjson.core.Json;
-import com.techatpark.sjson.core.util.TestUtil;
+import com.techatpark.sjson.core.util.TestDataProvider;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -18,10 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ObjectParserTest {
 
@@ -37,7 +30,7 @@ class ObjectParserTest {
     private static List<Path> jsonFilePath() throws IOException {
         List<Path> jsonFilePath = new ArrayList<>();
 
-        for (Path path : TestUtil.getJSONFiles()) {
+        for (Path path : TestDataProvider.getJSONFiles()) {
             String jsonText = Files.readString(path).trim();
             if (jsonText.startsWith("{")) {
                 jsonFilePath.add(path);

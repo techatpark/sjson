@@ -6,7 +6,7 @@ import com.github.victools.jsonschema.generator.SchemaGenerator;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
-import com.techatpark.sjson.core.util.TestUtil;
+import com.techatpark.sjson.core.util.TestDataProvider;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -73,7 +73,7 @@ class JsonSchemaTest {
      * @throws IOException if there is an issue listing files
      */
     private static Set<File> jsonSchemaFilesProvider() throws IOException {
-        return TestUtil.getJSONSchemaFiles();
+        return TestDataProvider.getJSONSchemaFiles();
     }
 
 }

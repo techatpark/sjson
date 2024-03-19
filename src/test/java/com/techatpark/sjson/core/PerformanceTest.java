@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.techatpark.sjson.core.Json;
-import com.techatpark.sjson.core.util.TestUtil;
+import com.techatpark.sjson.core.util.TestDataProvider;
 import org.github.jamm.MemoryMeter;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
@@ -17,8 +16,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Set;
 
 
@@ -94,7 +91,7 @@ class PerformanceTest {
      * @throws IOException if there is an issue listing files
      */
     private static Set<Path> jsonFilesProvider() throws IOException {
-        return TestUtil.getJSONFiles();
+        return TestDataProvider.getJSONFiles();
     }
 
     /**
