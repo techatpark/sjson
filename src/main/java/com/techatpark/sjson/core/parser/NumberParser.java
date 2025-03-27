@@ -5,7 +5,6 @@ import com.techatpark.sjson.core.Json;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  * Parser for Numbers.
@@ -76,11 +75,8 @@ public final class NumberParser {
                 } else if (longValue >= Integer.MIN_VALUE
                         && longValue <= Integer.MAX_VALUE) {
                     return (int) longValue;
-                } else if (longValue <= Long.MAX_VALUE) {
-                    return longValue;
                 } else {
-                    // For very large integers, use BigInteger
-                    return new BigInteger(numberStr);
+                    return longValue;
                 }
             }
         } catch (NumberFormatException e) {

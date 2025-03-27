@@ -1,7 +1,5 @@
 package com.techatpark.sjson.schema;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -14,22 +12,19 @@ class BooleanSchemaTest {
             (BooleanSchema) JsonSchema.getJsonSchema(Boolean.class);
     @Test
     void read() throws IOException {
-        System.out.println(booleanSchema);
-
-
-        Assertions.assertTrue(
+        assertTrue(
                 booleanSchema.read(new StringReader("true")),
                 "Boolean reading failed");
 
-        Assertions.assertFalse(
+        assertFalse(
                 booleanSchema.read(new StringReader("false")),
                 "Boolean reading failed");
 
-        Assertions.assertNull(
+        assertNull(
                 booleanSchema.read(new StringReader("null")),
                 "Boolean Reading null");
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             booleanSchema.read(new StringReader("illegal"));
         });
 

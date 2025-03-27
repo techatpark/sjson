@@ -8,8 +8,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.math.BigInteger;
-import java.util.List;
 
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,13 +58,11 @@ class NumberParserTest {
     }
 
     private void testCursor(final String jsonString, final String suffix) throws IOException {
-        StringReader reader = new StringReader(jsonString + suffix);
-        char firstChar = nextClean(reader); // Move to First Digit
+        final StringReader reader = new StringReader(jsonString + suffix);
+        final char firstChar = nextClean(reader); // Move to First Digit
         NumberParser.getNumber(new Json.ContentExtractor(reader),reader,  firstChar);
         assertEquals('1',
                 nextClean(reader));
     }
-
-
 
 }

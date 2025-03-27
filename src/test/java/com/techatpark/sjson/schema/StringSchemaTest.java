@@ -5,38 +5,30 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.ObjectStreamException;
 import java.io.StringReader;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StringSchemaTest {
 
     ObjectMapper objectmapper = new ObjectMapper();
     StringSchema stringschema = (StringSchema) JsonSchema.getJsonSchema(String.class);
+
     @Test
     void read() throws IOException {
 
-        System.out.println(stringschema);
-
-        Assertions.assertNull(
-                stringschema.read(new StringReader("null")),
-                "String null reading failed");
+        Assertions.assertNull(stringschema.read(new StringReader("null")), "String null reading failed");
         assertStringParsing("\"\"");
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             stringschema.read(new StringReader("Illegal"));
         });
 
-
     }
-            private void assertStringParsing(String input) throws IOException{
-            Assertions.assertEquals(objectmapper.readValue(input,String.class),
-                    stringschema.read(new StringReader(input)),
-                    "String reading failed");
 
-
-
+    private void assertStringParsing(String input) throws IOException {
+        assertEquals(objectmapper.readValue(input, String.class), stringschema.read(new StringReader(input)), "String reading failed");
     }
 
 }
