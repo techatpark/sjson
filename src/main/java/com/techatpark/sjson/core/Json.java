@@ -82,7 +82,7 @@ public final class Json {
      */
     public String jsonText(final List<Object> jsonArray) {
         return "[" + jsonArray.stream()
-                .map(o -> getValue(o))
+                .map(this::getValue)
                 .collect(Collectors.joining(",")) + "]";
     }
 
