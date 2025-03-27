@@ -6,5 +6,4 @@ module json.parser {
     requires jakarta.validation;
 
     opens com.techatpark.sjson.core;
-    opens com.techatpark.sjson.schema;
 }
