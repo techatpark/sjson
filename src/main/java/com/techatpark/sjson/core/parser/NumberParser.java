@@ -21,14 +21,14 @@ public final class NumberParser {
      * Reads the number from reader.
      * Reader will stop at the next to the end of number.
      *
-     * @param contentExtractor
+     * @param contextExtractor
      * @param reader
      * @param startingChar
      * @return number
      * @throws IOException
      */
     public static Number getNumber(
-            final Json.ContentExtractor contentExtractor,
+            final Json.ContextExtractor contextExtractor,
                                    final Reader reader,
                                    final char startingChar)
             throws IOException {
@@ -45,7 +45,7 @@ public final class NumberParser {
             charactor = (char) read;
         }
 
-        contentExtractor.setCursor(charactor);
+        contextExtractor.setCursor(charactor);
         return build(numberBuilder);
     }
 

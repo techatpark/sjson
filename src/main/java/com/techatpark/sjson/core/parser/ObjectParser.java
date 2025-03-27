@@ -25,17 +25,17 @@ public final class ObjectParser {
      * Reads Object from a reader. Reader will
      * stop at the next clean char after object.
      * @param reader
-     * @param contentExtractor
+     * @param contextExtractor
      * @return json object
      * @throws IOException
      */
     public static Map<String, Object> getObject(final Reader reader,
-                            final Json.ContentExtractor
-                            contentExtractor) throws IOException {
-        boolean eoo = endOfObject(reader, contentExtractor);
+                            final Json.ContextExtractor
+                                    contextExtractor) throws IOException {
+        boolean eoo = endOfObject(reader, contextExtractor);
         // This is Empty Object
         if (eoo) {
-            contentExtractor.setCursor(nextClean(reader));
+            contextExtractor.setCursor(nextClean(reader));
             return Collections.emptyMap();
         }
         final Map<String, Object> jsonMap = new HashMap<>();
@@ -44,32 +44,32 @@ public final class ObjectParser {
             key = getString(reader);
             next(reader, ':');
             jsonMap.put(key,
-                    contentExtractor.getValue());
-            eoo = endOfObject(reader, contentExtractor);
+                    contextExtractor.getValue());
+            eoo = endOfObject(reader, contextExtractor);
         }
-        contentExtractor.setCursor(nextClean(reader));
+        contextExtractor.setCursor(nextClean(reader));
         return jsonMap;
     }
 
     /**
      * Determines the Object End. By moving till " or }.
      * @param reader
-     * @param contentExtractor
+     * @param contextExtractor
      * @return flag
      * @throws IOException
      */
     private static boolean endOfObject(final Reader reader,
-                                       final Json.ContentExtractor
-                                       contentExtractor) throws IOException {
+                       final Json.ContextExtractor
+                               contextExtractor) throws IOException {
         char character;
-        if (contentExtractor.getCursor() == ',') {
+        if (contextExtractor.getCursor() == ',') {
             while (getCharacter(reader.read()) != '"') {
                 continue;
             }
             return false;
         }
 
-        if (contentExtractor.getCursor() == '}') {
+        if (contextExtractor.getCursor() == '}') {
             return true;
         }
 

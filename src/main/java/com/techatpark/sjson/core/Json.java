@@ -56,7 +56,7 @@ public final class Json {
      */
     public Object read(final Reader reader) throws IOException {
         try (reader) {
-            return new ContentExtractor(reader).getValue();
+            return new ContextExtractor(reader).getValue();
         }
     }
 
@@ -172,10 +172,10 @@ public final class Json {
     }
 
     /**
-     * ContentExtractor is responsible to interact with underlying reader to
+     * ContextExtractor is responsible to interact with underlying reader to
      * extract the content.
      */
-    public static final class ContentExtractor {
+    public static final class ContextExtractor {
 
         /**
          * Reader to the JSON Content.
@@ -192,7 +192,7 @@ public final class Json {
          *
          * @param theReader
          */
-        public ContentExtractor(final Reader theReader) {
+        public ContextExtractor(final Reader theReader) {
             this.reader = theReader;
         }
 

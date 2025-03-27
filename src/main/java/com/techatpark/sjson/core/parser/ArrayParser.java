@@ -22,42 +22,42 @@ public final class ArrayParser {
     /**
      * Reades an Array. Reader stops at next clean character.
      * @param reader
-     * @param contentExtractor
+     * @param contextExtractor
      * @return list
      * @throws IOException
      */
     public static List<Object> getArray(final Reader reader,
-                                  final Json.ContentExtractor
-                                          contentExtractor) throws IOException {
-        final Object value = contentExtractor.getValue();
+                                  final Json.ContextExtractor
+                                          contextExtractor) throws IOException {
+        final Object value = contextExtractor.getValue();
         // If not Empty Array
-        if (value == contentExtractor) {
-            contentExtractor.setCursor(nextClean(reader));
+        if (value == contextExtractor) {
+            contextExtractor.setCursor(nextClean(reader));
             return Collections.emptyList();
         }
         final List<Object> list = new ArrayList<>();
         list.add(value);
-        while (!endOfArray(reader, contentExtractor)) {
-            list.add(contentExtractor.getValue());
+        while (!endOfArray(reader, contextExtractor)) {
+            list.add(contextExtractor.getValue());
         }
-        contentExtractor.setCursor(nextClean(reader));
+        contextExtractor.setCursor(nextClean(reader));
         return list;
     }
     /**
      * Determine array close character.
      * @param reader
-     * @param contentExtractor
+     * @param contextExtractor
      * @return flag
      * @throws IOException
      */
     private static boolean endOfArray(final Reader reader,
-                                      final Json.ContentExtractor
-            contentExtractor) throws IOException {
+                              final Json.ContextExtractor
+                                      contextExtractor) throws IOException {
         char character;
-        if (contentExtractor.getCursor() == ',') {
+        if (contextExtractor.getCursor() == ',') {
             return false;
         }
-        if (contentExtractor.getCursor() == ']') {
+        if (contextExtractor.getCursor() == ']') {
             return true;
         }
 

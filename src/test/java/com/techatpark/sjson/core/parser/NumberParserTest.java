@@ -60,7 +60,7 @@ class NumberParserTest {
     private void testCursor(final String jsonString, final String suffix) throws IOException {
         final StringReader reader = new StringReader(jsonString + suffix);
         final char firstChar = nextClean(reader); // Move to First Digit
-        NumberParser.getNumber(new Json.ContentExtractor(reader),reader,  firstChar);
+        NumberParser.getNumber(new Json.ContextExtractor(reader),reader,  firstChar);
         assertEquals('1',
                 nextClean(reader));
     }
