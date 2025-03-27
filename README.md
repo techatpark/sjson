@@ -4,6 +4,8 @@
 
 SJson is a **lightweight tailer made json parser for server side workloads**. It tries to get optimized memory and performance with below goals.
 
+## Design Goals
+
 1. Optimized for Serialization, Deserialization and validation.
 2. Represent Json in native java format.
 3. No external dependencies
@@ -19,28 +21,28 @@ SJson is a **lightweight tailer made json parser for server side workloads**. It
 
 Include below in your pom.xml
 
-````
+```xml
 <dependency>
    <groupId>com.techatpark.sjson</groupId>
    <artifactId>json-parser</artifactId>
    <version>1.0.0</version>
 <dependency>   
-````
+```
 
-Below is the code to read JSON as Java Object
+To read JSON as Java Object
 
-````
+```java
    Json json = new Json();
    Object obj = json.read(new StringReader("{ \"abc\" : \"def\" }"));
-````
+```
 
 ## Development
 
 Below VM Options should be added for JVM. This is required to calculate the size of the objects
 
-````
+```shell
 -javaagent:<<PATH_TO_JAR>>/jamm-0.4.1.jar --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED
-````
+```
 ## How it works
 
 SJson was part of the tech talk series at Bangalore Opensource Java User Group. This will give an idea behind this work.

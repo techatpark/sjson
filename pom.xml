@@ -167,7 +167,6 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
