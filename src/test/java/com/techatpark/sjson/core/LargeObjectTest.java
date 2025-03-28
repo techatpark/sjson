@@ -1,6 +1,7 @@
 package com.techatpark.sjson.core;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ class LargeObjectTest {
         }
         largeJson.append("{\"id\": 100000, \"name\": \"LastItem\"}]}");
 
-        JSONObject jsonObject = new JSONObject(new StringReader(largeJson.toString()));
+        JsonNode jsonNode = new ObjectMapper().readTree(new StringReader(largeJson.toString()));
 
         assertThrows(IllegalArgumentException.class, () -> parser.read(new StringReader(largeJson.toString())));
     }
