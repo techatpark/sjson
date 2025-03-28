@@ -12,7 +12,6 @@ import static com.techatpark.sjson.core.parser.BooleanParser.getTrue;
 import static com.techatpark.sjson.core.parser.NullParser.getNull;
 import static com.techatpark.sjson.core.parser.ObjectParser.getObject;
 import static com.techatpark.sjson.core.util.ReaderUtil.ILLEGAL_JSON_VALUE;
-import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static com.techatpark.sjson.core.parser.StringParser.getString;
 import static com.techatpark.sjson.core.parser.NumberParser.getNumber;
 
@@ -255,7 +254,7 @@ public final class Json {
          */
         public Object getValue() throws IOException {
             // 1. move to the first clean character to determine the Data type
-            final char character = nextClean(reader);
+            final char character = nextClean();
             setCursor(character);
             // 2. Call corresponding get methods based on the type
             return switch (character) {
@@ -277,6 +276,13 @@ public final class Json {
         }
 
         /**
+         * Sets Cursor to next clean Character.
+         */
+        public void setCursorToNextClean() throws IOException {
+            setCursor(nextClean());
+        }
+
+        /**
          * Sets Cursor at given Character.
          * @param character
          */
@@ -290,6 +296,32 @@ public final class Json {
          */
         public char getCursor() {
             return cursor;
+        }
+
+        /**
+         * Skip Spaces and land reader at the valid character.
+         * @return valid character
+         * @throws IOException
+         */
+        public char nextClean() throws IOException {
+            char character;
+            do {
+                character = (char) reader.read();
+            } while (isSpace(character));
+            return character;
+        }
+
+        /**
+         * Determines if this is a space charecter.
+         *
+         * @param character
+         * @return flag
+         */
+        public boolean isSpace(final char character) {
+            return (character == ' '
+                    || character == '\n'
+                    || character == '\r'
+                    || character == '\t');
         }
     }
 }

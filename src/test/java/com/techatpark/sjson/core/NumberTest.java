@@ -13,7 +13,6 @@ import java.io.StringReader;
 import java.math.BigInteger;
 import java.util.List;
 
-import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -161,10 +160,11 @@ class NumberTest {
 
     private void testCursor(final String jsonString, final String suffix) throws IOException {
         final StringReader reader = new StringReader(jsonString + suffix);
-        final char firstChar = nextClean(reader); // Move to First Digit
-        NumberParser.getNumber(new Json.ContextExtractor(reader),reader,  firstChar);
+        final Json.ContextExtractor contextExtractor = new Json.ContextExtractor(reader);
+        final char firstChar = contextExtractor.nextClean(); // Move to First Digit
+        NumberParser.getNumber(contextExtractor,reader,  firstChar);
         assertEquals('1',
-                nextClean(reader));
+                contextExtractor.nextClean());
     }
 }
 

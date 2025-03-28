@@ -10,7 +10,6 @@ import java.util.Map;
 
 import static com.techatpark.sjson.core.parser.StringParser.getString;
 import static com.techatpark.sjson.core.util.ReaderUtil.next;
-import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
 
 public final class ObjectParser {
@@ -36,7 +35,7 @@ public final class ObjectParser {
         boolean eoo = endOfObject(reader, contextExtractor);
         // This is Empty Object
         if (eoo) {
-            contextExtractor.setCursor(nextClean(reader));
+            contextExtractor.setCursorToNextClean();
             return Collections.emptyMap();
         }
         final Map<String, Object> jsonMap = new HashMap<>();
@@ -48,7 +47,7 @@ public final class ObjectParser {
                     contextExtractor.getValue());
             eoo = endOfObject(reader, contextExtractor);
         }
-        contextExtractor.setCursor(nextClean(reader));
+        contextExtractor.setCursorToNextClean();
         contextExtractor.endObject();
         return jsonMap;
     }
