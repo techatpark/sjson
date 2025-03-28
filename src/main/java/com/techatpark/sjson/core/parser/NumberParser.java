@@ -5,11 +5,17 @@ import com.techatpark.sjson.core.Json;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * Parser for Numbers.
  */
 public final class NumberParser {
+
+    /**
+     * Maximum Characters for a Number.
+     */
+    public static final int DEFAULT_MAX_NUM_LEN = 1000;
 
     /**
      * Utility Class.
@@ -57,7 +63,7 @@ public final class NumberParser {
             if (numberStr.contains(".")) {
                 // Check if the number is a decimal
                 double doubleValue = Double.parseDouble(numberStr);
-                if (doubleValue >= Float.MIN_VALUE
+                if (doubleValue >= -Float.MAX_VALUE
                         && doubleValue <= Float.MAX_VALUE) {
                     return (float) doubleValue;
                 } else {
@@ -65,6 +71,11 @@ public final class NumberParser {
                 }
             } else {
                 // Check if the number is an integer
+                if (numberBuilder.length() > DEFAULT_MAX_NUM_LEN) {
+                    throw new IllegalArgumentException(
+                            "Number value length exceeds the maximum allowed ("
+                            + DEFAULT_MAX_NUM_LEN + ")");
+                }
                 long longValue = Long.parseLong(numberStr);
                 if (longValue >= Byte.MIN_VALUE
                         && longValue <= Byte.MAX_VALUE) {
@@ -80,8 +91,22 @@ public final class NumberParser {
                 }
             }
         } catch (NumberFormatException e) {
-            // If parsing fails, return BigDecimal
-            return new BigDecimal(numberStr);
+            return parseBigNumber(numberStr);
+        }
+    }
+
+    private static Number parseBigNumber(final String numberStr) {
+        try {
+            return new BigInteger(numberStr); // Try BigInteger first
+        } catch (NumberFormatException e) {
+            // Only create BigDecimal if BigInteger fails
+            BigDecimal bd = new BigDecimal(numberStr);
+            try {
+                // Convert to BigInteger if there's no fraction
+                return bd.toBigIntegerExact();
+            } catch (ArithmeticException ex) {
+                return bd; // If it's a decimal, return BigDecimal
+            }
         }
     }
 

@@ -31,16 +31,11 @@ class DeepNestedTest {
      */
     @Test
     void testDeeplyNestedJson() throws IOException {
-        StringBuilder deepJson = new StringBuilder("{");
-        for (int i = 0; i < 10_000; i++) {
-            deepJson.append("\"key\": {");
-        }
-        deepJson.append("\"final\": \"value\"");
-        for (int i = 0; i < 10_000; i++) {
-            deepJson.append("}");
-        }
+        String deepJson = "{" + "\"key\": {".repeat(10_000) +
+                "\"final\": \"value\"" +
+                "}".repeat(10_000);
 
-        assertThrows(IllegalArgumentException.class, () -> parser.read(new StringReader(deepJson.toString())));
+        assertThrows(IllegalArgumentException.class, () -> parser.read(new StringReader(deepJson)));
     }
 
     /**
@@ -53,16 +48,11 @@ class DeepNestedTest {
      */
     @Test
     void testDeeplyNestedArray() throws IOException {
-        StringBuilder deepArray = new StringBuilder("[");
-        for (int i = 0; i < 10_000; i++) {
-            deepArray.append("[");
-        }
-        deepArray.append("\"value\"");
-        for (int i = 0; i < 10_000; i++) {
-            deepArray.append("]");
-        }
+        String deepArray = "[" + "[".repeat(10_000) +
+                "\"value\"" +
+                "]".repeat(10_000);
 
-        assertThrows(IllegalArgumentException.class, () -> parser.read(new StringReader(deepArray.toString())));
+        assertThrows(IllegalArgumentException.class, () -> parser.read(new StringReader(deepArray)));
     }
 
     /**
@@ -100,16 +90,11 @@ class DeepNestedTest {
     @Test
     @Disabled
     void testNestedJsonWithinLimit() throws IOException {
-        StringBuilder deepJson = new StringBuilder("{");
-        for (int i = 0; i < 9_999; i++) {
-            deepJson.append("\"key\": {");
-        }
-        deepJson.append("\"final\": \"value\"");
-        for (int i = 0; i < 9_999; i++) {
-            deepJson.append("}");
-        }
+        String deepJson = "{" + "\"key\": {".repeat(9_999) +
+                "\"final\": \"value\"" +
+                "}".repeat(9_999);
 
-        assertDoesNotThrow(() -> parser.read(new StringReader(deepJson.toString())));
+        assertDoesNotThrow(() -> parser.read(new StringReader(deepJson)));
     }
 
     /**
@@ -130,15 +115,10 @@ class DeepNestedTest {
      */
     @Test
     void testDeeplyNestedWithEscapedCharacters() throws IOException {
-        StringBuilder json = new StringBuilder("{");
-        for (int i = 0; i < 500; i++) {
-            json.append("\"key\": {\"text\": \"\\\"quoted\\\"\" , ");
-        }
-        json.append("\"final\": \"value\"");
-        for (int i = 0; i < 500; i++) {
-            json.append("}");
-        }
+        String json = "{" + "\"key\": {\"text\": \"\\\"quoted\\\"\" , ".repeat(500) +
+                "\"final\": \"value\"" +
+                "}".repeat(500);
 
-        assertThrows(IllegalArgumentException.class, () -> parser.read(new StringReader(json.toString())));
+        assertThrows(IllegalArgumentException.class, () -> parser.read(new StringReader(json)));
     }
 }

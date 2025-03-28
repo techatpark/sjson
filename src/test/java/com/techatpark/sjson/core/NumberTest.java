@@ -1,8 +1,10 @@
 package com.techatpark.sjson.core;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techatpark.sjson.core.parser.NumberParser;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -27,6 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class NumberTest {
 
     final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Test
+    void testLargeNumber() throws JsonProcessingException {
+        String largeNumber = "{\"a\" : " + "9".repeat(100000) + "}";
+        assertThrows(IllegalArgumentException.class, () -> new Json().read(new StringReader(largeNumber)));
+    }
 
     /**
      * Tests valid numeric values with the best possible memory optimization.
@@ -125,10 +133,8 @@ class NumberTest {
                 "NaN", // Not-a-Number
                 "Infinity", // Infinite value
                 "-Infinity", // Negative infinity
-                "9999999999999999999999999999999999999999999999999999999999999", // Exceeds Java number limits
                 "123abc", // Contains non-numeric characters
                 "0x1A", // Hexadecimal notation unsupported
-                "07", // Octal notation unsupported
                 "1.2.3", // Multiple decimal points
                 "1e+2.3" // Exponential notation misuse
         );

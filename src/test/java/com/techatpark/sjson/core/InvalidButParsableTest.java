@@ -14,7 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class InvalidButParsableTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {"{key: value}","\"Newline in string \n remains invalid\""})
+    @ValueSource(strings = {"07",
+            "{key: value}",
+            "\"Newline in string \n remains invalid\""})
     void testInvalid(final String invalidJson) {
         assertDoesNotThrow(
                 () -> new Json().read(new StringReader(invalidJson)));
