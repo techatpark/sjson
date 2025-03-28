@@ -202,7 +202,7 @@ public final class Json {
          *
          * @param theReader
          */
-        public ContextExtractor(final Reader theReader) {
+        ContextExtractor(final Reader theReader) {
             this.reader = theReader;
             this.objectDepth = 0;
         }
@@ -213,8 +213,6 @@ public final class Json {
         public void startObject() {
             checkMaxDepth();
         }
-
-
 
         /**
          * Called when new Object completed.

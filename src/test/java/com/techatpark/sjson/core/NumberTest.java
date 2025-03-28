@@ -1,7 +1,7 @@
-package com.techatpark.sjson.core.parser;
+package com.techatpark.sjson.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techatpark.sjson.core.Json;
+import com.techatpark.sjson.core.parser.NumberParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -12,7 +12,7 @@ import java.io.StringReader;
 import static com.techatpark.sjson.core.util.ReaderUtil.nextClean;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class NumberParserTest {
+class NumberTest {
 
     final ObjectMapper objectMapper = new ObjectMapper();
 

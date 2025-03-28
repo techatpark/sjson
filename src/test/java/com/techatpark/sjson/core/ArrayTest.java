@@ -1,8 +1,7 @@
-package com.techatpark.sjson.core.parser;
+package com.techatpark.sjson.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParser;
-import com.techatpark.sjson.core.Json;
 import com.techatpark.sjson.core.util.TestDataProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,8 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-class ObjectParserTest {
-
+class ArrayTest {
     final ObjectMapper objectMapper = new ObjectMapper();
 
 
@@ -32,7 +30,7 @@ class ObjectParserTest {
 
         for (Path path : TestDataProvider.getJSONFiles()) {
             String jsonText = Files.readString(path).trim();
-            if (jsonText.startsWith("{")) {
+            if (jsonText.startsWith("[")) {
                 jsonFilePath.add(path);
             }
         }
@@ -53,5 +51,4 @@ class ObjectParserTest {
                 JsonParser.parseReader(new FileReader(path.toFile())),
                 "Reverse JSON Failed for " + path);
     }
-
 }
