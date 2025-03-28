@@ -32,7 +32,13 @@ class StringTest {
             "Hari",
             "Escapes \" \\",
             "Tabnext \n \b \t \f \r",
-            "Emoji \uD83D\uDE00 \u0000"
+            "Emoji \uD83D\uDE00 \u0000",
+            "こんにちは (Japanese)",
+            "مرحبا (Arabic)",
+            "你好 (Chinese)",
+            "Привет (Russian)",
+            "வணக்கம் (Tamil)",
+            "Mix: English हिंदी 中文 日本語 \uD83D\uDE80"
     })
     void testValid(final String originalValue) throws IOException {
 
@@ -56,13 +62,12 @@ class StringTest {
             "\"\\s\"",
             "\"dddd",
             "\"\n",
-            "\"20\\r\n\""
+            "\"20\\r\n\"",
+            "\"Broken Escape \\xG\"",
+            "\"Unfinished \\u123\""
     })
     void testInvalid(final String invalidjson) throws IOException {
         assertThrows(IllegalArgumentException.class,
                 () -> new Json().read(new StringReader(invalidjson)));
     }
-
-
-
 }
