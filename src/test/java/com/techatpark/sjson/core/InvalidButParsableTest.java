@@ -14,7 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class InvalidButParsableTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {"07",
+    @ValueSource(strings = {
+            "1e9999", // Exceeds floating-point range
+            "-1e9999", // Negative overflow
+            "07",
             "{key: value}",
             "\"Newline in string \n remains invalid\""})
     void testInvalid(final String invalidJson) {

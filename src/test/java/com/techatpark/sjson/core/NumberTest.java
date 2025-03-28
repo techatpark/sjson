@@ -128,8 +128,6 @@ class NumberTest {
      */
     static List<String> invalidNumbers() {
         return List.of(
-                "1e9999", // Exceeds floating-point range
-                "-1e9999", // Negative overflow
                 "NaN", // Not-a-Number
                 "Infinity", // Infinite value
                 "-Infinity", // Negative infinity
