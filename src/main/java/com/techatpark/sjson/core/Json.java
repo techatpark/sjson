@@ -178,6 +178,11 @@ public final class Json {
     public static final class ContextExtractor {
 
         /**
+         * Max Depth of an nested Object.
+         */
+        public static final int DEFAULT_MAX_DEPTH = 1000;
+
+        /**
          * Reader to the JSON Content.
          */
         private final Reader reader;
@@ -188,12 +193,58 @@ public final class Json {
         private char cursor;
 
         /**
+         * Depth of the current Object.
+         */
+        private short objectDepth;
+
+        /**
          * Creates Content extracter for the reader.
          *
          * @param theReader
          */
         public ContextExtractor(final Reader theReader) {
             this.reader = theReader;
+            this.objectDepth = 0;
+        }
+
+        /**
+         * Called when new Object starts.
+         */
+        public void startObject() {
+            checkMaxDepth();
+        }
+
+
+
+        /**
+         * Called when new Object completed.
+         */
+        public void endObject() {
+            decrementDepth();
+        }
+
+        /**
+         * Called when new Array starts.
+         */
+        public void startArray() {
+            checkMaxDepth();
+        }
+        /**
+         * Called when new Array completed.
+         */
+        public void endArray() {
+            decrementDepth();
+        }
+
+        private void checkMaxDepth() {
+            if (++objectDepth == DEFAULT_MAX_DEPTH) {
+                throw new IllegalArgumentException("Document nesting depth ("
+                        + DEFAULT_MAX_DEPTH + ") exceeds the maximum allowed");
+            }
+        }
+
+        private void decrementDepth() {
+            this.objectDepth--;
         }
 
         /**

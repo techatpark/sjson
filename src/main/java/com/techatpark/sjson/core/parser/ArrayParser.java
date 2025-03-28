@@ -29,6 +29,7 @@ public final class ArrayParser {
     public static List<Object> getArray(final Reader reader,
                                   final Json.ContextExtractor
                                           contextExtractor) throws IOException {
+        contextExtractor.startArray();
         final Object value = contextExtractor.getValue();
         // If not Empty Array
         if (value == contextExtractor) {
@@ -41,6 +42,7 @@ public final class ArrayParser {
             list.add(contextExtractor.getValue());
         }
         contextExtractor.setCursor(nextClean(reader));
+        contextExtractor.endArray();
         return list;
     }
     /**

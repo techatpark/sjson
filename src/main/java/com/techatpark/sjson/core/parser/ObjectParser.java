@@ -32,6 +32,7 @@ public final class ObjectParser {
     public static Map<String, Object> getObject(final Reader reader,
                             final Json.ContextExtractor
                                     contextExtractor) throws IOException {
+        contextExtractor.startObject();
         boolean eoo = endOfObject(reader, contextExtractor);
         // This is Empty Object
         if (eoo) {
@@ -48,6 +49,7 @@ public final class ObjectParser {
             eoo = endOfObject(reader, contextExtractor);
         }
         contextExtractor.setCursor(nextClean(reader));
+        contextExtractor.endObject();
         return jsonMap;
     }
 
