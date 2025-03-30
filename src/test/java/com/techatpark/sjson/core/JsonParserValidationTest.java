@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 class JsonParserValidationTest {
 
-    public final Json sJson = new Json();
+    
 
     /**
      * Test Illegal JSON Texts.
@@ -25,7 +25,7 @@ class JsonParserValidationTest {
     @MethodSource("illegalJsonPaths")
     void testIllegal(Path path) {
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            sJson.read(new FileReader(path.toFile()));
+            Json.read(new FileReader(path.toFile()));
         });
     }
 

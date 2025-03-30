@@ -27,17 +27,17 @@ import static com.techatpark.sjson.core.parser.NumberParser.getNumber;
  * This is not general purpose parser. This is useful for Microservices
  * and REST Clients where we primarily need to read/write json data.
  */
-public final class Json {
+public interface Json {
 
     /**
      * Length of Unicode.
      */
-    private static final int UNICODE_LENGTH = 4;
+    int UNICODE_LENGTH = 4;
 
     /**
      * For invalid JSON.
      */
-    public static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
+    String ILLEGAL_JSON_VALUE = "Illegal value at ";
 
     /**
      * Reads JSON as a Java Object.
@@ -57,9 +57,9 @@ public final class Json {
      * @return object
      * @throws IOException - throws io exception
      */
-    public static Object read(final Reader reader) throws IOException {
+    static Object read(final Reader reader) throws IOException {
         try (reader) {
-            return new ContextExtractor(reader).getValue();
+            return new ContextExtractor(reader).parse();
         }
     }
 
@@ -69,7 +69,7 @@ public final class Json {
      * @param jsonMap
      * @return jsonText
      */
-    public String jsonText(final Map<String, Object> jsonMap) {
+    static String jsonText(final Map<String, Object> jsonMap) {
         return "{" + jsonMap.entrySet().stream()
                 .map(entry ->
                         "\"" + escapeJsonTxt(entry.getKey()) + "\":"
@@ -83,9 +83,9 @@ public final class Json {
      * @param jsonArray
      * @return jsonTxt
      */
-    public String jsonText(final List<Object> jsonArray) {
+    private static String jsonText(final List<Object> jsonArray) {
         return "[" + jsonArray.stream()
-                .map(this::getValue)
+                .map(Json::getValue)
                 .collect(Collectors.joining(",")) + "]";
     }
 
@@ -95,7 +95,7 @@ public final class Json {
      * @param value
      * @return valueText
      */
-    private String getValue(final Object value) {
+    private static String getValue(final Object value) {
         return switch (value) {
             case null -> "null";
             case String str -> "\"" + escapeJsonTxt(str) + "\"";
@@ -112,7 +112,7 @@ public final class Json {
      * @param s
      * @return escapeJsonTxt
      */
-    private String escapeJsonTxt(final String s) {
+    private static String escapeJsonTxt(final String s) {
         if (s == null) {
             return null;
         }
@@ -126,7 +126,7 @@ public final class Json {
      * @param s - Must not be null.
      * @param sb
      */
-    private void escape(final String s, final StringBuilder sb) {
+    private static void escape(final String s, final StringBuilder sb) {
         final int len = s.length();
         for (int i = 0; i < len; i++) {
             char ch = s.charAt(i);
@@ -178,7 +178,7 @@ public final class Json {
      * ContextExtractor is responsible to interact with underlying reader to
      * extract the content.
      */
-    public static final class ContextExtractor {
+    final class ContextExtractor {
 
         /**
          * Max Depth of an nested Object.
@@ -256,7 +256,7 @@ public final class Json {
          * @return object
          * @throws IOException
          */
-        public Object getValue() throws IOException {
+        public Object parse() throws IOException {
             // 1. move to the first clean character to determine the Data type
             final char character = nextClean();
             setCursor(character);

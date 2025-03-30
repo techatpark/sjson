@@ -43,7 +43,7 @@ class StringTest {
     void testValid(final String originalValue) throws IOException {
 
         String jsonString = objectMapper.writeValueAsString(originalValue);
-        Assertions.assertEquals(originalValue, new Json().read(new StringReader(jsonString)));
+        Assertions.assertEquals(originalValue, Json.read(new StringReader(jsonString)));
     }
 
     /**
@@ -68,6 +68,6 @@ class StringTest {
     })
     void testInvalid(final String invalidjson) throws IOException {
         assertThrows(IllegalArgumentException.class,
-                () -> new Json().read(new StringReader(invalidjson)));
+                () -> Json.read(new StringReader(invalidjson)));
     }
 }

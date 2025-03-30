@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LargeObjectTest {
 
-    private final Json parser = new Json();
+    
 
     @Test
     @Disabled
@@ -25,6 +25,6 @@ class LargeObjectTest {
 
         JsonNode jsonNode = new ObjectMapper().readTree(new StringReader(largeJson.toString()));
 
-        assertThrows(IllegalArgumentException.class, () -> parser.read(new StringReader(largeJson.toString())));
+        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(largeJson.toString())));
     }
 }

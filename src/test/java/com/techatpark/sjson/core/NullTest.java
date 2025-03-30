@@ -30,7 +30,7 @@ class NullTest {
     @Test
     void testValid() throws IOException {
         String jsonString = objectMapper.writeValueAsString(null);
-        Assertions.assertNull(new Json().read(new StringReader(jsonString)));
+        Assertions.assertNull(Json.read(new StringReader(jsonString)));
     }
 
     /**
@@ -50,7 +50,7 @@ class NullTest {
     })
     void testInvalid(final String invalidjson) throws IOException {
         assertThrows(IllegalArgumentException.class,
-                () -> new Json().read(new StringReader(invalidjson)));
+                () -> Json.read(new StringReader(invalidjson)));
     }
 
 }

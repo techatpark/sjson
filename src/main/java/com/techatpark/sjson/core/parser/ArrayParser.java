@@ -27,7 +27,7 @@ public final class ArrayParser {
                                   final Json.ContextExtractor
                                           contextExtractor) throws IOException {
         contextExtractor.startArray();
-        final Object value = contextExtractor.getValue();
+        final Object value = contextExtractor.parse();
         // If not Empty Array
         if (value == contextExtractor) {
             contextExtractor.setCursorToNextClean();
@@ -36,7 +36,7 @@ public final class ArrayParser {
         final List<Object> list = new ArrayList<>();
         list.add(value);
         while (!endOfArray(reader, contextExtractor)) {
-            list.add(contextExtractor.getValue());
+            list.add(contextExtractor.parse());
         }
         contextExtractor.setCursorToNextClean();
         contextExtractor.endArray();

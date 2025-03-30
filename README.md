@@ -32,7 +32,7 @@ Include below in your pom.xml
 To read JSON as Java Object
 
 ```java
-   Json json = new Json();
+   Json json = Json;
    Object obj = json.read(new StringReader("{ \"abc\" : \"def\" }"));
 ```
 

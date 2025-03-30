@@ -46,7 +46,7 @@ class ObjectTest {
         Assertions.assertEquals(JsonParser
                         .parseReader(
                                 new StringReader(objectMapper.writeValueAsString(
-                                        new Json().read(
+                                        Json.read(
                                                 new FileReader(path.toFile())
                                         )))),
                 JsonParser.parseReader(new FileReader(path.toFile())),

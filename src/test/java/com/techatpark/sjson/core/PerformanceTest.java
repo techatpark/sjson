@@ -26,7 +26,7 @@ class PerformanceTest {
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    public final Json sJson = new Json();
+
     public final ObjectMapper jackson = new ObjectMapper();
 
     @ParameterizedTest
@@ -45,7 +45,7 @@ class PerformanceTest {
 
         // Measure SJson
         start = System.nanoTime();
-        ourJsonObject = sJson.read(new BufferedReader(new FileReader(path.toFile())));
+        ourJsonObject = Json.read(new BufferedReader(new FileReader(path.toFile())));
         oursTime = System.nanoTime() - start;
         oursSize = meter.measureDeep(ourJsonObject);
 

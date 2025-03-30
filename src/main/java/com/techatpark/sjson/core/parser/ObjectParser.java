@@ -42,7 +42,7 @@ public final class ObjectParser {
             key = getString(reader, contextExtractor);
             next(reader, ':');
             jsonMap.put(key,
-                    contextExtractor.getValue());
+                    contextExtractor.parse());
             eoo = endOfObject(reader, contextExtractor);
         }
         contextExtractor.setCursorToNextClean();
