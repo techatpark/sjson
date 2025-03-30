@@ -53,7 +53,7 @@ public final class Json {
      * @return object
      * @throws IOException - throws io exception
      */
-    public Object read(final Reader reader) throws IOException {
+    public static Object read(final Reader reader) throws IOException {
         try (reader) {
             return new ContextExtractor(reader).getValue();
         }
@@ -317,7 +317,7 @@ public final class Json {
          * @param character
          * @return flag
          */
-        public boolean isSpace(final char character) {
+        private boolean isSpace(final char character) {
             return (character == ' '
                     || character == '\n'
                     || character == '\r'
