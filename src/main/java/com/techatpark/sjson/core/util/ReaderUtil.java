@@ -10,28 +10,11 @@ public final class ReaderUtil {
      */
     public static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
 
-
     /**
      * Utility Class.
      */
     private ReaderUtil() {
     }
-
-    /**
-     * Skip Spaces and land reader at the valid character.
-     * @param reader
-     * @param character
-     * @throws IOException
-     */
-    public static void next(final Reader reader,
-                            final char character) throws IOException {
-        int charVal;
-        do {
-            charVal = (char) reader.read();
-        } while (charVal != character);
-    }
-
-
 
     /**
      * get Character.
