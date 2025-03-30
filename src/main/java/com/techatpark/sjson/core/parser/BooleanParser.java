@@ -1,10 +1,11 @@
 package com.techatpark.sjson.core.parser;
 
+import com.techatpark.sjson.core.Json;
+
 import java.io.IOException;
 import java.io.Reader;
 
-import static com.techatpark.sjson.core.util.ReaderUtil.ILLEGAL_JSON_VALUE;
-import static com.techatpark.sjson.core.util.ReaderUtil.next;
+import static com.techatpark.sjson.core.Json.ILLEGAL_JSON_VALUE;
 
 /**
  * Boolean Parser.
@@ -30,11 +31,14 @@ public final class BooleanParser {
     /**
      * Reads True from Reader. Reader will stip at the "e" symbol.
      * @param reader
+     * @param contextExtractor
      * @return string
      * @throws IOException
      */
-    public static boolean getTrue(final Reader reader) throws IOException {
-        char[] charBuffer = next(reader, THREE);
+    public static boolean getTrue(final Reader reader,
+                                  final Json.ContextExtractor
+                                          contextExtractor) throws IOException {
+        char[] charBuffer = contextExtractor.next(THREE);
         if (charBuffer[0] == 'r'
                 && charBuffer[1] == 'u'
                 && charBuffer[2] == 'e') {
@@ -47,11 +51,14 @@ public final class BooleanParser {
     /**
      * Reads False from Reader. Reader will strip at the "e" symbol.
      * @param reader
+     * @param contextExtractor
      * @return string
      * @throws IOException
      */
-    public static boolean getFalse(final Reader reader) throws IOException {
-        char[] charBuffer = next(reader, FOUR);
+    public static boolean getFalse(final Reader reader,
+                               final Json.ContextExtractor
+                                       contextExtractor) throws IOException {
+        char[] charBuffer = contextExtractor.next(FOUR);
         if (charBuffer[0] == 'a'
                 && charBuffer[1] == 'l'
                 && charBuffer[2] == 's'

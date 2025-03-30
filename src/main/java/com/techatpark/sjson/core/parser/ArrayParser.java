@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
 public final class ArrayParser {
 
     /**
@@ -61,7 +60,7 @@ public final class ArrayParser {
             return true;
         }
 
-        while ((character = getCharacter(reader.read())) != ','
+        while ((character = contextExtractor.getCharacter(reader.read())) != ','
                 && character != ']') {
             continue;
         }

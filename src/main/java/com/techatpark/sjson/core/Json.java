@@ -11,7 +11,6 @@ import static com.techatpark.sjson.core.parser.BooleanParser.getFalse;
 import static com.techatpark.sjson.core.parser.BooleanParser.getTrue;
 import static com.techatpark.sjson.core.parser.NullParser.getNull;
 import static com.techatpark.sjson.core.parser.ObjectParser.getObject;
-import static com.techatpark.sjson.core.util.ReaderUtil.ILLEGAL_JSON_VALUE;
 import static com.techatpark.sjson.core.parser.StringParser.getString;
 import static com.techatpark.sjson.core.parser.NumberParser.getNumber;
 
@@ -34,6 +33,11 @@ public final class Json {
      * Length of Unicode.
      */
     private static final int UNICODE_LENGTH = 4;
+
+    /**
+     * For invalid JSON.
+     */
+    public static final String ILLEGAL_JSON_VALUE = "Illegal value at ";
 
     /**
      * Reads JSON as a Java Object.
@@ -258,10 +262,10 @@ public final class Json {
             setCursor(character);
             // 2. Call corresponding get methods based on the type
             return switch (character) {
-                case '"' -> getString(reader);
-                case 'n' -> getNull(reader);
-                case 't' -> getTrue(reader);
-                case 'f' -> getFalse(reader);
+                case '"' -> getString(reader, this);
+                case 'n' -> getNull(reader, this);
+                case 't' -> getTrue(reader, this);
+                case 'f' -> getFalse(reader, this);
                 case '{' -> getObject(reader, this);
                 case '[' -> getArray(reader, this);
                 case ']' -> this;
@@ -309,6 +313,32 @@ public final class Json {
                 character = (char) reader.read();
             } while (isSpace(character));
             return character;
+        }
+
+        /**
+         * Reads next chars for given length
+         * from the reader and fill an char array.
+         * @param length
+         * @return char array
+         * @throws IOException
+         */
+        public char[] next(final int length) throws IOException {
+            char[] cbuf = new char[length];
+            reader.read(cbuf, 0, length);
+            return cbuf;
+        }
+
+        /**
+         * get Character.
+         * @throws IllegalArgumentException if EOF
+         * @param value
+         * @return char value
+         */
+        public char getCharacter(final int value) {
+            if (value == -1) {
+                throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
+            }
+            return (char) value;
         }
 
         /**

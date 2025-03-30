@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.techatpark.sjson.core.parser.StringParser.getString;
-import static com.techatpark.sjson.core.util.ReaderUtil.next;
-import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
 
 public final class ObjectParser {
 
@@ -41,7 +39,7 @@ public final class ObjectParser {
         final Map<String, Object> jsonMap = new HashMap<>();
         String key;
         while (!eoo) {
-            key = getString(reader);
+            key = getString(reader, contextExtractor);
             next(reader, ':');
             jsonMap.put(key,
                     contextExtractor.getValue());
@@ -64,7 +62,7 @@ public final class ObjectParser {
                                contextExtractor) throws IOException {
         char character;
         if (contextExtractor.getCursor() == ',') {
-            while (getCharacter(reader.read()) != '"') {
+            while (contextExtractor.getCharacter(reader.read()) != '"') {
                 continue;
             }
             return false;
@@ -74,7 +72,7 @@ public final class ObjectParser {
             return true;
         }
 
-        while ((character = getCharacter(reader.read())) != '"'
+        while ((character = contextExtractor.getCharacter(reader.read())) != '"'
                 && character != '}') {
             continue;
         }

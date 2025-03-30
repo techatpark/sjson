@@ -1,11 +1,11 @@
 package com.techatpark.sjson.core.parser;
 
+import com.techatpark.sjson.core.Json;
+
 import java.io.IOException;
 import java.io.Reader;
 
-import static com.techatpark.sjson.core.util.ReaderUtil.ILLEGAL_JSON_VALUE;
-import static com.techatpark.sjson.core.util.ReaderUtil.getCharacter;
-import static com.techatpark.sjson.core.util.ReaderUtil.next;
+import static com.techatpark.sjson.core.Json.ILLEGAL_JSON_VALUE;
 
 /**
  * Parser for String.
@@ -34,15 +34,20 @@ public final class StringParser {
     /**
      * Reads String from Reader. Reader will stop at the " symbol
      * @param reader
+     * @param contextExtractor
      * @return string
      * @throws IOException
      */
-    public static String getString(final Reader reader) throws IOException {
+    public static String getString(final Reader reader,
+                       final Json.ContextExtractor
+                               contextExtractor) throws IOException {
         final StringBuilder sb = new StringBuilder();
         char character;
 
-        while ((character = getCharacter(reader.read())) != '\\'
-                && character != '"') {
+        while (
+            (character = contextExtractor.getCharacter(reader.read())) != '\\'
+                && character != '"'
+        ) {
             sb.append(character);
         }
 
@@ -55,12 +60,12 @@ public final class StringParser {
         for (;;) {
             switch (character) {
                 case '\\':
-                    character = getCharacter(reader.read());
+                    character = contextExtractor.getCharacter(reader.read());
                     switch (character) {
                         case '"', '\'', '\\', '/' -> sb.append(character);
                         case 'u' -> sb.append((char) Integer
-                                .parseInt(new String(next(reader, LENGTH)),
-                                        RADIX));
+                            .parseInt(new String(contextExtractor.next(LENGTH)),
+                                    RADIX));
                         case 'b' -> sb.append('\b');
                         case 't' -> sb.append('\t');
                         case 'n' -> sb.append('\n');
@@ -78,7 +83,7 @@ public final class StringParser {
                     }
                     sb.append(character);
             }
-            character = getCharacter(reader.read());
+            character = contextExtractor.getCharacter(reader.read());
         }
     }
 
