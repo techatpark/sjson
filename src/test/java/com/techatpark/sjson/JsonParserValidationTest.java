@@ -1,6 +1,5 @@
-package com.techatpark.sjson.core;
+package com.techatpark.sjson;
 
-import com.techatpark.sjson.core.Json;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

@@ -1,4 +1,12 @@
-package com.techatpark.sjson.core;
+package com.techatpark.sjson;
+
+import com.techatpark.sjson.element.JsonArray;
+import com.techatpark.sjson.element.JsonFalse;
+import com.techatpark.sjson.element.JsonNull;
+import com.techatpark.sjson.element.JsonNumber;
+import com.techatpark.sjson.element.JsonObject;
+import com.techatpark.sjson.element.JsonString;
+import com.techatpark.sjson.element.JsonTrue;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -6,13 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.techatpark.sjson.core.parser.ArrayParser.getArray;
-import static com.techatpark.sjson.core.parser.BooleanParser.getFalse;
-import static com.techatpark.sjson.core.parser.BooleanParser.getTrue;
-import static com.techatpark.sjson.core.parser.NullParser.getNull;
-import static com.techatpark.sjson.core.parser.ObjectParser.getObject;
-import static com.techatpark.sjson.core.parser.StringParser.getString;
-import static com.techatpark.sjson.core.parser.NumberParser.getNumber;
 
 /**
  * Json parser for server side workloads.
@@ -26,8 +27,9 @@ import static com.techatpark.sjson.core.parser.NumberParser.getNumber;
  * Note:
  * This is not general purpose parser. This is useful for Microservices
  * and REST Clients where we primarily need to read/write json data.
+ * @param <T> type of object
  */
-public interface Json {
+public interface Json<T> {
 
     /**
      * Length of Unicode.
@@ -38,6 +40,12 @@ public interface Json {
      * For invalid JSON.
      */
     String ILLEGAL_JSON_VALUE = "Illegal value at ";
+
+    /**
+     * Reads the object value.
+     * @return value
+     */
+    T read();
 
     /**
      * Reads JSON as a Java Object.
@@ -59,7 +67,7 @@ public interface Json {
      */
     static Object read(final Reader reader) throws IOException {
         try (reader) {
-            return new ContextExtractor(reader).parse();
+            return new ContextExtractor(reader).parse().read();
         }
     }
 
@@ -178,7 +186,7 @@ public interface Json {
      * ContextExtractor is responsible to interact with underlying reader to
      * extract the content.
      */
-    final class ContextExtractor {
+    final class ContextExtractor implements Json<Object> {
 
         /**
          * Max Depth of an nested Object.
@@ -256,23 +264,23 @@ public interface Json {
          * @return object
          * @throws IOException
          */
-        public Object parse() throws IOException {
+        public Json<?> parse() throws IOException {
             // 1. move to the first clean character to determine the Data type
             final char character = nextClean();
             setCursor(character);
             // 2. Call corresponding get methods based on the type
             return switch (character) {
-                case '"' -> getString(reader, this);
-                case 'n' -> getNull(reader, this);
-                case 't' -> getTrue(reader, this);
-                case 'f' -> getFalse(reader, this);
-                case '{' -> getObject(reader, this);
-                case '[' -> getArray(reader, this);
+                case '"' -> new JsonString(reader, this);
+                case 'n' -> new JsonNull(reader, this);
+                case 't' -> new JsonTrue(reader, this);
+                case 'f' -> new JsonFalse(reader, this);
+                case '{' -> new JsonObject(reader, this);
+                case '[' -> new JsonArray(reader, this);
                 case ']' -> this;
                 default -> {
                     if (Character.isDigit(character)
                             || character == '+' || character == '-') {
-                        yield getNumber(this, reader, character);
+                        yield new JsonNumber(this, reader, character);
                     }
                     throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                 }
@@ -352,6 +360,12 @@ public interface Json {
                     || character == '\n'
                     || character == '\r'
                     || character == '\t');
+        }
+
+        @Override
+        public Object read() {
+            throw new UnsupportedOperationException("Can not read Object "
+                    + "from context extractor");
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.techatpark.sjson.core;
+package com.techatpark.sjson;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

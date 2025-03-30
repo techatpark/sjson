@@ -1,4 +1,4 @@
-package com.techatpark.sjson.core;
+package com.techatpark.sjson;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

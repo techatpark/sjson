@@ -13,10 +13,10 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 /**
  * This will make sure we have all the review comments met.
  */
-public class CodeReviewTest {
+class CodeReviewTest {
 
     @Test
-    public void some_architecture_rule() {
+    void some_architecture_rule() {
         JavaClasses classes = new ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_JARS)
@@ -29,6 +29,7 @@ public class CodeReviewTest {
                 .resideInAnyPackage("java.io"
                         ,"java.math"
                         ,"java.util"
+                        , "java.util.stream"
                         ,"jakarta.validation"
                         ,"java.lang"
                         ,"java.lang.reflect"

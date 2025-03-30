@@ -1,8 +1,8 @@
-package com.techatpark.sjson.core;
+package com.techatpark.sjson;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techatpark.sjson.core.parser.NumberParser;
+import com.techatpark.sjson.element.JsonNumber;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -138,11 +138,11 @@ class NumberTest {
     }
 
     /**
-     * Tests Where NumberParser completes cursor.
+     * Tests Where JsonNumber completes cursor.
      * <p>
      *     Steps:
      *     1) Pass valid number value(validjson) (With following 1).
-     *     2) Read java object using NumberParser.
+     *     2) Read java object using JsonNumber.
      * </p>
      * Expected Result:
      * next Clean Should be at 1
@@ -162,7 +162,7 @@ class NumberTest {
         final StringReader reader = new StringReader(jsonString + suffix);
         final Json.ContextExtractor contextExtractor = new Json.ContextExtractor(reader);
         final char firstChar = contextExtractor.nextClean(); // Move to First Digit
-        NumberParser.getNumber(contextExtractor,reader,  firstChar);
+        new JsonNumber(contextExtractor,reader,  firstChar);
         assertEquals('1',
                 contextExtractor.nextClean());
     }

@@ -1,4 +1,4 @@
-package com.techatpark.sjson.core;
+package com.techatpark.sjson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;

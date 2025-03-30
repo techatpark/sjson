@@ -1,16 +1,14 @@
-package com.techatpark.sjson.core.parser;
+package com.techatpark.sjson.element;
 
-import com.techatpark.sjson.core.Json;
+import com.techatpark.sjson.Json;
 
 import java.io.IOException;
 import java.io.Reader;
 
-import static com.techatpark.sjson.core.Json.ILLEGAL_JSON_VALUE;
-
 /**
  * Parser for String.
  */
-public final class StringParser {
+public final class JsonString implements Json<String> {
 
 
 
@@ -24,23 +22,26 @@ public final class StringParser {
      */
     private static final int RADIX = 16;
 
-
     /**
-     * Utility Class.
+     * Json String.
      */
-    private StringParser() {
-    }
+    private final StringBuilder jsonString;
 
     /**
      * Reads String from Reader. Reader will stop at the " symbol
      * @param reader
      * @param contextExtractor
-     * @return string
      * @throws IOException
      */
-    public static String getString(final Reader reader,
-                       final Json.ContextExtractor
+    public JsonString(final Reader reader,
+                      final Json.ContextExtractor
                                contextExtractor) throws IOException {
+        jsonString = getString(reader, contextExtractor);
+    }
+
+    private static StringBuilder getString(final Reader reader,
+                        final Json.ContextExtractor contextExtractor)
+            throws IOException {
         final StringBuilder sb = new StringBuilder();
         char character;
 
@@ -53,7 +54,7 @@ public final class StringParser {
 
         // Normal String
         if (character == '"') {
-            return sb.toString();
+            return sb;
         }
 
         // String with escape characters ?!
@@ -79,7 +80,7 @@ public final class StringParser {
                     throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
                 default:
                     if (character == '"') {
-                        return sb.toString();
+                        return sb;
                     }
                     sb.append(character);
             }
@@ -88,4 +89,8 @@ public final class StringParser {
     }
 
 
+    @Override
+    public String read() {
+        return jsonString.toString();
+    }
 }

@@ -1,4 +1,4 @@
 /**
  * Parsers for JSON Core Data types.
  */
-package com.techatpark.sjson.core.parser;
+package com.techatpark.sjson.element;

@@ -1,6 +1,6 @@
-package com.techatpark.sjson.core.parser;
+package com.techatpark.sjson.element;
 
-import com.techatpark.sjson.core.Json;
+import com.techatpark.sjson.Json;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -10,18 +10,21 @@ import java.math.BigInteger;
 /**
  * Parser for Numbers.
  */
-public final class NumberParser {
+public final class JsonNumber implements Json<Number> {
 
     /**
      * Maximum Characters for a Number.
      */
     public static final int DEFAULT_MAX_NUM_LEN = 1000;
+    /**
+     * Number Capacity (Default).
+     */
+    public static final int CAPACITY = 10;
 
     /**
-     * Utility Class.
+     * Json Number.
      */
-    private NumberParser() {
-    }
+    private final StringBuilder numberBuilder;
 
     /**
      * Reads the number from reader.
@@ -30,15 +33,14 @@ public final class NumberParser {
      * @param contextExtractor
      * @param reader
      * @param startingChar
-     * @return number
      * @throws IOException
      */
-    public static Number getNumber(
+    public JsonNumber(
             final Json.ContextExtractor contextExtractor,
-                                   final Reader reader,
-                                   final char startingChar)
+            final Reader reader,
+            final char startingChar)
             throws IOException {
-        final StringBuilder numberBuilder = new StringBuilder(10);
+        numberBuilder = new StringBuilder(CAPACITY);
         numberBuilder.append(startingChar);
         int read = reader.read();
         char charactor = (char) read;
@@ -52,7 +54,6 @@ public final class NumberParser {
         }
 
         contextExtractor.setCursor(charactor);
-        return build(numberBuilder);
     }
 
 
@@ -110,4 +111,8 @@ public final class NumberParser {
         }
     }
 
+    @Override
+    public Number read() {
+        return build(numberBuilder);
+    }
 }

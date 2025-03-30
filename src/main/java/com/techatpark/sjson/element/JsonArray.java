@@ -1,47 +1,49 @@
-package com.techatpark.sjson.core.parser;
+package com.techatpark.sjson.element;
 
-import com.techatpark.sjson.core.Json;
+import com.techatpark.sjson.Json;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public final class ArrayParser {
+public final class JsonArray implements Json<List<Object>> {
 
     /**
-     * util classes.
+     * Json Elements of the Array.
      */
-    private ArrayParser() {
-    }
+    private final List<Json<?>> jsonElements;
 
     /**
-     * Reades an Array. Reader stops at next clean character.
+     * Reads an Array. Reader stops at next clean character.
      * @param reader
      * @param contextExtractor
-     * @return list
      * @throws IOException
      */
-    public static List<Object> getArray(final Reader reader,
-                                  final Json.ContextExtractor
-                                          contextExtractor) throws IOException {
+    public JsonArray(final Reader reader,
+                     final Json.ContextExtractor
+                               contextExtractor) throws IOException {
         contextExtractor.startArray();
-        final Object value = contextExtractor.parse();
+        final Json<?> value = contextExtractor.parse();
         // If not Empty Array
         if (value == contextExtractor) {
             contextExtractor.setCursorToNextClean();
-            return Collections.emptyList();
+            jsonElements = Collections.emptyList();
+        } else {
+            jsonElements = new ArrayList<>();
+            jsonElements.add(value);
+            while (!endOfArray(reader, contextExtractor)) {
+                jsonElements.add(contextExtractor.parse());
+            }
+            contextExtractor.setCursorToNextClean();
         }
-        final List<Object> list = new ArrayList<>();
-        list.add(value);
-        while (!endOfArray(reader, contextExtractor)) {
-            list.add(contextExtractor.parse());
-        }
-        contextExtractor.setCursorToNextClean();
+
         contextExtractor.endArray();
-        return list;
     }
+
+
     /**
      * Determine array close character.
      * @param reader
@@ -68,4 +70,10 @@ public final class ArrayParser {
     }
 
 
+    @Override
+    public List<Object> read() {
+        return jsonElements
+                .stream().map(Json::read)
+                .collect(Collectors.toUnmodifiableList());
+    }
 }

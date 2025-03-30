@@ -1,4 +1,4 @@
-package com.techatpark.sjson.core.util;
+package com.techatpark.sjson.util;
 
 import java.io.File;
 import java.io.IOException;

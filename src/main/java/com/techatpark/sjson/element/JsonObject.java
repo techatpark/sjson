@@ -1,6 +1,6 @@
-package com.techatpark.sjson.core.parser;
+package com.techatpark.sjson.element;
 
-import com.techatpark.sjson.core.Json;
+import com.techatpark.sjson.Json;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -8,46 +8,44 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.techatpark.sjson.core.parser.StringParser.getString;
 
-public final class ObjectParser {
+public final class JsonObject implements Json<Map<String, Object>> {
 
     /**
-     * util classes.
+     * Json Value.
      */
-    private ObjectParser() {
-    }
+    private final Map<String, Json<?>> jsonObject;
 
     /**
      * Reads Object from a reader. Reader will
      * stop at the next clean char after object.
      * @param reader
      * @param contextExtractor
-     * @return json object
      * @throws IOException
      */
-    public static Map<String, Object> getObject(final Reader reader,
-                            final Json.ContextExtractor
-                                    contextExtractor) throws IOException {
+    public JsonObject(final Reader reader,
+                      final Json.ContextExtractor
+                                contextExtractor) throws IOException {
         contextExtractor.startObject();
         boolean eoo = endOfObject(reader, contextExtractor);
         // This is Empty Object
         if (eoo) {
             contextExtractor.setCursorToNextClean();
-            return Collections.emptyMap();
+            jsonObject = Collections.emptyMap();
+        } else {
+            jsonObject = new HashMap<>();
+            String key;
+            while (!eoo) {
+                key = new JsonString(reader, contextExtractor).read();
+                next(reader, ':');
+                jsonObject.put(key,
+                        contextExtractor.parse());
+                eoo = endOfObject(reader, contextExtractor);
+            }
+            contextExtractor.setCursorToNextClean();
         }
-        final Map<String, Object> jsonMap = new HashMap<>();
-        String key;
-        while (!eoo) {
-            key = getString(reader, contextExtractor);
-            next(reader, ':');
-            jsonMap.put(key,
-                    contextExtractor.parse());
-            eoo = endOfObject(reader, contextExtractor);
-        }
-        contextExtractor.setCursorToNextClean();
+
         contextExtractor.endObject();
-        return jsonMap;
     }
 
     /**
@@ -93,4 +91,14 @@ public final class ObjectParser {
         } while (charVal != character);
     }
 
+    @Override
+    public Map<String, Object> read() {
+        Map<String, Object> objectMap = HashMap.newHashMap(jsonObject.size());
+
+        for (Map.Entry<String, Json<?>> entry : jsonObject.entrySet()) {
+            objectMap.put(entry.getKey(), entry.getValue().read());
+        }
+
+        return objectMap;
+    }
 }

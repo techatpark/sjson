@@ -1,9 +1,9 @@
-package com.techatpark.sjson.core;
+package com.techatpark.sjson;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParser;
-import com.techatpark.sjson.core.util.TestDataProvider;
+import com.techatpark.sjson.util.TestDataProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
