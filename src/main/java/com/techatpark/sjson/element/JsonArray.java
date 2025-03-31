@@ -7,9 +7,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public final class JsonArray implements Json<List<Object>> {
+public final class JsonArray implements Json<List<?>> {
 
     /**
      * Json Elements of the Array.
@@ -71,9 +70,9 @@ public final class JsonArray implements Json<List<Object>> {
 
 
     @Override
-    public List<Object> read() {
+    public List<?> read() {
         return jsonElements
                 .stream().map(Json::read)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 }
