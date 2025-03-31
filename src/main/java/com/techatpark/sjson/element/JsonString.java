@@ -3,7 +3,6 @@ package com.techatpark.sjson.element;
 import com.techatpark.sjson.Json;
 
 import java.io.IOException;
-import java.io.Reader;
 
 /**
  * Parser for String.
@@ -29,24 +28,23 @@ public final class JsonString implements Json<String> {
 
     /**
      * Reads String from Reader. Reader will stop at the " symbol
-     * @param reader
      * @param contextExtractor
      * @throws IOException
      */
-    public JsonString(final Reader reader,
+    public JsonString(
                       final Json.ContextExtractor
                                contextExtractor) throws IOException {
-        jsonString = getString(reader, contextExtractor);
+        jsonString = getString(contextExtractor);
     }
 
-    private static StringBuilder getString(final Reader reader,
+    private static StringBuilder getString(
                         final Json.ContextExtractor contextExtractor)
             throws IOException {
         final StringBuilder sb = new StringBuilder();
         char character;
 
         while (
-            (character = contextExtractor.getCharacter(reader.read())) != '\\'
+            (character = contextExtractor.getCharacter()) != '\\'
                 && character != '"'
         ) {
             sb.append(character);
@@ -61,7 +59,7 @@ public final class JsonString implements Json<String> {
         for (;;) {
             switch (character) {
                 case '\\':
-                    character = contextExtractor.getCharacter(reader.read());
+                    character = contextExtractor.getCharacter();
                     switch (character) {
                         case '"', '\'', '\\', '/' -> sb.append(character);
                         case 'u' -> sb.append((char) Integer
@@ -84,7 +82,7 @@ public final class JsonString implements Json<String> {
                     }
                     sb.append(character);
             }
-            character = contextExtractor.getCharacter(reader.read());
+            character = contextExtractor.getCharacter();
         }
     }
 

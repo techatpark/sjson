@@ -283,12 +283,12 @@ public sealed interface Json<T>
             setCursor(character);
             // 2. Call corresponding get methods based on the type
             return switch (character) {
-                case '"' -> new JsonString(reader, this);
-                case 'n' -> new JsonNull(reader, this);
-                case 't' -> new JsonTrue(reader, this);
-                case 'f' -> new JsonFalse(reader, this);
-                case '{' -> new JsonObject(reader, this);
-                case '[' -> new JsonArray(reader, this);
+                case '"' -> new JsonString(this);
+                case 'n' -> new JsonNull(this);
+                case 't' -> new JsonTrue(this);
+                case 'f' -> new JsonFalse(this);
+                case '{' -> new JsonObject(this);
+                case '[' -> new JsonArray(this);
                 case ']' -> this;
                 default -> {
                     if (Character.isDigit(character)
@@ -352,14 +352,27 @@ public sealed interface Json<T>
         /**
          * get Character.
          * @throws IllegalArgumentException if EOF
-         * @param value
          * @return char value
          */
-        public char getCharacter(final int value) {
+        public char getCharacter() throws IOException {
+            final int value = reader.read();
             if (value == -1) {
                 throw new IllegalArgumentException(ILLEGAL_JSON_VALUE);
             }
             return (char) value;
+        }
+
+        /**
+         * Skip Spaces and land reader at the valid character.
+         * @param character
+         * @throws IOException
+         */
+        public void next(
+                                final char character) throws IOException {
+            int charVal;
+            do {
+                charVal = (char) reader.read();
+            } while (charVal != character);
         }
 
         /**

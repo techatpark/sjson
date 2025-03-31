@@ -3,7 +3,6 @@ package com.techatpark.sjson.element;
 import com.techatpark.sjson.Json;
 
 import java.io.IOException;
-import java.io.Reader;
 
 /**
  * Boolean Parser.
@@ -22,11 +21,10 @@ public final class JsonFalse implements  Json<Boolean> {
 
     /**
      * Reads False from Reader. Reader will strip at the "e" symbol.
-     * @param reader
      * @param contextExtractor
      * @throws IOException
      */
-    public JsonFalse(final Reader reader,
+    public JsonFalse(
                      final Json.ContextExtractor
                                contextExtractor) throws IOException {
         char[] charBuffer = contextExtractor.next(FOUR);

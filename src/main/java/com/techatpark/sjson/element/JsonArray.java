@@ -3,7 +3,6 @@ package com.techatpark.sjson.element;
 import com.techatpark.sjson.Json;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,11 +16,10 @@ public final class JsonArray implements Json<List<?>> {
 
     /**
      * Reads an Array. Reader stops at next clean character.
-     * @param reader
      * @param contextExtractor
      * @throws IOException
      */
-    public JsonArray(final Reader reader,
+    public JsonArray(
                      final Json.ContextExtractor
                                contextExtractor) throws IOException {
         contextExtractor.startArray();
@@ -33,7 +31,7 @@ public final class JsonArray implements Json<List<?>> {
         } else {
             jsonElements = new ArrayList<>();
             jsonElements.add(value);
-            while (!endOfArray(reader, contextExtractor)) {
+            while (!endOfArray(contextExtractor)) {
                 jsonElements.add(contextExtractor.parse());
             }
             contextExtractor.setCursorToNextClean();
@@ -45,12 +43,11 @@ public final class JsonArray implements Json<List<?>> {
 
     /**
      * Determine array close character.
-     * @param reader
      * @param contextExtractor
      * @return flag
      * @throws IOException
      */
-    private static boolean endOfArray(final Reader reader,
+    private static boolean endOfArray(
                               final Json.ContextExtractor
                                       contextExtractor) throws IOException {
         char character;
@@ -61,7 +58,7 @@ public final class JsonArray implements Json<List<?>> {
             return true;
         }
 
-        while ((character = contextExtractor.getCharacter(reader.read())) != ','
+        while ((character = contextExtractor.getCharacter()) != ','
                 && character != ']') {
             continue;
         }

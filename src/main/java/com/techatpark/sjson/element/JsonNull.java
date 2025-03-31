@@ -3,7 +3,6 @@ package com.techatpark.sjson.element;
 import com.techatpark.sjson.Json;
 
 import java.io.IOException;
-import java.io.Reader;
 
 /**
  * Null Parser.
@@ -17,11 +16,10 @@ public final class JsonNull implements  Json<Object> {
 
     /**
      * Reads Null from Reader. Reader will stip at the "l" symbol.
-     * @param reader
      * @param contextExtractor
      * @throws IOException
      */
-    public JsonNull(final Reader reader,
+    public JsonNull(
                     final Json.ContextExtractor
                                contextExtractor) throws IOException {
         char[] charBuffer = contextExtractor.next(LENGTH);
