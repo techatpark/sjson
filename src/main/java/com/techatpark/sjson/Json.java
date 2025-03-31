@@ -29,7 +29,10 @@ import java.util.stream.Collectors;
  * and REST Clients where we primarily need to read/write json data.
  * @param <T> type of object
  */
-public interface Json<T> {
+public sealed interface Json<T>
+        permits JsonString, JsonNumber, JsonTrue, JsonFalse,
+            JsonNull, JsonArray, JsonObject,
+            Json.ContextExtractor {
 
     /**
      * Length of Unicode.
