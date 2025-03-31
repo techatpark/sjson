@@ -69,8 +69,18 @@ public sealed interface Json<T>
      * @throws IOException - throws io exception
      */
     static Object read(final Reader reader) throws IOException {
+        return parse(reader).read();
+    }
+
+    /**
+     * Parses the reader for Json.
+     * @param reader
+     * @return json
+     * @throws IOException
+     */
+    private static Json<?> parse(final Reader reader) throws IOException {
         try (reader) {
-            return new ContextExtractor(reader).parse().read();
+            return new ContextExtractor(reader).parse();
         }
     }
 
