@@ -160,11 +160,11 @@ class NumberTest {
 
     private void testCursor(final String jsonString, final String suffix) throws IOException {
         final StringReader reader = new StringReader(jsonString + suffix);
-        final Json.ContextExtractor contextExtractor = new Json.ContextExtractor(reader);
-        final char firstChar = contextExtractor.nextClean(); // Move to First Digit
-        new JsonNumber(contextExtractor,reader,  firstChar);
+        final Json.Parser parser = new Json.Parser(reader);
+        final char firstChar = parser.nextClean(); // Move to First Digit
+        new JsonNumber(parser,reader,  firstChar);
         assertEquals('1',
-                contextExtractor.nextClean());
+                parser.nextClean());
     }
 }
 

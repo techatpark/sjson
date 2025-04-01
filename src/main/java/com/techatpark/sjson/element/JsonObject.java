@@ -18,55 +18,55 @@ public final class JsonObject implements Json<Map<String, Object>> {
     /**
      * Reads Object from a reader. Reader will
      * stop at the next clean char after object.
-     * @param contextExtractor
+     * @param parser
      * @throws IOException
      */
     public JsonObject(
-                      final Json.ContextExtractor
-                                contextExtractor) throws IOException {
-        contextExtractor.startObject();
-        boolean eoo = endOfObject(contextExtractor);
+                      final Parser
+                              parser) throws IOException {
+        parser.startObject();
+        boolean eoo = endOfObject(parser);
         // This is Empty Object
         if (eoo) {
-            contextExtractor.setCursorToNextClean();
+            parser.setCursorToNextClean();
             jsonObject = Collections.emptyMap();
         } else {
             jsonObject = new HashMap<>();
             String key;
             while (!eoo) {
-                key = new JsonString(contextExtractor).read();
-                contextExtractor.next(':');
+                key = new JsonString(parser).read();
+                parser.next(':');
                 jsonObject.put(key,
-                        contextExtractor.parse());
-                eoo = endOfObject(contextExtractor);
+                        parser.parse());
+                eoo = endOfObject(parser);
             }
-            contextExtractor.setCursorToNextClean();
+            parser.setCursorToNextClean();
         }
 
-        contextExtractor.endObject();
+        parser.endObject();
     }
 
     /**
      * Determines the Object End. By moving till " or }.
-     * @param contextExtractor
+     * @param parser
      * @return flag
      * @throws IOException
      */
-    private static boolean endOfObject(final Json.ContextExtractor
-                               contextExtractor) throws IOException {
+    private static boolean endOfObject(final Parser
+                                               parser) throws IOException {
         char character;
-        if (contextExtractor.getCursor() == ',') {
-            while (contextExtractor.getCharacter() != '"') {
+        if (parser.getCursor() == ',') {
+            while (parser.getCharacter() != '"') {
                 continue;
             }
             return false;
         }
 
-        if (contextExtractor.getCursor() == '}') {
+        if (parser.getCursor() == '}') {
             return true;
         }
 
-        while ((character = contextExtractor.getCharacter()) != '"'
+        while ((character = parser.getCharacter()) != '"'
                 && character != '}') {
             continue;
         }

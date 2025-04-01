@@ -16,13 +16,13 @@ public final class JsonNull implements  Json<Object> {
 
     /**
      * Reads Null from Reader. Reader will stip at the "l" symbol.
-     * @param contextExtractor
+     * @param parser
      * @throws IOException
      */
     public JsonNull(
-                    final Json.ContextExtractor
-                               contextExtractor) throws IOException {
-        char[] charBuffer = contextExtractor.next(LENGTH);
+                    final Parser
+                            parser) throws IOException {
+        char[] charBuffer = parser.next(LENGTH);
         if (charBuffer[0] != 'u'
             || charBuffer[1] != 'l'
             || charBuffer[2] != 'l') {

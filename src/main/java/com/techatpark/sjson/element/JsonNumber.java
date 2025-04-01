@@ -30,13 +30,13 @@ public final class JsonNumber implements Json<Number> {
      * Reads the number from reader.
      * Reader will stop at the next to the end of number.
      *
-     * @param contextExtractor
+     * @param parser
      * @param reader
      * @param startingChar
      * @throws IOException
      */
     public JsonNumber(
-            final Json.ContextExtractor contextExtractor,
+            final Parser parser,
             final Reader reader,
             final char startingChar)
             throws IOException {
@@ -53,7 +53,7 @@ public final class JsonNumber implements Json<Number> {
             charactor = (char) read;
         }
 
-        contextExtractor.setCursor(charactor);
+        parser.setCursor(charactor);
     }
 
 

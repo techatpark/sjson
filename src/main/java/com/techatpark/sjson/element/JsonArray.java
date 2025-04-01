@@ -16,49 +16,49 @@ public final class JsonArray implements Json<List<?>> {
 
     /**
      * Reads an Array. Reader stops at next clean character.
-     * @param contextExtractor
+     * @param parser
      * @throws IOException
      */
     public JsonArray(
-                     final Json.ContextExtractor
-                               contextExtractor) throws IOException {
-        contextExtractor.startArray();
-        final Json<?> value = contextExtractor.parse();
+                     final Parser
+                             parser) throws IOException {
+        parser.startArray();
+        final Json<?> value = parser.parse();
         // If not Empty Array
-        if (value == contextExtractor) {
-            contextExtractor.setCursorToNextClean();
+        if (value == parser) {
+            parser.setCursorToNextClean();
             jsonElements = Collections.emptyList();
         } else {
             jsonElements = new ArrayList<>();
             jsonElements.add(value);
-            while (!endOfArray(contextExtractor)) {
-                jsonElements.add(contextExtractor.parse());
+            while (!endOfArray(parser)) {
+                jsonElements.add(parser.parse());
             }
-            contextExtractor.setCursorToNextClean();
+            parser.setCursorToNextClean();
         }
 
-        contextExtractor.endArray();
+        parser.endArray();
     }
 
 
     /**
      * Determine array close character.
-     * @param contextExtractor
+     * @param parser
      * @return flag
      * @throws IOException
      */
     private static boolean endOfArray(
-                              final Json.ContextExtractor
-                                      contextExtractor) throws IOException {
+                              final Parser
+                                      parser) throws IOException {
         char character;
-        if (contextExtractor.getCursor() == ',') {
+        if (parser.getCursor() == ',') {
             return false;
         }
-        if (contextExtractor.getCursor() == ']') {
+        if (parser.getCursor() == ']') {
             return true;
         }
 
-        while ((character = contextExtractor.getCharacter()) != ','
+        while ((character = parser.getCharacter()) != ','
                 && character != ']') {
             continue;
         }

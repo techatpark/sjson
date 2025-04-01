@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public sealed interface Json<T>
         permits JsonString, JsonNumber, JsonTrue, JsonFalse,
             JsonNull, JsonArray, JsonObject,
-            Json.ContextExtractor {
+        Json.Parser {
 
     /**
      * Length of Unicode.
@@ -80,7 +80,7 @@ public sealed interface Json<T>
      */
     private static Json<?> parse(final Reader reader) throws IOException {
         try (reader) {
-            return new ContextExtractor(reader).parse();
+            return new Parser(reader).parse();
         }
     }
 
@@ -196,10 +196,10 @@ public sealed interface Json<T>
     }
 
     /**
-     * ContextExtractor is responsible to interact with underlying reader to
+     * Parser is responsible to interact with underlying reader to
      * extract the content.
      */
-    final class ContextExtractor implements Json<Object> {
+    final class Parser implements Json<Object> {
 
         /**
          * Max Depth of an nested Object.
@@ -226,7 +226,7 @@ public sealed interface Json<T>
          *
          * @param theReader
          */
-        ContextExtractor(final Reader theReader) {
+        Parser(final Reader theReader) {
             this.reader = theReader;
             this.objectDepth = 0;
         }

@@ -17,13 +17,13 @@ public final class JsonTrue implements  Json<Boolean> {
 
     /**
      * Reads True from Reader. Reader will stip at the "e" symbol.
-     * @param contextExtractor
+     * @param parser
      * @throws IOException
      */
     public JsonTrue(
-                    final Json.ContextExtractor
-                              contextExtractor) throws IOException {
-        char[] charBuffer = contextExtractor.next(THREE);
+                    final Parser
+                            parser) throws IOException {
+        char[] charBuffer = parser.next(THREE);
         if (charBuffer[0] != 'r'
                 || charBuffer[1] != 'u'
                 || charBuffer[2] != 'e') {

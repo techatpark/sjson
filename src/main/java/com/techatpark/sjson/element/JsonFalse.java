@@ -21,13 +21,13 @@ public final class JsonFalse implements  Json<Boolean> {
 
     /**
      * Reads False from Reader. Reader will strip at the "e" symbol.
-     * @param contextExtractor
+     * @param parser
      * @throws IOException
      */
     public JsonFalse(
-                     final Json.ContextExtractor
-                               contextExtractor) throws IOException {
-        char[] charBuffer = contextExtractor.next(FOUR);
+                     final Parser
+                             parser) throws IOException {
+        char[] charBuffer = parser.next(FOUR);
         if (charBuffer[0] != 'a'
             || charBuffer[1] != 'l'
             || charBuffer[2] != 's'
