@@ -13,7 +13,7 @@ public final class JsonObject implements Json<Map<String, Object>> {
     /**
      * Json Value.
      */
-    private final Map<String, Json<?>> jsonObject;
+    private final Map<JsonString, Json<?>> jsonObject;
 
     /**
      * Reads Object from a reader. Reader will
@@ -32,9 +32,9 @@ public final class JsonObject implements Json<Map<String, Object>> {
             jsonObject = Collections.emptyMap();
         } else {
             jsonObject = new HashMap<>();
-            String key;
+            JsonString key;
             while (!eoo) {
-                key = new JsonString(parser).read();
+                key = new JsonString(parser);
                 parser.next(':');
                 jsonObject.put(key,
                         parser.parse());
@@ -79,8 +79,8 @@ public final class JsonObject implements Json<Map<String, Object>> {
     public Map<String, Object> read() {
         Map<String, Object> objectMap = HashMap.newHashMap(jsonObject.size());
 
-        for (Map.Entry<String, Json<?>> entry : jsonObject.entrySet()) {
-            objectMap.put(entry.getKey(), entry.getValue().read());
+        for (Map.Entry<JsonString, Json<?>> entry : jsonObject.entrySet()) {
+            objectMap.put(entry.getKey().read(), entry.getValue().read());
         }
 
         return objectMap;

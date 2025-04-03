@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParser;
 import com.techatpark.sjson.util.TestDataProvider;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -14,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ObjectTest {
 
@@ -51,6 +55,21 @@ class ObjectTest {
                                         )))),
                 JsonParser.parseReader(new FileReader(path.toFile())),
                 "Reverse JSON Failed for " + path);
+    }
+
+
+    @Test
+    @Disabled
+    void testDuplicateKey() {
+        final String json = """
+                {
+                    "key" : "value-1",
+                    "key" : "value-2"
+                }
+                """;
+
+        assertThrows(IllegalArgumentException.class,
+                () -> Json.read(new StringReader(json)));
     }
 
 }
