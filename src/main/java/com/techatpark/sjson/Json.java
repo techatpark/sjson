@@ -381,7 +381,7 @@ public sealed interface Json<T>
          * @param character
          * @return flag
          */
-        private boolean isSpace(final char character) {
+        public boolean isSpace(final char character) {
             return (character == ' '
                     || character == '\n'
                     || character == '\r'

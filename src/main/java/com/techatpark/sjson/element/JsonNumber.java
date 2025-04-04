@@ -44,21 +44,29 @@ public final class JsonNumber implements Json<Number> {
         numberBuilder.append(startingChar);
         int read = reader.read();
         char charactor = (char) read;
-        while (read  != -1
-                && charactor != ','
-                    && charactor != '}'
-                                    && charactor != ']') {
+        while (read  != -1) {
+
+            if (charactor == ','
+                    || charactor == '}'
+                    || charactor == ']') {
+                parser.setCursor(charactor);
+                break;
+            } else if (parser.isSpace(charactor)) {
+                parser.setCursor(parser.nextClean());
+                break;
+            }
+
             numberBuilder.append(charactor);
             read = reader.read();
             charactor = (char) read;
         }
 
-        parser.setCursor(charactor);
+
     }
 
     @Override
     public Number read() {
-        String numberStr = numberBuilder.toString().trim();
+        String numberStr = numberBuilder.toString();
         try {
             // Try to parse as different types based on the range
             if (numberStr.contains(".")) {
