@@ -56,8 +56,8 @@ public final class JsonNumber implements Json<Number> {
         parser.setCursor(charactor);
     }
 
-
-    private static Number build(final StringBuilder numberBuilder) {
+    @Override
+    public Number read() {
         String numberStr = numberBuilder.toString().trim();
         try {
             // Try to parse as different types based on the range
@@ -75,7 +75,7 @@ public final class JsonNumber implements Json<Number> {
                 if (numberBuilder.length() > DEFAULT_MAX_NUM_LEN) {
                     throw new IllegalArgumentException(
                             "Number value length exceeds the maximum allowed ("
-                            + DEFAULT_MAX_NUM_LEN + ")");
+                                    + DEFAULT_MAX_NUM_LEN + ")");
                 }
                 long longValue = Long.parseLong(numberStr);
                 if (longValue >= Byte.MIN_VALUE
@@ -96,7 +96,7 @@ public final class JsonNumber implements Json<Number> {
         }
     }
 
-    private static Number parseBigNumber(final String numberStr) {
+    private Number parseBigNumber(final String numberStr) {
         try {
             return new BigInteger(numberStr); // Try BigInteger first
         } catch (NumberFormatException e) {
@@ -109,10 +109,5 @@ public final class JsonNumber implements Json<Number> {
                 return bd; // If it's a decimal, return BigDecimal
             }
         }
-    }
-
-    @Override
-    public Number read() {
-        return build(numberBuilder);
     }
 }
