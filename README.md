@@ -2,7 +2,7 @@
 
 # SJson
 
-SJson is a **lightweight tailer made json parser for server side workloads**. It tries to get optimized memory and performance with below goals.
+SJson is a **lightweight tailer made json parser for server side workloads**. It provides optimized memory and performance with below goals.
 
 ## Design Goals
 
@@ -25,15 +25,15 @@ Include below in your pom.xml
 <dependency>
    <groupId>com.techatpark.sjson</groupId>
    <artifactId>json-parser</artifactId>
-   <version>1.0.0</version>
-<dependency>   
+   <version>{{version}}</version>
+<dependency>
 ```
 
 To read JSON as Java Object
 
 ```java
-   Json json = Json;
-   Object obj = json.read(new StringReader("{ \"abc\" : \"def\" }"));
+Object obj = Json.read(new StringReader("{ \"abc\" : \"def\" }")); // returns Map<String, Object>
+Object arr = Json.read(new StringReader("[1,true,{ \"abc\" : \"def\" }]")); // returns List<Object>
 ```
 
 ## Development
