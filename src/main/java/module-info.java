@@ -2,6 +2,8 @@
  * info.java file.
  */
 module json.parser {
-    requires java.base;
-    opens com.techatpark.sjson.util;
+    requires jakarta.validation;
+    requires java.compiler;
+
+    opens com.techatpark.sjson;
 }
