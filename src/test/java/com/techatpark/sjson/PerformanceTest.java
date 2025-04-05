@@ -91,7 +91,7 @@ class PerformanceTest {
      * @throws IOException if there is an issue listing files
      */
     private static Set<Path> jsonFilesProvider() throws IOException {
-        return TestDataProvider.getJSONFiles();
+        return TestDataProvider.getJSONObjectFiles();
     }
 
     /**
