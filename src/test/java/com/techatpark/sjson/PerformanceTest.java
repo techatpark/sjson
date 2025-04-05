@@ -1,13 +1,14 @@
 package com.techatpark.sjson;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
+import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.techatpark.sjson.util.TestDataProvider;
 import org.github.jamm.MemoryMeter;
 import org.json.JSONObject;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -16,114 +17,134 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 
-
+/**
+ * Reads Json Objects as Map<String,Object> using various parsers,
+ * Compare them with Json.parse() by Memory usage and performance
+ */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PerformanceTest {
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_GREEN = "\u001B[32m";
+    private static final String ANSI_WHITE = "\u001B[37m";
 
+    private final ObjectMapper jackson = new ObjectMapper();
+    private final Gson gson = new Gson();
 
-    public final ObjectMapper jackson = new ObjectMapper();
+    private final  MemoryMeter meter = MemoryMeter.builder().build();
+
+    long totalOursTime = 0;
+    long totalOrgJsonTime = 0;
+    long totalJacksonTime = 0;
+    long totalGsonTime = 0;
+
+    long totalOursSize = 0;
+    long totalOrgJsonSize = 0;
+    long totalJacksonSize = 0;
+    long totalGsonSize = 0;
+
+    int fileCount = 0;
+    
 
     @ParameterizedTest
     @MethodSource("jsonFilesProvider")
     void testRead(Path path) throws IOException {
-        MemoryMeter meter = MemoryMeter.builder().build();
-        Object ourJsonObject;
-        JSONObject orgJSONObject;
-        JsonNode jacksonJsonNode;
-        JsonElement gsonObject;
+        fileCount++;
 
-        long start;
+        // Our Json
+        long start = System.nanoTime();
+        Object ourJsonObject = Json.read(new BufferedReader(new FileReader(path.toFile())));
+        long oursTime = System.nanoTime() - start;
+        long oursSize = meter.measureDeep(ourJsonObject);
 
-        long jacksonsTime, jsonTime, gsonTime, oursTime;
-        long jacksonsSize, jsonSize, gsonSize, oursSize;
-
-        // Measure SJson
+        // Org JSON
         start = System.nanoTime();
-        ourJsonObject = Json.read(new BufferedReader(new FileReader(path.toFile())));
-        oursTime = System.nanoTime() - start;
-        oursSize = meter.measureDeep(ourJsonObject);
+        Map orgJsonObject = new JSONObject(new BufferedReader(new FileReader(path.toFile()))).toMap();
+        long orgjsonTime = System.nanoTime() - start;
+        long orgjsonSize = meter.measureDeep(orgJsonObject);
 
-        // Measure Org Json
+        // Jackson
         start = System.nanoTime();
-        orgJSONObject = new JSONObject(new BufferedReader(new FileReader(path.toFile())));
-        jsonTime = System.nanoTime() - start - oursTime;
-        jsonSize = meter.measureDeep(orgJSONObject);
+        Map jacksonJson = jackson.readValue(new BufferedReader(new FileReader(path.toFile())), Map.class);
+        long jacksonsTime = System.nanoTime() - start;
+        long jacksonsSize = meter.measureDeep(jacksonJson);
 
-        // Measure Jackson
+        // Gson
         start = System.nanoTime();
-        jacksonJsonNode = jackson.readTree(new BufferedReader(new FileReader(path.toFile())));
-        jacksonsTime = System.nanoTime() - start - oursTime;
-        jacksonsSize = meter.measureDeep(jacksonJsonNode);
+        Map gsonJson = gson.fromJson(new BufferedReader(new FileReader(path.toFile())), Map.class);
+        long gsonTime = System.nanoTime() - start;
+        long gsonSize = meter.measureDeep(gsonJson);
 
-        // Measure Gson
-        start = System.nanoTime();
-        gsonObject = JsonParser.parseReader(new BufferedReader(new FileReader(path.toFile())));
-        gsonTime = System.nanoTime() - start - oursTime;
-        gsonSize = meter.measureDeep(gsonObject);
+        // Accumulate totals
+        totalOursTime += oursTime;
+        totalOrgJsonTime += orgjsonTime;
+        totalJacksonTime += jacksonsTime;
+        totalGsonTime += gsonTime;
+
+        totalOursSize += oursSize;
+        totalOrgJsonSize += orgjsonSize;
+        totalJacksonSize += jacksonsSize;
+        totalGsonSize += gsonSize;
 
         // Check Correctness of the parser
-        Assertions.assertEquals(gsonObject,
+        Assertions.assertEquals(JsonParser.parseReader(new StringReader(jackson.writeValueAsString(gsonJson))),
                 JsonParser.parseReader(new StringReader(jackson.writeValueAsString(ourJsonObject))),
                 "Reverse JSON Failed for " + path);
 
+        // Print formatted table
         System.out.format("%33s%20s%20s%20s%10s%20s%20s%20s\n",
                 ANSI_RESET + path.getFileName(),
-                getSizeDisplay(jsonSize, oursSize),
-                getSizeDisplay(jacksonsSize, oursSize),
-                getSizeDisplay(gsonSize, oursSize),
+                getMemoryDisplay(orgjsonSize, oursSize),
+                getMemoryDisplay(jacksonsSize, oursSize),
+                getMemoryDisplay(gsonSize, oursSize),
                 ANSI_WHITE + "|",
-                getTimeDisplay(jsonTime),
-                getTimeDisplay(jacksonsTime),
-                getTimeDisplay(gsonTime)
+                getTimeDisplay(orgjsonTime, oursTime),
+                getTimeDisplay(jacksonsTime, oursTime),
+                getTimeDisplay(gsonTime, oursTime)
         );
     }
 
-    /**
-     * Provides paths to JSON files for parameterized tests.
-     *
-     * @return Stream of paths to JSON files
-     * @throws IOException if there is an issue listing files
-     */
+    @AfterAll
+    void printAverages() {
+        System.out.println(ANSI_RESET + "\nAverage Memory and Time Usage (nanoseconds and bytes):");
+        System.out.format("%33s%20s%20s%20s%10s%20s%20s%20s\n",
+                ANSI_RESET + "Average",
+                getMemoryDisplay(totalOrgJsonSize / fileCount, totalOursSize / fileCount),
+                getMemoryDisplay(totalJacksonSize / fileCount, totalOursSize / fileCount),
+                getMemoryDisplay(totalGsonSize / fileCount, totalOursSize / fileCount),
+                ANSI_WHITE + "|",
+                getTimeDisplay(totalOrgJsonTime / fileCount, totalOursTime / fileCount),
+                getTimeDisplay(totalJacksonTime / fileCount, totalOursTime / fileCount),
+                getTimeDisplay(totalGsonTime / fileCount, totalOursTime / fileCount)
+        );
+    }
+
     private static Set<Path> jsonFilesProvider() throws IOException {
         return TestDataProvider.getJSONObjectFiles();
     }
 
-    /**
-     * Get Timing in a Color Coded Format.
-     * @param time
-     * @return time as text
-     */
-    private String getTimeDisplay(final long time) {
+    private String getTimeDisplay(final long time, final long oursTime) {
         StringBuilder builder = new StringBuilder();
-        if(time < 0) {
-            builder.append(ANSI_RED);
-        }
-        else {
+        long gap = time - oursTime;
+        if (gap > 0) {
             builder.append(ANSI_GREEN);
+        } else {
+            builder.append(ANSI_RED);
         }
         return builder.append(time).toString();
     }
 
-    /**
-     * Get Size in a Color Coded Format.
-     * @param size
-     * @return size as text
-     */
-    private String getSizeDisplay(final long size,final long ourSize) {
+    private String getMemoryDisplay(final long size, final long ourSize) {
         StringBuilder builder = new StringBuilder();
-        long gap = size-ourSize;
-        if(gap < 0) {
+        if (size > ourSize) {
+            builder.append(ANSI_GREEN);
+        } else {
             builder.append(ANSI_RED);
         }
-        else {
-            builder.append(ANSI_GREEN);
-        }
-        return builder.append(gap).toString();
+        return builder.append(size).toString();
     }
 }
