@@ -54,6 +54,7 @@
     <properties>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.source>21</maven.compiler.source>
+        <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <jamm.version>0.4.1</jamm.version>
         <jackson.version>2.18.3</jackson.version>
         <gson.version>2.12.1</gson.version>
@@ -94,7 +95,7 @@
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
+            <version>${jakarta.validation-api.version}</version>
         </dependency>
 
 
@@ -201,7 +202,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.93</minimum>
+                                            <minimum>0.95</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

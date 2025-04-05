@@ -16,8 +16,6 @@
 
 > 💡 **Note:** SJson is purpose-built for backend systems—not a general-purpose parser.
 
-Here’s the updated section with **Data Engineering workloads** added, keeping it concise and aligned with the tone:
-
 ---
 
 ### Ideal For
@@ -25,10 +23,6 @@ Here’s the updated section with **Data Engineering workloads** added, keeping 
 - Microservices: Service-to-service communication
 - Client SDKs: Lightweight JSON processing (e.g., Elastic clients)
 - Data Engineering: ETL pipelines, streaming ingestion, compact intermediate JSON parsing
-
----
-
-Would you also like a brief usage example in a data processing context (like parsing large streaming JSON records)?
 
 ---
 
