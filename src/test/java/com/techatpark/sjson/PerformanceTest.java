@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.techatpark.sjson.util.TestDataProvider;
 import org.github.jamm.MemoryMeter;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
@@ -16,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
@@ -63,7 +65,8 @@ class PerformanceTest {
 
         // Org JSON
         start = System.nanoTime();
-        Map orgJsonObject = new JSONObject(new BufferedReader(new FileReader(path.toFile()))).toMap();
+        JSONTokener jsonTokener = new JSONTokener(new BufferedReader(new FileReader(path.toFile())));
+        Map orgJsonObject = new JSONObject(jsonTokener).toMap();
         long orgjsonTime = System.nanoTime() - start;
         long orgjsonSize = meter.measureDeep(orgJsonObject);
 
