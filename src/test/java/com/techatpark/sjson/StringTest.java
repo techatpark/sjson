@@ -38,7 +38,8 @@ class StringTest {
             "你好 (Chinese)",
             "Привет (Russian)",
             "வணக்கம் (Tamil)",
-            "Mix: English हिंदी 中文 日本語 \uD83D\uDE80"
+            "Mix: English हिंदी 中文 日本語 \uD83D\uDE80",
+            "this is\nA test\r\nWith some different\rNew Lines"
     })
     void testValid(final String originalValue) throws IOException {
 

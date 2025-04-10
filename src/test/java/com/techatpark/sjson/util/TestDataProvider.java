@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 public class TestDataProvider {
 
-    private static String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources" :
+    private static String baseFolder = System.getenv("SJSON_LOCAL_DIR") == null ? "src/test/resources/samples" :
             System.getenv("SJSON_LOCAL_DIR");
 
     /**
@@ -22,9 +22,10 @@ public class TestDataProvider {
      * @throws IOException
      */
     public static Set<Path> getJSONFiles() throws IOException {
-        try (Stream<Path> stream = Files.list(new File(baseFolder, "samples").toPath())) {
+        try (Stream<Path> stream = Files.walk(new File(baseFolder).toPath())) {
             return stream
                     .filter(path -> !Files.isDirectory(path))
+                    .filter(path -> path.toString().toLowerCase().endsWith(".json"))
                     .collect(Collectors.toSet());
         }
     }

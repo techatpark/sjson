@@ -57,18 +57,18 @@ class PerformanceTest {
     void testRead(Path path) throws IOException {
         fileCount++;
 
-        // Our Json
-        long start = System.nanoTime();
-        Object ourJsonObject = Json.read(new BufferedReader(new FileReader(path.toFile())));
-        long oursTime = System.nanoTime() - start;
-        long oursSize = meter.measureDeep(ourJsonObject);
-
         // Org JSON
-        start = System.nanoTime();
+        long start = System.nanoTime();
         JSONTokener jsonTokener = new JSONTokener(new BufferedReader(new FileReader(path.toFile())));
         Map orgJsonObject = new JSONObject(jsonTokener).toMap();
         long orgjsonTime = System.nanoTime() - start;
         long orgjsonSize = meter.measureDeep(orgJsonObject);
+
+        // Our Json
+        start = System.nanoTime();
+        Object ourJsonObject = Json.read(new BufferedReader(new FileReader(path.toFile())));
+        long oursTime = System.nanoTime() - start;
+        long oursSize = meter.measureDeep(ourJsonObject);
 
         // Jackson
         start = System.nanoTime();
