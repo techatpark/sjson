@@ -1,12 +1,11 @@
 package com.techatpark.sjson;
 
 import com.techatpark.sjson.element.JsonArray;
-import com.techatpark.sjson.element.JsonFalse;
 import com.techatpark.sjson.element.JsonNull;
 import com.techatpark.sjson.element.JsonNumber;
 import com.techatpark.sjson.element.JsonObject;
 import com.techatpark.sjson.element.JsonString;
-import com.techatpark.sjson.element.JsonTrue;
+import com.techatpark.sjson.element.JsonBoolean;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -30,8 +29,8 @@ import java.util.stream.Collectors;
  * @param <T> type of object
  */
 public sealed interface Json<T>
-        permits JsonString, JsonNumber, JsonTrue, JsonFalse,
-            JsonNull, JsonArray, JsonObject,
+        permits JsonString, JsonNumber, JsonBoolean,
+        JsonNull, JsonArray, JsonObject,
         Json.Parser {
 
     /**
@@ -285,8 +284,8 @@ public sealed interface Json<T>
             return switch (character) {
                 case '"' -> new JsonString(this);
                 case 'n' -> new JsonNull(this);
-                case 't' -> new JsonTrue(this);
-                case 'f' -> new JsonFalse(this);
+                case 't' -> new JsonBoolean(this, true);
+                case 'f' -> new JsonBoolean(this, false);
                 case '{' -> new JsonObject(this);
                 case '[' -> new JsonArray(this);
                 case ']' -> this;
