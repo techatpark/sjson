@@ -177,15 +177,12 @@ public sealed interface Json<T>
                     break;
                 default:
                     //Reference: http://www.unicode.org/versions/Unicode5.1.0/
-                    if ((ch >= '\u0000' && ch <= '\u001F')
-                            || (ch >= '\u007F' && ch <= '\u009F')
-                            || (ch >= '\u2000' && ch <= '\u20FF')) {
+                    if (ch <= '\u001F' || ch >= '\u007F'
+                            && ch <= '\u009F' || ch >= '\u2000'
+                            && ch <= '\u20FF') {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
-                        for (int k = 0; k < UNICODE_LENGTH
-                                - ss.length(); k++) {
-                            sb.append('0');
-                        }
+                        sb.append("0".repeat(UNICODE_LENGTH - ss.length()));
                         sb.append(ss.toUpperCase());
                     } else {
                         sb.append(ch);

@@ -59,3 +59,9 @@ SJson was featured at the **Bangalore Open Source Java User Group** to teach stu
 📺 **Watch the tech talk** (video coming soon)
 
 ---
+
+## Reference
+
+- https://www.youtube.com/watch?v=NSzRK8f7EX0&pp=ygUSSlNPTiBBUEkgQ29yZSBKYXZh
+- https://www.youtube.com/watch?v=W8k9ZCrsphc&t=448s
+- https://www.youtube.com/watch?v=R8Xubleffr8
