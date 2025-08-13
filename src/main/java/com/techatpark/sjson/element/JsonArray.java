@@ -24,7 +24,7 @@ public final class JsonArray implements Json<List<?>> {
                              parser) throws IOException {
         parser.startArray();
         final Json<?> value = parser.parse();
-        // If not Empty Array
+        // If Empty Array
         if (value == parser) {
             parser.setCursorToNextClean();
             jsonElements = Collections.emptyList();
@@ -47,9 +47,7 @@ public final class JsonArray implements Json<List<?>> {
      * @return flag
      * @throws IOException
      */
-    private static boolean endOfArray(
-                              final Parser
-                                      parser) throws IOException {
+    private boolean endOfArray(final Parser parser) throws IOException {
         char character;
         if (parser.getCursor() == ',') {
             return false;
@@ -64,7 +62,6 @@ public final class JsonArray implements Json<List<?>> {
         }
         return character == ']';
     }
-
 
     @Override
     public List<?> read() {

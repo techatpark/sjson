@@ -10,10 +10,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 class ArrayTest {
     final ObjectMapper objectMapper = new ObjectMapper();
@@ -25,18 +23,8 @@ class ArrayTest {
      * @return Stream of paths to JSON files
      * @throws IOException if there is an issue listing files
      */
-    private static List<Path> jsonFilePath() throws IOException {
-        List<Path> jsonFilePath = new ArrayList<>();
-
-        for (Path path : TestDataProvider.getJSONFiles()) {
-            String jsonText = Files.readString(path).trim();
-            if (jsonText.startsWith("[")) {
-                jsonFilePath.add(path);
-            }
-        }
-
-        return jsonFilePath;
-
+    private static Set<Path> jsonFilePath() throws IOException {
+        return TestDataProvider.getJSONArrayFiles();
     }
 
     @ParameterizedTest
@@ -45,7 +33,7 @@ class ArrayTest {
         Assertions.assertEquals(JsonParser
                         .parseReader(
                                 new StringReader(objectMapper.writeValueAsString(
-                                        Json.read(
+                                        Json.parse(
                                                 new FileReader(path.toFile())
                                         )))),
                 JsonParser.parseReader(new FileReader(path.toFile())),

@@ -25,6 +25,6 @@ class LargeObjectTest {
 
         JsonNode jsonNode = new ObjectMapper().readTree(new StringReader(largeJson.toString()));
 
-        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(largeJson.toString())));
+        assertThrows(IllegalArgumentException.class, () -> Json.parse(new StringReader(largeJson.toString())));
     }
 }

@@ -32,7 +32,7 @@ class NumberTest {
     @Test
     void testLargeNumber() throws JsonProcessingException {
         String largeNumber = "{\"a\" : " + "9".repeat(100000) + "}";
-        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(largeNumber)));
+        assertThrows(IllegalArgumentException.class, () -> Json.parse(new StringReader(largeNumber)));
     }
 
     /**
@@ -53,7 +53,7 @@ class NumberTest {
     @MethodSource("validNumbers")
     void testValidNumbers(final Number expectedNumber) throws IOException {
         String jsonString = objectMapper.writeValueAsString(expectedNumber);
-        Assertions.assertEquals(expectedNumber, Json.read(new StringReader(jsonString)));
+        Assertions.assertEquals(expectedNumber, Json.parse(new StringReader(jsonString)));
     }
 
     /**
@@ -112,7 +112,7 @@ class NumberTest {
     @ParameterizedTest
     @MethodSource("invalidNumbers")
     void testInvalidNumbers(final String invalidNumber) {
-        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(invalidNumber)));
+        assertThrows(IllegalArgumentException.class, () -> Json.parse(new StringReader(invalidNumber)));
     }
 
     /**

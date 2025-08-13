@@ -52,23 +52,25 @@
     </distributionManagement>
 
     <properties>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.source>21</maven.compiler.source>
+        <java.version>24</java.version>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
         <jamm.version>0.4.1</jamm.version>
-        <jackson.version>2.18.3</jackson.version>
-        <gson.version>2.12.1</gson.version>
-        <org.json.version>20250107</org.json.version>
-        <junit.version>5.13.0-M1</junit.version>
-        <archunit.version>1.4.0</archunit.version>
-        <sonar.version>5.0.0.4389</sonar.version>
-        <surefire.version>3.5.2</surefire.version>
-        <jacoco.version>0.8.12</jacoco.version>
+        <jackson.version>2.20.0-rc1</jackson.version>
+        <gson.version>2.13.1</gson.version>
+        <org.json.version>20250517</org.json.version>
+        <junit.version>5.13.4</junit.version>
+        <archunit.version>1.4.1</archunit.version>
+        <sonar.version>5.1.0.4751</sonar.version>
+        <surefire.version>3.5.3</surefire.version>
+        <jacoco.version>0.8.13</jacoco.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-javadoc.version>3.3.1</maven-javadoc.version>
         <maven-gpg.version>3.0.1</maven-gpg.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <checkstyle.version>10.21.4</checkstyle.version>
+        <checkstyle.version>11.0.0</checkstyle.version>
         <jvm.options>
             -javaagent:${user.home}/.m2/repository/io/github/stephankoelle/jamm/${jamm.version}/jamm-${jamm.version}.jar
             --add-opens java.base/java.util=ALL-UNNAMED --add-opens jakarta.validation/jakarta.validation=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
@@ -94,7 +96,7 @@
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
+            <version>${jakarta.validation-api.version}</version>
         </dependency>
 
 
@@ -201,7 +203,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.93</minimum>
+                                            <minimum>0.95</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -210,16 +212,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-compiler-plugin</artifactId>-->
-            <!--                <version>3.8.1</version>-->
-            <!--                <configuration>-->
-            <!--                    <compilerArgs>-->
-            <!--&lt;!&ndash;                        <arg>${jvm.options}</arg>&ndash;&gt;-->
-            <!--                    </compilerArgs>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

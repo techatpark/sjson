@@ -2,51 +2,48 @@
 
 # SJson
 
-SJson is a **lightweight tailer made json parser for server side workloads**. It tries to get optimized memory and performance with below goals.
+> **SJson** is a lightweight, high-performance JSON parser built for server-side Java. Designed for REST APIs and microservices, it delivers faster parsing with lower memory usage using native Java structures.
 
-## Design Goals
+## Why Use SJson?
 
-1. Optimized for Serialization, Deserialization and validation.
-2. Represent Json in native java format.
-3. No external dependencies
-4. Trust the validity of json documents. It is just enough to say invalid, reasoning is optional
-5. Utilize latest java features
+-  Optimized for fast serialization & deserialization
+-  No external dependencies. Uses native Java types (`Map`, `List`, etc.)
+-  Assumes valid JSON (minimal validation overhead)
+-  Clean, modern, and extendable Java code
 
-**Note:** This is **not** general purpose parser. This is specifically written for REST API use cases. 
+### Use cases
 
-1. Service to Service Communications in microservices
-2. Client SDK such as Elastic REST Client.
+- **Microservices:** Service-to-service communication
+- **Client SDKs:** Lightweight JSON processing (e.g., Elastic clients)
+- **Data Engineering:** ETL pipelines, streaming ingestion, compact intermediate JSON parsing
 
 ## Usage
 
-Include below in your pom.xml
+Add dependency to your project
 
+### Maven
 ```xml
 <dependency>
-   <groupId>com.techatpark.sjson</groupId>
-   <artifactId>json-parser</artifactId>
-   <version>1.0.0</version>
-<dependency>   
+    <groupId>com.techatpark.sjson</groupId>
+    <artifactId>json-parser</artifactId>
+    <version>{{version}}</version>
+</dependency>
+```
+### Gradle
+```groovy
+implementation 'com.techatpark.sjson:json-parser:{{version}}'
 ```
 
-To read JSON as Java Object
+You can now perform serialization & deserialization
 
 ```java
-   Json json = Json;
-   Object obj = json.read(new StringReader("{ \"abc\" : \"def\" }"));
+Object obj = Json.parse(Reader.of("{ \"abc\" : \"def\" }"));  // Map<String, Object>
+
+String jsonString = Json.stringify(obj);
 ```
 
-## Development
+## Reference
 
-Below VM Options should be added for JVM. This is required to calculate the size of the objects
-
-```shell
--javaagent:<<PATH_TO_JAR>>/jamm-0.4.1.jar --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED
-```
-## How it works
-
-SJson was part of the tech talk series at Bangalore Opensource Java User Group. This will give an idea behind this work.
-
-1. Setup : https://www.youtube.com/watch?v=q_1H8ZJceA8
-2. Optimization: https://www.youtube.com/watch?v=XMRaLCRfvlQ
-3. Collection: https://www.youtube.com/watch?v=tMgy5PxPFQ4
+- https://www.youtube.com/watch?v=NSzRK8f7EX0&pp=ygUSSlNPTiBBUEkgQ29yZSBKYXZh
+- https://www.youtube.com/watch?v=W8k9ZCrsphc&t=448s
+- https://www.youtube.com/watch?v=R8Xubleffr8

@@ -34,7 +34,7 @@ class JsonTest {
     @ParameterizedTest
     @MethodSource("jsonFilesProvider")
     void testGetJsonText(Path path) throws IOException {
-            if(Json.read(new BufferedReader(new FileReader(path.toFile())))
+            if(Json.parse(new BufferedReader(new FileReader(path.toFile())))
                     instanceof Map sJsonObject) {
                 Assertions.assertEquals(JsonParser.parseString(jackson.writeValueAsString(sJsonObject)),
                         JsonParser.parseReader(new StringReader(Json.jsonText(sJsonObject))),

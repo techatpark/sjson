@@ -1,12 +1,11 @@
 package com.techatpark.sjson;
 
 import com.techatpark.sjson.element.JsonArray;
-import com.techatpark.sjson.element.JsonFalse;
 import com.techatpark.sjson.element.JsonNull;
 import com.techatpark.sjson.element.JsonNumber;
 import com.techatpark.sjson.element.JsonObject;
 import com.techatpark.sjson.element.JsonString;
-import com.techatpark.sjson.element.JsonTrue;
+import com.techatpark.sjson.element.JsonBoolean;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -30,8 +29,8 @@ import java.util.stream.Collectors;
  * @param <T> type of object
  */
 public sealed interface Json<T>
-        permits JsonString, JsonNumber, JsonTrue, JsonFalse,
-            JsonNull, JsonArray, JsonObject,
+        permits JsonString, JsonNumber, JsonBoolean,
+        JsonNull, JsonArray, JsonObject,
         Json.Parser {
 
     /**
@@ -68,8 +67,8 @@ public sealed interface Json<T>
      * @return object
      * @throws IOException - throws io exception
      */
-    static Object read(final Reader reader) throws IOException {
-        return parse(reader).read();
+    static Object parse(final Reader reader) throws IOException {
+        return jsonReader(reader).read();
     }
 
     /**
@@ -78,7 +77,7 @@ public sealed interface Json<T>
      * @return json
      * @throws IOException
      */
-    private static Json<?> parse(final Reader reader) throws IOException {
+    private static Json<?> jsonReader(final Reader reader) throws IOException {
         try (reader) {
             return new Parser(reader).parse();
         }
@@ -94,7 +93,7 @@ public sealed interface Json<T>
         return "{" + jsonMap.entrySet().stream()
                 .map(entry ->
                         "\"" + escapeJsonTxt(entry.getKey()) + "\":"
-                        + getValue(entry.getValue()
+                        + stringify(entry.getValue()
                         )).collect(Collectors.joining(",")) + "}";
     }
 
@@ -106,7 +105,7 @@ public sealed interface Json<T>
      */
     private static String jsonText(final List<Object> jsonArray) {
         return "[" + jsonArray.stream()
-                .map(Json::getValue)
+                .map(Json::stringify)
                 .collect(Collectors.joining(",")) + "]";
     }
 
@@ -116,7 +115,7 @@ public sealed interface Json<T>
      * @param value
      * @return valueText
      */
-    private static String getValue(final Object value) {
+    static String stringify(final Object value) {
         return switch (value) {
             case null -> "null";
             case String str -> "\"" + escapeJsonTxt(str) + "\"";
@@ -178,15 +177,12 @@ public sealed interface Json<T>
                     break;
                 default:
                     //Reference: http://www.unicode.org/versions/Unicode5.1.0/
-                    if ((ch >= '\u0000' && ch <= '\u001F')
-                            || (ch >= '\u007F' && ch <= '\u009F')
-                            || (ch >= '\u2000' && ch <= '\u20FF')) {
+                    if (ch <= '\u001F' || ch >= '\u007F'
+                            && ch <= '\u009F' || ch >= '\u2000'
+                            && ch <= '\u20FF') {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
-                        for (int k = 0; k < UNICODE_LENGTH
-                                - ss.length(); k++) {
-                            sb.append('0');
-                        }
+                        sb.append("0".repeat(UNICODE_LENGTH - ss.length()));
                         sb.append(ss.toUpperCase());
                     } else {
                         sb.append(ch);
@@ -285,8 +281,8 @@ public sealed interface Json<T>
             return switch (character) {
                 case '"' -> new JsonString(this);
                 case 'n' -> new JsonNull(this);
-                case 't' -> new JsonTrue(this);
-                case 'f' -> new JsonFalse(this);
+                case 't' -> new JsonBoolean(this, true);
+                case 'f' -> new JsonBoolean(this, false);
                 case '{' -> new JsonObject(this);
                 case '[' -> new JsonArray(this);
                 case ']' -> this;

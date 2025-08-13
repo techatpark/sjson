@@ -35,7 +35,7 @@ class DeepNestedTest {
                 "\"final\": \"value\"" +
                 "}".repeat(10_000);
 
-        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(deepJson)));
+        assertThrows(IllegalArgumentException.class, () -> Json.parse(new StringReader(deepJson)));
     }
 
     /**
@@ -52,7 +52,7 @@ class DeepNestedTest {
                 "\"value\"" +
                 "]".repeat(10_000);
 
-        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(deepArray)));
+        assertThrows(IllegalArgumentException.class, () -> Json.parse(new StringReader(deepArray)));
     }
 
     /**
@@ -76,7 +76,7 @@ class DeepNestedTest {
             mixedJson.append("]");
         }
 
-        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(mixedJson.toString())));
+        assertThrows(IllegalArgumentException.class, () -> Json.parse(new StringReader(mixedJson.toString())));
     }
 
     /**
@@ -94,7 +94,7 @@ class DeepNestedTest {
                 "\"final\": \"value\"" +
                 "}".repeat(9_999);
 
-        assertDoesNotThrow(() -> Json.read(new StringReader(deepJson)));
+        assertDoesNotThrow(() -> Json.parse(new StringReader(deepJson)));
     }
 
     /**
@@ -105,7 +105,7 @@ class DeepNestedTest {
     @Test
     void testUnbalancedNesting() throws IOException {
         String unbalancedJson = "{ \"key\": { \"nested\": [ 1, 2, 3 }"; // Missing closing bracket
-        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(unbalancedJson)));
+        assertThrows(IllegalArgumentException.class, () -> Json.parse(new StringReader(unbalancedJson)));
     }
 
     /**
@@ -119,6 +119,6 @@ class DeepNestedTest {
                 "\"final\": \"value\"" +
                 "}".repeat(500);
 
-        assertThrows(IllegalArgumentException.class, () -> Json.read(new StringReader(json)));
+        assertThrows(IllegalArgumentException.class, () -> Json.parse(new StringReader(json)));
     }
 }

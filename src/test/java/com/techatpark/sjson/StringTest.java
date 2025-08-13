@@ -38,12 +38,13 @@ class StringTest {
             "你好 (Chinese)",
             "Привет (Russian)",
             "வணக்கம் (Tamil)",
-            "Mix: English हिंदी 中文 日本語 \uD83D\uDE80"
+            "Mix: English हिंदी 中文 日本語 \uD83D\uDE80",
+            "this is\nA test\r\nWith some different\rNew Lines"
     })
     void testValid(final String originalValue) throws IOException {
 
         String jsonString = objectMapper.writeValueAsString(originalValue);
-        Assertions.assertEquals(originalValue, Json.read(new StringReader(jsonString)));
+        Assertions.assertEquals(originalValue, Json.parse(new StringReader(jsonString)));
     }
 
     /**
@@ -68,6 +69,6 @@ class StringTest {
     })
     void testInvalid(final String invalidjson) throws IOException {
         assertThrows(IllegalArgumentException.class,
-                () -> Json.read(new StringReader(invalidjson)));
+                () -> Json.parse(new StringReader(invalidjson)));
     }
 }
