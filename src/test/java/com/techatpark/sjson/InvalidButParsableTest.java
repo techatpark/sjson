@@ -22,7 +22,7 @@ class InvalidButParsableTest {
             "\"Newline in string \n remains invalid\""})
     void testInvalid(final String invalidJson) {
         assertDoesNotThrow(
-                () -> Json.read(new StringReader(invalidJson)));
+                () -> Json.parse(new StringReader(invalidJson)));
     }
 
 }

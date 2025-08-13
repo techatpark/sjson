@@ -38,7 +38,7 @@ class ObjectTest {
         Assertions.assertEquals(JsonParser
                         .parseReader(
                                 new StringReader(objectMapper.writeValueAsString(
-                                        Json.read(
+                                        Json.parse(
                                                 new FileReader(path.toFile())
                                         )))),
                 JsonParser.parseReader(new FileReader(path.toFile())),
@@ -57,7 +57,7 @@ class ObjectTest {
                 """;
 
         assertThrows(IllegalArgumentException.class,
-                () -> Json.read(new StringReader(json)));
+                () -> Json.parse(new StringReader(json)));
     }
 
 }

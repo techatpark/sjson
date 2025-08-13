@@ -24,7 +24,7 @@ class JsonParserValidationTest {
     @MethodSource("illegalJsonPaths")
     void testIllegal(Path path) {
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Json.read(new FileReader(path.toFile()));
+            Json.parse(new FileReader(path.toFile()));
         });
     }
 

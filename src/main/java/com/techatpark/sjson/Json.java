@@ -67,8 +67,8 @@ public sealed interface Json<T>
      * @return object
      * @throws IOException - throws io exception
      */
-    static Object read(final Reader reader) throws IOException {
-        return parse(reader).read();
+    static Object parse(final Reader reader) throws IOException {
+        return jsonReader(reader).read();
     }
 
     /**
@@ -77,7 +77,7 @@ public sealed interface Json<T>
      * @return json
      * @throws IOException
      */
-    private static Json<?> parse(final Reader reader) throws IOException {
+    private static Json<?> jsonReader(final Reader reader) throws IOException {
         try (reader) {
             return new Parser(reader).parse();
         }
@@ -93,7 +93,7 @@ public sealed interface Json<T>
         return "{" + jsonMap.entrySet().stream()
                 .map(entry ->
                         "\"" + escapeJsonTxt(entry.getKey()) + "\":"
-                        + getValue(entry.getValue()
+                        + stringify(entry.getValue()
                         )).collect(Collectors.joining(",")) + "}";
     }
 
@@ -105,7 +105,7 @@ public sealed interface Json<T>
      */
     private static String jsonText(final List<Object> jsonArray) {
         return "[" + jsonArray.stream()
-                .map(Json::getValue)
+                .map(Json::stringify)
                 .collect(Collectors.joining(",")) + "]";
     }
 
@@ -115,7 +115,7 @@ public sealed interface Json<T>
      * @param value
      * @return valueText
      */
-    private static String getValue(final Object value) {
+    static String stringify(final Object value) {
         return switch (value) {
             case null -> "null";
             case String str -> "\"" + escapeJsonTxt(str) + "\"";

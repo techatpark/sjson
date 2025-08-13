@@ -17,7 +17,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
@@ -66,7 +65,7 @@ class PerformanceTest {
 
         // Our Json
         start = System.nanoTime();
-        Object ourJsonObject = Json.read(new BufferedReader(new FileReader(path.toFile())));
+        Object ourJsonObject = Json.parse(new BufferedReader(new FileReader(path.toFile())));
         long oursTime = System.nanoTime() - start;
         long oursSize = meter.measureDeep(ourJsonObject);
 

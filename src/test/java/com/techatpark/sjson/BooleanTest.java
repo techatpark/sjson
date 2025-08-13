@@ -35,7 +35,7 @@ class BooleanTest {
     void testValid(final Boolean originalValue) throws IOException {
         String jsonString = objectMapper.writeValueAsString(originalValue);
         Assertions.assertEquals(originalValue ,
-                Json.read(new StringReader(jsonString)));
+                Json.parse(new StringReader(jsonString)));
     }
     /**
      * Tests invalid Boolean Values.
@@ -52,6 +52,6 @@ class BooleanTest {
     @ValueSource(strings = {"tru", "fals"})
     void testInvalid(final String invalidJson) {
         assertThrows(IllegalArgumentException.class,
-                () -> Json.read(new StringReader(invalidJson)));
+                () -> Json.parse(new StringReader(invalidJson)));
     }
 }

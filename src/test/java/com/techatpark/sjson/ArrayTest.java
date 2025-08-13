@@ -10,10 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 class ArrayTest {
@@ -36,7 +33,7 @@ class ArrayTest {
         Assertions.assertEquals(JsonParser
                         .parseReader(
                                 new StringReader(objectMapper.writeValueAsString(
-                                        Json.read(
+                                        Json.parse(
                                                 new FileReader(path.toFile())
                                         )))),
                 JsonParser.parseReader(new FileReader(path.toFile())),
